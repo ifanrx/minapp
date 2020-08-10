@@ -15,6 +15,13 @@ class _StorageAsync {
     }
     return _sp.getString(key);
   }
+
+  Future<bool> remove(String key) async {
+    if (_sp == null) {
+      _sp = await SharedPreferences.getInstance();
+    }
+    return _sp.remove(key);
+  }
 }
 
 class _Storage {

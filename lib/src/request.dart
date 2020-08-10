@@ -63,6 +63,9 @@ String _extractErrorMsg(Response<dynamic> res) {
   if (res.statusCode == 404) {
     return 'not found';
   }
+  if (res.data is String) {
+    return res.data.length > 0 ? res.data : res.statusMessage;
+  }
   if (res.data != null && res.data['error_msg'] != null) {
     return res.data['error_msg'] as String;
   }

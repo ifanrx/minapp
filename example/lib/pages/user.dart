@@ -2,93 +2,270 @@ import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart' as BaaS;
 
 import '../util.dart';
+import 'common.dart';
 
 class UserPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _UserPageState();
+  _UserPage createState() => _UserPage();
 }
 
-class _UserPageState extends State<UserPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _UserPage extends State<UserPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
+  List<BaaS.User> userList;
 
-  void _showSnackBar(String message) {
-    _scaffoldKey.currentState.removeCurrentSnackBar();
-    var snackBar = SnackBar(content: Text(message));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+  @override
+  void initState() {
+    super.initState();
+    userList = [];
+  }
+
+  void onFetchUserList(List<BaaS.User> users) {
+    setState(() {
+      userList = users;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(title: Text('用户')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child:  Column(
+        key: _scaffoldKey,
+        appBar: AppBar(title: Text('用户')),
+        body: Padding(
+          padding: EdgeInsets.all(6.0),
+          child: ListView(
+            children: <Widget>[
+              GetUserList(onFetchUserList: onFetchUserList),
+              GetUser(userList: userList),
+            ],
+          ),
+        )
+    );
+  }
+}
+
+class GetUserList extends StatefulWidget {
+  final onFetchUserList;
+
+  GetUserList({this.onFetchUserList});
+
+  @override
+  _GetUserList createState() => _GetUserList();
+}
+
+class _GetUserList extends State<GetUserList> {
+  String orderBy;
+  int limit, offset;
+  List<BaaS.User> userList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserList();
+  }
+
+  Future<void> fetchUserList() async {
+    try {
+      var _userList = await BaaS.User.find(
+        limit: limit ?? 20,
+        offset: offset ?? 0,
+        orderBy: orderBy,
+      );
+      setState(() {
+        userList = _userList;
+      });
+      widget.onFetchUserList(userList);
+    } on BaaS.HError catch(e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
+  List<Widget> _userListBuilder() {
+    var list = userList.map((e) {
+      return ListTile(
+        title: Text(e.nickname ?? e.userId),
+      );
+    });
+    return list.toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          '_userprofile 表',
+          style: TextStyle(fontSize: 24),
+        ),
+        Container(
+          child: Text(
+            'order_by',
+            style: TextStyle(fontSize: 16),
+          ),
+          alignment: Alignment.topLeft,
+        ),
+        Row(
           children: <Widget>[
-            TextFormField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: '用户名',
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return '请填写用户名';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: '密码',
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return '请填写密码';
-                }
-                return null;
-              },
-            ),
-            RaisedButton(
-              child: Text('登录'),
-              onPressed: () async {
-                if (!_formKey.currentState.validate()) return;
-
-                var username = _usernameController.text;
-                var password = _passwordController.text;
-
-                try {
-                  await BaaS.login({
-                    'username': username,
-                    'password': password,
+            Flexible(
+              child: RadioListTile<String>(
+                title: Text('nickname'),
+                value: 'nickname',
+                groupValue: orderBy,
+                onChanged: (v) {
+                  setState(() {
+                    orderBy = v;
                   });
-                  _showSnackBar('登录成功');
-                } on BaaS.HError catch(e) {
-                  _showSnackBar(e.toString());
-                }
+                  fetchUserList();
+                },
+              ),
+            ),
+            Flexible(
+              child: RadioListTile<String>(
+                title: Text('-nickname'),
+                value: '-nickname',
+                groupValue: orderBy,
+                onChanged: (v) {
+                  setState(() {
+                    orderBy = v;
+                  });
+                  fetchUserList();
+                },
+              ),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Text(
+                'limit',
+                style: TextStyle(fontSize: 16),
+              ),
+              alignment: Alignment.topLeft,
+            ),
+            NumberInputWithIncrementDecrement(
+              width: 100,
+              alignment: Alignment.bottomLeft,
+              onChange: (v) {
+                setState(() {
+                  limit = v;
+                });
+                fetchUserList();
               },
             ),
-            RaisedButton(
-              child: Text('获取当前用户'),
-              onPressed: () async {
-                try {
-                  var res = await BaaS.getCurrentUser();
-                  _showSnackBar(prettyJson(res));
-                } on BaaS.HError catch(e) {
-                  _showSnackBar(e.toString());
-                }
+            Container(
+              child: Text(
+                'offset',
+                style: TextStyle(fontSize: 16),
+              ),
+              alignment: Alignment.topLeft,
+            ),
+            NumberInputWithIncrementDecrement(
+              width: 100,
+              alignment: Alignment.bottomLeft,
+              onChange: (v) {
+                setState(() {
+                  offset = v;
+                });
+                fetchUserList();
               },
             ),
           ],
         ),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1,
+              color: Colors.grey,
+            )
+          ),
+          child: SizedBox(
+            height: 300.0,
+            width: 300.0,
+            child: ListView(
+              children: _userListBuilder(),
+            )
+          ),
         ),
-      ),
+      ],
+    );
+  }
+}
+
+class GetUser extends StatefulWidget {
+  final List<BaaS.User> userList;
+
+  GetUser({this.userList}) : super();
+
+  @override
+  _GetUser createState() => _GetUser();
+}
+
+class _GetUser extends State<GetUser> {
+  final String userId = '36395395';
+  BaaS.User user;
+
+  Future<void> initUser() async {
+    if (widget.userList.length <= 0) return;
+    user = await BaaS.User.user(widget.userList[0].userId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    initUser();
+
+    return Column(
+      children: <Widget>[
+        SectionTitle('user = "$userId"'),
+        RaisedButton(
+          child: Text('获取用户信息'),
+          onPressed: widget.userList.length > 0 ? () async {
+            try {
+              String userId = widget.userList.length > 0 ? widget.userList[0].userId : this.userId;
+              BaaS.User user = await BaaS.User.user(userId);
+              showSimpleDialog(context, prettyJson(user.toJson()));
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
+          } : null,
+        ),
+        RaisedButton(
+          child: Text('获取用户信息 select & expand'),
+          onPressed: () async {
+            try {
+              String userId = widget.userList.length > 0 ? widget.userList[0].userId : this.userId;
+
+              BaaS.User user = await BaaS.User.user(
+                userId,
+                expand: ['pointer_test_order'],
+                select: ['nickname', 'pointer_test_order'],
+              );
+              showSimpleDialog(context, prettyJson(user.toJson()));
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
+          },
+        ),
+        RaisedButton(
+          child: Text('查找指定用户 by user_id'),
+          onPressed: () async {
+          },
+        ),
+        RaisedButton(
+          child: Text('更新当前用户信息 自定义字段'),
+          onPressed: () async {
+            try {
+              await user.updateUserInfo({
+                'age': 68,
+              });
+              showSnackBar(user.get('age').toString(), context);
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
+          },
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart' as BaaS;
 
+import 'auth.dart';
 import 'storage.dart';
 import 'user.dart';
 import 'schema.dart';
@@ -17,6 +18,7 @@ class _Feature {
 }
 
 final _features = [
+  _Feature(name: '登入&登出', page: AuthPage()),
   _Feature(name: '本地存储', page: StoragePage()),
   _Feature(name: '用户', page: UserPage()),
   _Feature(name: '数据表', page: SchemaPage()),

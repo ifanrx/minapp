@@ -4,8 +4,7 @@ import 'pages/index.dart';
 
 void main() {
   BaaS.init(
-    '995140f59511a222c937',
-    host: 'https://i-v5204.eng.szx.ifanrx.com',
+    'a4d2d62965ddb57fa4d6',
   );
 
   runApp(MaterialApp(
