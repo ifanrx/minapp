@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'query.dart';
 import 'request.dart';
-import 'currentUser.dart';
+import 'current_user.dart';
 import 'constants.dart';
 
 class User extends CurrentUser {
@@ -29,19 +29,11 @@ class User extends CurrentUser {
     return User(res.data);
   }
 
-  static Future<dynamic> find({int limit = 20, int offset = 0, String orderBy, Query query}) async {
-    Map<String, dynamic> data = {
-      'limit': limit,
-      'offset': offset,
-    };
-    if (orderBy != null) {
-      data.addAll({'order_by': orderBy});
-    }
-
+  static Future<dynamic> find({Query query}) async {
     Response res = await request(
       path: Api.userList,
       method: 'GET',
-      data: data,
+      data: query?.get(),
     );
     List<dynamic> objects = res.data['objects'];
     var userList = List<User>();
