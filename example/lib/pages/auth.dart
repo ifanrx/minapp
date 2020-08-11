@@ -29,34 +29,6 @@ class AuthPage extends StatelessWidget {
   }
 }
 
-class Title extends StatelessWidget {
-  final String title;
-  Title(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        title,
-        textAlign: TextAlign.left,
-        style: TextStyle(color: Colors.red, fontSize: 18),
-      ),
-      margin: EdgeInsets.only(top: 30.0),
-      padding: EdgeInsets.only(left: 20.0),
-      alignment: Alignment.topLeft,
-      decoration: BoxDecoration(
-          border: Border(
-              left: BorderSide(
-                color: Colors.red,
-                width: 3,
-                style: BorderStyle.solid,
-              )
-          )
-      ),
-    );
-  }
-}
-
 class LoginUsername extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LoginUsername();
@@ -75,7 +47,7 @@ class _LoginUsername extends State<LoginUsername> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Title('用户登录'),
+          SectionTitle('用户登录'),
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
@@ -161,7 +133,7 @@ class _Register extends State<Register> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Title('用户注册'),
+          SectionTitle('用户注册'),
           TextFormField(
             decoration: InputDecoration(
               labelText: '邮箱',
@@ -252,7 +224,7 @@ class _LoginWithPhone extends State<LoginWithPhone> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Title('手机号码登录'),
+          SectionTitle('手机号码登录'),
           TextFormField(
             decoration: InputDecoration(
               labelText: '手机号',
@@ -321,7 +293,7 @@ class _OtherSettings extends State<OtherSettings> {
     return Container(
       child: Column(
         children: <Widget>[
-          Title('其他'),
+          SectionTitle('其他'),
           Form(
             key: _formKey,
             child: Column(

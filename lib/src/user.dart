@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import 'query.dart';
 import 'request.dart';
 import 'currentUser.dart';
 import 'constants.dart';
@@ -10,9 +11,11 @@ class User extends CurrentUser {
   static Future<User> user(String userId,
       {List<String> expand, List<String> select}) async {
     Map<String, dynamic> data = {};
+
     if (expand != null && expand.length > 0) {
       data.addAll({'expand': expand.join(',')});
     }
+
     if (select != null && select.length > 0) {
       data.addAll({'keys': select.join(',')});
     }
@@ -26,7 +29,7 @@ class User extends CurrentUser {
     return User(res.data);
   }
 
-  static Future<dynamic> find({int limit = 20, int offset = 0, String orderBy}) async {
+  static Future<dynamic> find({int limit = 20, int offset = 0, String orderBy, Query query}) async {
     Map<String, dynamic> data = {
       'limit': limit,
       'offset': offset,

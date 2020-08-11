@@ -11,3 +11,5 @@ export 'src/user.dart';
 export 'src/base_record.dart';
 export 'src/table_object.dart';
 export 'src/table_record.dart';
+export 'src/currentUser.dart';
+export 'src/invokeFunction.dart';
