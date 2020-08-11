@@ -1,6 +1,6 @@
 import 'h_error.dart';
-import 'table_object.dart';
-import 'h_error.dart';
+import 'geo_point.dart';
+import 'geo_polygon.dart';
 
 class BaseRecord {
   Map record;
@@ -32,7 +32,12 @@ class BaseRecord {
       }
     } else if (arg1 is String) {
       print('$arg1 is string type');
-      record['\$set'][arg1] = arg2;
+
+      if (arg2 is GeoPoint || arg2 is GeoPolygon) {
+        record['\$set'][arg1] = arg2.geoJSON;
+      } else {
+        record['\$set'][arg1] = arg2;
+      }
     } else {
       throw HError(605);
     }

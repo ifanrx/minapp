@@ -1,13 +1,9 @@
 import 'util.dart';
 
 class GeoPoint {
-  double longitude;
-  double latitude;
-  Map geoJSON;
-
-  Map toGeoJSON() {
-    // return cloneDeep(this.geoJSON);
-  }
+  num longitude;
+  num latitude;
+  Map<String, dynamic> geoJSON;
 
   GeoPoint({this.longitude, this.latitude}) {
     this.geoJSON = {
