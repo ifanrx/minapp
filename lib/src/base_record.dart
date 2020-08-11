@@ -8,8 +8,6 @@ class BaseRecord {
 
   BaseRecord({this.tableName}) {
     recordValueInit();
-    print('tableName: $tableName');
-    print(record);
   }
 
   void recordValueInit() {
@@ -33,7 +31,9 @@ class BaseRecord {
     } else if (arg1 is String) {
       print('$arg1 is string type');
 
-      if (arg2 is GeoPoint || arg2 is GeoPolygon) {
+      if (arg2 is List<GeoPoint> || arg2 is List<GeoPolygon>) {
+        record['\$set'][arg1] = arg2.map((geo) => geo.geoJSON).toList();
+      } else if (arg2 is GeoPoint || arg2 is GeoPolygon) {
         record['\$set'][arg1] = arg2.geoJSON;
       } else {
         record['\$set'][arg1] = arg2;

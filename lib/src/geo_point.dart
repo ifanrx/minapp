@@ -1,5 +1,3 @@
-import 'util.dart';
-
 class GeoPoint {
   num longitude;
   num latitude;
