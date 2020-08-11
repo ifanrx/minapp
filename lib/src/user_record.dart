@@ -1,4 +1,4 @@
-import 'currentUser.dart';
+import 'current_user.dart';
 
 class UserRecord {
   static Future<CurrentUser> initCurrentUser(Map<String, dynamic> userInfo) async {

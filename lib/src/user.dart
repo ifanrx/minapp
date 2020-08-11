@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'query.dart';
 import 'request.dart';
-import 'currentUser.dart';
+import 'current_user.dart';
 import 'constants.dart';
 
 class User extends CurrentUser {

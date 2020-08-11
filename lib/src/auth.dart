@@ -5,7 +5,7 @@ import 'storage.dart';
 import 'constants.dart';
 import 'request.dart';
 import 'util.dart';
-import 'currentUser.dart';
+import 'current_user.dart';
 
 class Auth {
   static Future<String> getAuthToken() => storageAsync.get(StorageKey.authToken);

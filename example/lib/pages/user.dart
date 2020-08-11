@@ -65,11 +65,13 @@ class _GetUserList extends State<GetUserList> {
 
   Future<void> fetchUserList() async {
     try {
-      var _userList = await BaaS.User.find(
-        limit: limit ?? 20,
-        offset: offset ?? 0,
-        orderBy: orderBy,
-      );
+      BaaS.Query query = BaaS.Query();
+      query.limit(limit ?? 20);
+      query.offset(offset ?? 0);
+      query.orderBy(orderBy);
+
+      var _userList = await BaaS.User.find(query: query);
+
       setState(() {
         userList = _userList;
       });
@@ -250,6 +252,9 @@ class _GetUser extends State<GetUser> {
         RaisedButton(
           child: Text('查找指定用户 by user_id'),
           onPressed: () async {
+            BaaS.Query query = BaaS.Query();
+            query.orderBy('created_at');
+            print(query.get());
           },
         ),
         RaisedButton(

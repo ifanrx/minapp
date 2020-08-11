@@ -7,6 +7,6 @@ export 'src/auth.dart';
 export 'src/h_error.dart';
 export 'src/user.dart';
 export 'src/sms.dart';
-export 'src/currentUser.dart';
-export 'src/invokeFunction.dart';
+export 'src/current_user.dart';
+export 'src/invoke_function.dart';
 export 'src/query.dart';
