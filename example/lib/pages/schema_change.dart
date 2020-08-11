@@ -41,11 +41,19 @@ class SchemaChange extends StatefulWidget {
 }
 
 class _SchemaChangeState extends State<SchemaChange> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _showSnackBar(String message) {
+    _scaffoldKey.currentState.removeCurrentSnackBar();
+    var snackBar = SnackBar(content: Text(message));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   Widget customButton({
     Function fn,
     String title,
-    Color titleColor = Colors.black45,
-    Color bgColor = Colors.white60,
+    Color titleColor = Colors.white,
+    Color bgColor = Colors.green,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,59 +97,12 @@ class _SchemaChangeState extends State<SchemaChange> {
 
     print('options: $options');
     tableRecord.set(options);
-    await tableRecord.save();
-
-    // tableRecord.set({'num1': 123, 'num2': 123});
-    // tableRecord.set('num3', 234);
-    // tableRecord.set('num4', 234);
-
-    // String now = DateTime.now().toIso8601String();
-    // // tableRecord.set('date', now);
-
-    // GeoPoint point1 = new GeoPoint(longitude: 10.123, latitude: 10);
-    // GeoPoint point2 = new GeoPoint(longitude: 20.12453, latitude: 10);
-    // GeoPoint point3 = new GeoPoint(longitude: 30.564654, latitude: 20);
-    // GeoPoint point4 = new GeoPoint(longitude: 20.654, latitude: 30);
-    // GeoPoint point5 = new GeoPoint(longitude: 10.123, latitude: 10);
-
-    // GeoPolygon polygon = new GeoPolygon(points: [
-    //   point1,
-    //   point2,
-    //   point3,
-    //   point4,
-    //   point5,
-    // ]);
-
-    // // tableRecord.set('geo_polygon', polygon);
-
-    // Map obj = {'ifanr': 'cool', "that": 123, "j_123": 123};
-    // // tableRecord.set('obj', obj);
-
-    // // List<int> array_i = [1, 2, 3];
-    // // tableRecord.set('array_i', array_i);
-
-    // // List<String> array_s = ['str1', 'str2', 'str3'];
-    // // tableRecord.set('array_s', array_s);
-
-    // // List<num> array_n = [1, 1.2, 300.23123];
-    // // tableRecord.set('array_n', array_n);
-
-    // // List<bool> array_b = [true, false, true];
-    // // tableRecord.set('array_b', array_b);
-
-    // // List<Map> array_o = [obj, obj];
-    // // tableRecord.set('array_o', array_o);
-
-    // // List<String> array_d = [now, now];
-    // // tableRecord.set('array_d', array_d);
-
-    // List<GeoPolygon> array_geo_polygon = [polygon];
-    // tableRecord.set('array_geo_polygon', array_geo_polygon);
-
-    // List<GeoPoint> array_geo_point = [point1, point2, point3];
-    // tableRecord.set('array_geo_point', array_geo_point);
-
-    // await tableRecord.save();
+    try {
+      await tableRecord.save();
+      _showSnackBar('创建成功');
+    } on HError catch (e) {
+      _showSnackBar('创建失败: ${e.toString()}');
+    }
   }
 
   void createRecordB() async {
@@ -180,14 +141,16 @@ class _SchemaChangeState extends State<SchemaChange> {
 
     try {
       await tableRecord.save();
-    } catch (e) {
-      showSnackBar('创建失败', e);
+      _showSnackBar('创建成功');
+    } on HError catch (e) {
+      _showSnackBar('创建失败: ${e.toString()}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(title: Text('Schema 增删改测试')),
       body: Padding(
         padding: EdgeInsets.all(10),
@@ -200,17 +163,13 @@ class _SchemaChangeState extends State<SchemaChange> {
               customButton(
                 fn: createRecordA,
                 title: '添加记录（整体 set）',
-                titleColor: Colors.white,
-                bgColor: Colors.green,
               ),
               customButton(
                 fn: createRecordB,
                 title: '添加记录（单独 set）',
-                titleColor: Colors.white,
-                bgColor: Colors.green,
               ),
               customButton(
-                fn: () {},
+                fn: null,
                 title: '删除记录',
               ),
               SizedBox(height: 10),
