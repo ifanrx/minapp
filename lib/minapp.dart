@@ -9,3 +9,4 @@ export 'src/user.dart';
 export 'src/sms.dart';
 export 'src/currentUser.dart';
 export 'src/invokeFunction.dart';
+export 'src/query.dart';
