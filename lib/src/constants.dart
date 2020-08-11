@@ -27,4 +27,6 @@ class Api {
   static const updateUser = '/hserve/v2.4/user/info/';
 
   static const verifySmsCode = '/hserve/v1.8/sms-verification-code/verify/';
+
+  static const cloudFunction = '/hserve/v1/cloud-function/job/';
 }
