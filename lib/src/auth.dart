@@ -8,9 +8,11 @@ import 'util.dart';
 import 'currentUser.dart';
 
 class Auth {
-  static Future<String> getAuthToken() => storageAsync.get(StorageKey.authToken);
+  static Future<String> getAuthToken() =>
+      storageAsync.get(StorageKey.authToken);
 
-  static String getAuthUrl(Map<String, dynamic> data, [bool isLoginFunc = false]) {
+  static String getAuthUrl(Map<String, dynamic> data,
+      [bool isLoginFunc = false]) {
     if (data['email'] != null) {
       return isLoginFunc ? Api.loginEmail : Api.registerEmail;
     }
@@ -77,7 +79,9 @@ class Auth {
     return res.data;
   }
 
-  static Future<dynamic> loginWithSmsVerificationCode (String mobilePhone, String smsCode, {bool createUser = true}) async {
+  static Future<dynamic> loginWithSmsVerificationCode(
+      String mobilePhone, String smsCode,
+      {bool createUser = true}) async {
     Response res = await request(
       path: Api.loginSms,
       method: 'POST',
@@ -94,13 +98,9 @@ class Auth {
   }
 
   static Future requestPasswordReset(String email) async {
-    var res = await request(
-      path: Api.passwordReset,
-      method: 'POST',
-      data: {
-        'email': email,
-      }
-    );
+    var res = await request(path: Api.passwordReset, method: 'POST', data: {
+      'email': email,
+    });
     return res.data;
   }
 
