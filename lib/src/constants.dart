@@ -29,5 +29,8 @@ class Api {
   static const verifySmsCode = '/hserve/v1.8/sms-verification-code/verify/';
 
   static const createRecord = '/hserve/v2.4/table/:tableID/record/';
+  static const createRecordList =
+      '/hserve/v2.4/table/:tableID/record/?enable_trigger=:enable_trigger';
+
   static const cloudFunction = '/hserve/v1/cloud-function/job/';
 }

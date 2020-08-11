@@ -21,9 +21,9 @@ Future<Response<T>> request<T>({
   String path,
   String method = 'GET',
   Map<String, dynamic> params,
-  Map<String, dynamic> data,
+  dynamic data,
   Map<String, dynamic> headers,
-}) async  {
+}) async {
   if (config.clientID == null) {
     throw HError(602);
   }
@@ -43,13 +43,15 @@ Future<Response<T>> request<T>({
     path = _join(config.host, path);
   }
 
+  print(path);
+
   try {
     if (method.toUpperCase() == 'GET') {
       return await _dio.request(path, queryParameters: data, options: options);
     }
 
     return await _dio.request(path, data: data, options: options);
-  } on DioError catch(e) {
+  } on DioError catch (e) {
     if (e.response != null) {
       var msg = _extractErrorMsg(e.response);
       throw HError(e.response.statusCode, msg);
