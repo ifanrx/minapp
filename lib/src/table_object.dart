@@ -1,9 +1,10 @@
-import 'table_record.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
+import 'table_record.dart';
 import 'request.dart';
 import 'constants.dart';
 import 'h_error.dart';
+import 'query.dart';
 
 class TableObject {
   String tableName;
@@ -19,7 +20,11 @@ class TableObject {
     return new TableRecord(tableName: tableName ?? tableId);
   }
 
-  void createMany({@required List records, bool enableTrigger = true}) async {
+  /// 创建多条数据
+  /// [records] 多条数据项
+  /// [enableTrigger] 是否触发触发器
+  Future<dynamic> createMany(
+      {@required List records, bool enableTrigger = true}) async {
     Response response = await request(
       path: Api.createRecordList,
       method: 'POST',
@@ -29,5 +34,19 @@ class TableObject {
 
     print('create many res data: ${response.data}');
     return response.data;
+  }
+
+  /// 更新数据记录
+  /// [recordId] 数据项 id
+  /// [query] 查询数据项
+  TableRecord getWithoutData({String recordId, Query query}) {
+    if (recordId != null) {
+      return new TableRecord(tableName: tableName, recordId: recordId);
+    } else if (query != null) {
+      return new TableRecord(
+          tableName: tableName, recordId: recordId, query: query);
+    } else {
+      throw HError(605);
+    }
   }
 }

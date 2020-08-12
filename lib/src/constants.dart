@@ -31,6 +31,9 @@ class Api {
   static const createRecord = '/hserve/v2.4/table/:tableID/record/';
   static const createRecordList =
       '/hserve/v2.4/table/:tableID/record/?enable_trigger=:enable_trigger';
+  static const updateRecord = '/hserve/v2.4/table/:tableID/record/:recordID/';
+  static const updateRecordList =
+      '/hserve/v2.4/table/:tableID/record/?limit=:limit&offset=:offset&where=:where&enable_trigger=:enable_trigger&return_total_count=:return_total_count';
 
   static const cloudFunction = '/hserve/v1/cloud-function/job/';
 }

@@ -3,6 +3,17 @@ class Query {
   String _orderBy;
   List<String> _keys, _expand;
 
+  Query() {
+    _initQueryParams();
+  }
+
+  void _initQueryParams() {
+    _limit = null;
+    _offset = 0;
+    _orderBy = null;
+    _keys = null;
+    _expand = null;
+  }
 
   void offset(int offset) {
     _offset = offset;
