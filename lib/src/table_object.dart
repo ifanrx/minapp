@@ -49,4 +49,40 @@ class TableObject {
       throw HError(605);
     }
   }
+
+  Future<dynamic> delete(
+      {String recordId,
+      Query query,
+      bool enableTrigger = true,
+      bool withCount = false}) async {
+    if (recordId != null) {
+      Response response = await request(
+        path: Api.deleteRecord,
+        method: 'DELETE',
+        params: {'tableID': tableName, 'recordID': recordId},
+      );
+
+      print('recordId $recordId has been deleted. res: $response');
+      return response;
+    } else if (query != null) {
+      Map<String, dynamic> queryData = query.get();
+      print('query: $queryData');
+      Response response = await request(
+        path: Api.deleteRecordList,
+        method: 'DELETE',
+        params: {
+          'tableID': tableName,
+          'limit': queryData['limit'] ?? '',
+          'offset': queryData['offset'] ?? 0,
+          'where': queryData['where'] ?? '',
+          'enable_trigger': enableTrigger ? 1 : 0,
+          'return_total_count': withCount ? 1 : 0,
+        },
+      );
+      print('all have been deleted. res: $response');
+      return response;
+    } else {
+      throw HError(605);
+    }
+  }
 }
