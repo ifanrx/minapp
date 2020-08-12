@@ -24,14 +24,14 @@ class TableRecord extends BaseRecord {
       data: data,
     );
 
-    print('res data: ${response.data}');
-
     return response.data;
   }
 
   /// 更新数据记录
-  Future<dynamic> update(
-      {bool enableTrigger = true, bool withCount = false}) async {
+  Future<dynamic> update({
+    bool enableTrigger = true,
+    bool withCount = false,
+  }) async {
     Map data = this.record;
 
     print('saving data: $data');
@@ -44,11 +44,9 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      print('res data: ${response.data}');
       return response.data;
     } else {
       Map<String, dynamic> queryData = query.get();
-      print('query: $queryData');
 
       Response response = await request(
         path: Api.updateRecordList,
@@ -65,7 +63,6 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      print('res data: ${response.data}');
       return response.data;
     }
   }

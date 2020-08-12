@@ -5,6 +5,7 @@ import 'request.dart';
 import 'constants.dart';
 import 'h_error.dart';
 import 'query.dart';
+import 'base_record.dart';
 
 class TableObject {
   String tableName;
@@ -23,8 +24,17 @@ class TableObject {
   /// 创建多条数据
   /// [records] 多条数据项
   /// [enableTrigger] 是否触发触发器
-  Future<dynamic> createMany(
-      {@required List records, bool enableTrigger = true}) async {
+  Future<dynamic> createMany({
+    @required List records,
+    bool enableTrigger = true,
+  }) async {
+    Function serializeValue = new BaseRecord().serializeValueFuncFactory();
+
+    records = records.map((record) {
+      record.forEach((key, value) => record[key] = serializeValue(value));
+      return record;
+    }).toList();
+
     Response response = await request(
       path: Api.createRecordList,
       method: 'POST',
@@ -32,7 +42,6 @@ class TableObject {
       data: records,
     );
 
-    print('create many res data: ${response.data}');
     return response.data;
   }
 
@@ -44,25 +53,27 @@ class TableObject {
       return new TableRecord(tableName: tableName, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
-          tableName: tableName, recordId: recordId, query: query);
+        tableName: tableName,
+        recordId: recordId,
+        query: query,
+      );
     } else {
       throw HError(605);
     }
   }
 
-  Future<dynamic> delete(
-      {String recordId,
-      Query query,
-      bool enableTrigger = true,
-      bool withCount = false}) async {
+  Future<dynamic> delete({
+    String recordId,
+    Query query,
+    bool enableTrigger = true,
+    bool withCount = false,
+  }) async {
     if (recordId != null) {
       Response response = await request(
         path: Api.deleteRecord,
         method: 'DELETE',
         params: {'tableID': tableName, 'recordID': recordId},
       );
-
-      print('recordId $recordId has been deleted. res: $response');
       return response;
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
@@ -79,7 +90,6 @@ class TableObject {
           'return_total_count': withCount ? 1 : 0,
         },
       );
-      print('all have been deleted. res: $response');
       return response;
     } else {
       throw HError(605);

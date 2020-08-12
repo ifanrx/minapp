@@ -1,3 +1,5 @@
+import 'package:minapp/minapp.dart';
+
 import 'h_error.dart';
 import 'geo_point.dart';
 import 'geo_polygon.dart';
@@ -17,11 +19,28 @@ class BaseRecord {
     };
   }
 
+  /// 解析不同类型 value 的内容
+  Function serializeValueFuncFactory() {
+    return (value) {
+      if (value is List<GeoPoint> || value is List<GeoPolygon>) {
+        return value.map((geo) => geo.geoJSON).toList();
+      } else if (value is GeoPoint || value is GeoPolygon) {
+        return value.geoJSON;
+      } else if (value is TableRecord) {
+        return value.recordId;
+      } else {
+        return value;
+      }
+    };
+  }
+
   /// 给字段赋值
   /// 接收 [arg1] 为 Map<String, dynamic> 的参数。此为一次性赋值。
   /// 或接收 [arg1] 为字符串，[arg2] 为任意值作为参数。此为逐个赋值。
   /// 不可同时用 set 与 unset 操作同一字段，否则会报 605 错误
   void set(dynamic arg1, [dynamic arg2]) {
+    Function serializeValue = serializeValueFuncFactory();
+
     if (arg2 == null) {
       if (arg1 is Map<String, dynamic>) {
         arg1.forEach((String key, dynamic value) {
@@ -39,13 +58,15 @@ class BaseRecord {
         throw HError(605);
       }
 
-      if (arg2 is List<GeoPoint> || arg2 is List<GeoPolygon>) {
-        record['\$set'][arg1] = arg2.map((geo) => geo.geoJSON).toList();
-      } else if (arg2 is GeoPoint || arg2 is GeoPolygon) {
-        record['\$set'][arg1] = arg2.geoJSON;
-      } else {
-        record['\$set'][arg1] = arg2;
-      }
+      record['\$set'][arg1] = serializeValue(arg2);
+
+      // if (arg2 is List<GeoPoint> || arg2 is List<GeoPolygon>) {
+      //   record['\$set'][arg1] = arg2.map((geo) => geo.geoJSON).toList();
+      // } else if (arg2 is GeoPoint || arg2 is GeoPolygon) {
+      //   record['\$set'][arg1] = arg2.geoJSON;
+      // } else {
+      //   record['\$set'][arg1] = serializeValue(arg2);
+      // }
     } else {
       throw HError(605);
     }
