@@ -1,7 +1,10 @@
+import 'where.dart';
+
 class Query {
   int _offset, _limit;
   String _orderBy;
   List<String> _keys, _expand;
+  Where _where;
 
   Query() {
     _initQueryParams();
@@ -27,6 +30,10 @@ class Query {
     _orderBy = orderBy;
   }
 
+  void where(Where where) {
+    _where = where;
+  }
+
   Map<String, dynamic> get() {
     Map<String, dynamic> data = {};
 
@@ -39,6 +46,8 @@ class Query {
     if (_expand != null) data.addAll({'expand': _expand.join(',')});
 
     if (_keys != null) data.addAll({'keys': _keys.join(',')});
+
+    if (_where != null) data.addAll({'where': _where});
 
     return data;
   }

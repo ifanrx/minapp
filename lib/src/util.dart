@@ -8,7 +8,8 @@ import 'constants.dart';
 import 'h_error.dart';
 import 'dart:core';
 
-Future<Map<String, dynamic>> mergeRequestHeader(Map<String, dynamic> headers) async {
+Future<Map<String, dynamic>> mergeRequestHeader(
+    Map<String, dynamic> headers) async {
   if (config.clientID == null) {
     throw HError(602);
   }
@@ -33,15 +34,18 @@ Future<Map<String, dynamic>> mergeRequestHeader(Map<String, dynamic> headers) as
   return headers;
 }
 
-int getExpiredAt (int nowMilliseconds, int expiresIn) {
+int getExpiredAt(int nowMilliseconds, int expiresIn) {
   return (nowMilliseconds ~/ 1000) + expiresIn - 30;
 }
 
-Future<void> handleLoginSuccess(Response res, [bool isAnonymous = false]) async {
+Future<void> handleLoginSuccess(Response res,
+    [bool isAnonymous = false]) async {
   await storageAsync.set(StorageKey.authToken, res.data['token']);
   await storageAsync.set(StorageKey.uid, res.data['user_id'].toString());
   await storageAsync.set(
-      StorageKey.expiresAt, getExpiredAt(Clock().now().millisecondsSinceEpoch, res.data['expires_in']).toString());
+      StorageKey.expiresAt,
+      getExpiredAt(Clock().now().millisecondsSinceEpoch, res.data['expires_in'])
+          .toString());
   if (isAnonymous) {
     await storageAsync.set(StorageKey.isAnonymousUser, '1');
   } else {
@@ -68,4 +72,21 @@ Future clearSession() async {
   await storageAsync.remove(StorageKey.uid);
 
   await storageAsync.remove(StorageKey.expiresAt);
+}
+
+/// 对 RegExp 类型的变量解析出不含左右斜杠和 flag 的正则字符串和 flags
+/// [regExp] 正则表达式
+List parseRegExp(RegExp regExp) {
+  List result = [];
+  String regExpString = regExp.pattern.toString();
+
+  int lastIndex = regExpString.lastIndexOf('/');
+
+  result.add(regExpString.substring(1, lastIndex));
+
+  if (lastIndex != regExpString.length - 1) {
+    result.add(regExpString.substring(lastIndex + 1));
+  }
+
+  return result;
 }

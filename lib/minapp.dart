@@ -15,3 +15,4 @@ export 'src/invoke_function.dart';
 export 'src/query.dart';
 export 'src/geo_point.dart';
 export 'src/geo_polygon.dart';
+export 'src/where.dart';

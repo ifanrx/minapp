@@ -37,6 +37,8 @@ class Api {
   static const deleteRecord = '/hserve/v2.4/table/:tableID/record/:recordID/';
   static const deleteRecordList =
       '/hserve/v2.4/table/:tableID/record/?limit=:limit&offset=:offset&where=:where&enable_trigger=:enable_trigger&return_total_count=:return_total_count';
+  static const getRecord = '/hserve/v2.4/table/:tableID/record/:recordID/';
+  static const queryRecordList = '/hserve/v2.4/table/:tableID/record/';
 
   static const cloudFunction = '/hserve/v1/cloud-function/job/';
 }

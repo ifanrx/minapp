@@ -6,6 +6,7 @@ import 'constants.dart';
 import 'h_error.dart';
 import 'query.dart';
 import 'base_record.dart';
+import 'where.dart';
 
 class TableObject {
   String tableName;
@@ -61,6 +62,12 @@ class TableObject {
     }
   }
 
+  /// 删除数据记录
+  /// [recordId] 数据项 id
+  /// 批量删除数据记录
+  /// [query] 数据记录查询条件
+  /// [enableTrigger] 是否触发触发器
+  /// [withCount] 是否返回 total_count
   Future<dynamic> delete({
     String recordId,
     Query query,
@@ -93,5 +100,51 @@ class TableObject {
     } else {
       throw HError(605);
     }
+  }
+
+  /// 获取单条数据
+  /// [recordId] 数据项 id
+  Future<dynamic> get({@required String recordId}) async {
+    Response response = await request(
+      path: Api.deleteRecord,
+      method: 'GET',
+      params: {'tableID': tableName, 'recordID': recordId},
+    );
+
+    return response;
+  }
+
+  /// 获取数据记录列表
+  /// [query] 查询条件
+  /// [withCount] 是否返回 total_count
+  Future<dynamic> find({Query query, bool withCount = false}) async {
+    Map<String, dynamic> data = {
+      'return_total_count': withCount ? 1 : 0,
+    };
+
+    if (query != null) {
+      Map<String, dynamic> queryData = query.get();
+      print('query get: $queryData');
+      queryData.forEach((key, value) {
+        if (value != null) {
+          if (value is Where) {
+            data[key] = value.get();
+          } else {
+            data[key] = value;
+          }
+        }
+      });
+
+      print('data: $data');
+    }
+
+    Response response = await request(
+      path: Api.queryRecordList,
+      method: 'GET',
+      params: {'tableID': tableName},
+      data: data,
+    );
+
+    return response;
   }
 }
