@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
+import 'package:collection/collection.dart';
 import 'dart:math';
 import 'dart:convert';
-import 'common.dart';
+import '../util.dart';
 
 Map<String, dynamic> object = {
   'a': 'b',
   'c': ['d', 'array', 'dog'],
   'f': {'f': 123.44}
 };
+
+Map<String, dynamic> pointerIds = getPointerIds();
 
 class ValueGenerator {
   String string() {
@@ -49,6 +52,10 @@ class _SchemaChangeState extends State<SchemaChange> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+  TableObject tableObject = new TableObject(tableName: 'auto_maintable');
+  ValueGenerator valueGenerator = new ValueGenerator();
+  Map<String, dynamic> record;
+
   Widget customButton({
     Function fn,
     String title,
@@ -75,9 +82,6 @@ class _SchemaChangeState extends State<SchemaChange> {
   }
 
   void createRecordA() async {
-    ValueGenerator valueGenerator = new ValueGenerator();
-
-    TableObject tableObject = new TableObject(tableName: 'auto_maintable');
     TableRecord tableRecord = tableObject.create();
 
     Map<String, dynamic> options = {
@@ -93,12 +97,16 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
+      'pointer_test_order': new TableObject(tableName: 'test_order')
+          .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
+      'array_obj': [object, object],
+      'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
     };
 
-    print('options: $options');
     tableRecord.set(options);
     try {
-      await tableRecord.save();
+      var _record = await tableRecord.save();
+      setState(() => record = _record.data);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
@@ -106,9 +114,6 @@ class _SchemaChangeState extends State<SchemaChange> {
   }
 
   void createRecordB() async {
-    ValueGenerator valueGenerator = new ValueGenerator();
-
-    TableObject tableObject = new TableObject(tableName: 'auto_maintable');
     TableRecord tableRecord = tableObject.create();
 
     Map<String, dynamic> options = {
@@ -124,6 +129,10 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
+      'pointer_test_order': new TableObject(tableName: 'test_order')
+          .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
+      'array_obj': [object, object],
+      'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
     };
 
     tableRecord.set('str', options['str']);
@@ -138,13 +147,175 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.set('geo_point', options['geo_point']);
     tableRecord.set('geo_polygon', options['geo_polygon']);
     tableRecord.set('obj', options['obj']);
+    tableRecord.set('pointer_test_order', options['pointer_test_order']);
+    tableRecord.set('array_obj', options['array_obj']);
+    tableRecord.set('array_geo', options['array_geo']);
 
     try {
-      await tableRecord.save();
+      var _record = await tableRecord.save();
+      setState(() => record = _record.data);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
     }
+  }
+
+  void deleteRecord() async {
+    try {
+      await tableObject.delete(recordId: record['id']);
+      setState(() => record = null);
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void updatePointer() async {
+    // 获取一个 tableRecord 实例
+    TableObject order = new TableObject(tableName: 'test_order');
+    TableRecord orderRecord =
+        order.getWithoutData(recordId: pointerIds['pointer_test_order_id2']);
+
+    // 创建一行数据
+    TableRecord product = tableObject.getWithoutData(recordId: record['id']);
+
+    // 给 pointer 字段赋值
+    product.set('pointer_test_order', orderRecord);
+
+    try {
+      await product.update();
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void updateRecord() async {
+    TableRecord tableRecord =
+        tableObject.getWithoutData(recordId: record['id']);
+    tableRecord.set('int', 100);
+    try {
+      var _record = await tableRecord.update();
+      setState(() => record = _record.data);
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void increment(String key, int value) async {
+    TableRecord tableRecord =
+        tableObject.getWithoutData(recordId: record['id']);
+    tableRecord.incrementBy(key, value);
+    try {
+      var _record = await tableRecord.update();
+      setState(() => record = _record.data);
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void minusOne() {
+    increment('int', -1);
+  }
+
+  void plusOne() {
+    increment('int', 1);
+  }
+
+  Function addNumbersToArray(String key, dynamic value) {
+    return () async {
+      if (value is! List) {
+        value = [value];
+      }
+
+      TableRecord tableRecord =
+          tableObject.getWithoutData(recordId: record['id']);
+      tableRecord.append(key, value);
+
+      try {
+        var _record = await tableRecord.update();
+        setState(() => record = _record.data);
+        _showSnackBar('成功');
+      } catch (e) {
+        _showSnackBar('失败 - ${e.toString()}');
+      }
+    };
+  }
+
+  Function removeNumbersFromArray(String key, dynamic value) {
+    return () async {
+      List<int> numArray = [];
+      if (value is List) {
+        numArray.addAll([value[0], value[1]]);
+      } else {
+        numArray.add(value);
+      }
+
+      TableRecord tableRecord =
+          tableObject.getWithoutData(recordId: record['id']);
+      tableRecord.remove('array_i', numArray);
+
+      try {
+        var _record = await tableRecord.update();
+        setState(() => record = _record.data);
+        _showSnackBar('成功');
+      } catch (e) {
+        _showSnackBar('失败 - ${e.toString()}');
+      }
+    };
+  }
+
+  void patchObject() async {
+    TableRecord tableRecord =
+        tableObject.getWithoutData(recordId: record['id']);
+
+    tableRecord.patchObject('obj', {'num': valueGenerator.integer()});
+
+    try {
+      var _record = await tableRecord.update();
+      setState(() => record = _record.data);
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void unsetField(TableRecord tableRecord) async {
+    try {
+      await tableRecord.update();
+      setState(() => record = null);
+      _showSnackBar('成功');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+  }
+
+  void unsetObj() {
+    TableRecord tableRecord =
+        tableObject.getWithoutData(recordId: record['id']);
+
+    num randomNum = valueGenerator.number();
+    tableRecord.set('num', randomNum);
+    tableRecord.unset('array_obj');
+    tableRecord.unset('array_file');
+    tableRecord.unset('array_geo');
+    unsetField(tableRecord);
+  }
+
+  void unsetStr() {
+    TableRecord tableRecord =
+        tableObject.getWithoutData(recordId: record['id']);
+
+    num randomNum = valueGenerator.number();
+    tableRecord.set('num', randomNum);
+    tableRecord.unset({
+      'array_obj': 'abc',
+      'array_file': {'a': 10},
+      'array_geo': true,
+    });
+    unsetField(tableRecord);
   }
 
   @override
@@ -169,61 +340,79 @@ class _SchemaChangeState extends State<SchemaChange> {
                 title: '添加记录（单独 set）',
               ),
               customButton(
-                fn: null,
+                fn: record == null ? null : deleteRecord,
                 title: '删除记录',
               ),
               SizedBox(height: 10),
               Text('更新字段 -- pointer', style: TextStyle(fontSize: 16.0)),
               customButton(
-                fn: () {},
+                fn: record == null ? null : updatePointer,
                 title: 'updatePointer',
               ),
               SizedBox(height: 10),
-              Text('更新字段 -- int', style: TextStyle(fontSize: 16.0)),
+              Text('更新字段 -- int: ${record != null ? record['int'] : ''}',
+                  style: TextStyle(fontSize: 16.0)),
               customButton(
-                fn: () {},
+                fn: record == null ? null : updateRecord,
                 title: 'int = 100',
               ),
               customButton(
-                fn: () {},
-                title: 'int = 1',
+                fn: record == null ? null : minusOne,
+                title: 'int -= 1',
               ),
               customButton(
-                fn: () {},
+                fn: record == null ? null : plusOne,
                 title: 'int += 1',
               ),
               SizedBox(height: 10),
-              Text('更新字段 -- array_int[]', style: TextStyle(fontSize: 16.0)),
+              Text(
+                  '更新字段 -- array_int[]: ${record != null ? record['array_i'] : ''}',
+                  style: TextStyle(fontSize: 16.0)),
               customButton(
-                fn: () {},
+                fn: record == null
+                    ? null
+                    : addNumbersToArray('array_i', [123, 456]),
                 title: 'add[123, 456]',
               ),
               customButton(
-                fn: () {},
+                fn: record == null
+                    ? null
+                    : addNumbersToArray('array_i', 123456),
                 title: 'add 123456',
               ),
               customButton(
-                fn: () {},
-                title: 'remove []',
+                fn: record == null || record['array_i'].length <= 1
+                    ? null
+                    : removeNumbersFromArray('array_i',
+                        [record['array_i'][0], record['array_i'][1]]),
+                title: record != null && record['array_i'].length > 1
+                    ? 'remove [${record['array_i'][0]}, ${record['array_i'][1]}]'
+                    : 'remove []',
               ),
               customButton(
-                fn: () {},
-                title: 'remove',
+                fn: record == null || record['array_i'].length == 0
+                    ? null
+                    : removeNumbersFromArray('array_i', record['array_i'][0]),
+                title: record != null && record['array_i'].length > 0
+                    ? 'remove ${record['array_i'][0]}'
+                    : 'remove',
               ),
               SizedBox(height: 10),
-              Text('更新字段 -- obj.num', style: TextStyle(fontSize: 16.0)),
+              Text(
+                  '更新字段 -- obj.num: ${record != null && record['obj']['num'] != null ? record['obj']['num'] : ''}',
+                  style: TextStyle(fontSize: 16.0)),
               customButton(
-                fn: () {},
+                fn: record == null ? null : patchObject,
                 title: 'pathObject',
               ),
               SizedBox(height: 10),
               Text('更新字段 -- unset', style: TextStyle(fontSize: 16.0)),
               customButton(
-                fn: () {},
+                fn: record == null ? null : unsetObj,
                 title: 'unset obj',
               ),
               customButton(
-                fn: () {},
+                fn: record == null ? null : unsetStr,
                 title: 'unset str',
               ),
             ],

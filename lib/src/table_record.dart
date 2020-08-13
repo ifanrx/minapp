@@ -15,8 +15,6 @@ class TableRecord extends BaseRecord {
   Future<dynamic> save() async {
     Map<String, dynamic> data = this.record['\$set'];
 
-    print('saving data: $data');
-
     Response response = await request(
       path: Api.createRecord,
       method: 'POST',
@@ -24,7 +22,7 @@ class TableRecord extends BaseRecord {
       data: data,
     );
 
-    return response.data;
+    return response;
   }
 
   /// 更新数据记录
@@ -34,8 +32,6 @@ class TableRecord extends BaseRecord {
   }) async {
     Map data = this.record;
 
-    print('saving data: $data');
-
     if (recordId != null) {
       Response response = await request(
         path: Api.updateRecord,
@@ -44,7 +40,7 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      return response.data;
+      return response;
     } else {
       Map<String, dynamic> queryData = query.get();
 
@@ -63,7 +59,7 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      return response.data;
+      return response;
     }
   }
 }

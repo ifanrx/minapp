@@ -10,6 +10,7 @@ import 'base_record.dart';
 class TableObject {
   String tableName;
   int tableId;
+  Function serializeValue = new BaseRecord().serializeValue;
 
   TableObject({this.tableName, this.tableId}) {
     if (tableName == null && tableId == null) {
@@ -28,8 +29,6 @@ class TableObject {
     @required List records,
     bool enableTrigger = true,
   }) async {
-    Function serializeValue = new BaseRecord().serializeValueFuncFactory();
-
     records = records.map((record) {
       record.forEach((key, value) => record[key] = serializeValue(value));
       return record;
@@ -42,7 +41,7 @@ class TableObject {
       data: records,
     );
 
-    return response.data;
+    return response;
   }
 
   /// 更新数据记录
@@ -77,7 +76,7 @@ class TableObject {
       return response;
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
-      print('query: $queryData');
+
       Response response = await request(
         path: Api.deleteRecordList,
         method: 'DELETE',
