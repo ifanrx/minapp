@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:minapp/minapp.dart';
+
 import 'h_error.dart';
 import 'base_record.dart';
 import 'util.dart';
@@ -158,7 +160,7 @@ class Where {
   void and(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$and': []};
     wheres.forEach((where) {
-      andWhere['\$and'].add(where._getCondition());
+      andWhere['\$and'].add(where._condition);
     });
 
     _setCondition(andWhere);
@@ -170,15 +172,55 @@ class Where {
   void or(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$or': []};
     wheres.forEach((where) {
-      andWhere['\$or'].add(where._getCondition());
+      andWhere['\$or'].add(where._condition);
     });
 
     _setCondition(andWhere);
   }
 
-  /// 获取 where 的查询条件
-  Map<String, dynamic> _getCondition() {
-    return _condition;
+  /// 多边形包含判断，在指定多边形集合中找出包含某一点的多边形（geojson 类型）
+  /// [key] 用于查询判断的字段
+  /// [point] 点
+  void include(String key, GeoPoint point) {
+    _addCondition(key, {'intersects': point.geoJSON});
+  }
+
+  /// 多边形包含判断，在指定点集合中，查找包含于指定的多边形区域的点（geojson 类型）。
+  /// [key] 用于查询判断的字段
+  /// [polygon] 多边形
+  void within(String key, GeoPolygon polygon) {
+    _addCondition(key, {'within': polygon.geoJSON});
+  }
+
+  /// 圆包含判断，在指定点集合中，查找包含在指定圆心和指定半径所构成的圆形区域中的点（geojson 类型）
+  /// [key] 用于查询判断的字段
+  /// [point] 圆心
+  /// [radius] 半径
+  void withinCircle(String key, GeoPoint point, num radius) {
+    Map<String, dynamic> data = {
+      'radius': radius,
+      'coordinates': [point.longitude, point.latitude],
+    };
+    _addCondition(key, {'center': data});
+  }
+
+  /// 圆环包含判断，在指定点集合中，查找包含在以某点为起点的最大和最小距离所构成的圆环区域中的点（geojson 类型）
+  /// [key] 用于查询判断的字段
+  /// [point] 圆心
+  /// [maxDistance] 最大半径
+  /// [minDistance] 最小半径
+  void withinRegion(String key, GeoPoint point,
+      {num maxDistance, num minDistance = 0}) {
+    Map<String, dynamic> data = {
+      'geometry': point.geoJSON,
+      'min_distance': minDistance
+    };
+
+    if (maxDistance != null) {
+      data['max_distance'] = maxDistance;
+    }
+
+    _addCondition(key, {'nearsphere': data});
   }
 
   void _setCondition(Map<String, dynamic> condition) {
