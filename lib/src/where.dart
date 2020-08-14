@@ -85,6 +85,106 @@ class Where {
     _addCondition(key, {'all': list.map((e) => serializeValue(e)).toList()});
   }
 
+  /// 字段为 Null 判断
+  /// 判断逻辑：Record[key] 是 null
+  /// [key] 用于查询判断的字段
+  void isNull(dynamic key) {
+    if (key is String) {
+      _addCondition(key, {'isnull': true});
+    } else if (key is List<String>) {
+      key.forEach((k) {
+        _addCondition(k, {'isnull': true});
+      });
+    } else {
+      throw HError(605);
+    }
+  }
+
+  /// 字段不为 Null 判断
+  /// 判断逻辑：Record[key] 不是 null
+  /// [key] 用于查询判断的字段
+  void isNotNull(dynamic key) {
+    if (key is String) {
+      _addCondition(key, {'isnull': false});
+    } else if (key is List<String>) {
+      key.forEach((k) {
+        _addCondition(k, {'isnull': false});
+      });
+    } else {
+      throw HError(605);
+    }
+  }
+
+  /// 字段存在判断
+  /// 判断逻辑：Record[key] 不是 undefined
+  /// [key] 用于查询判断的字段
+  void exists(dynamic key) {
+    if (key is String) {
+      _addCondition(key, {'exists': true});
+    } else if (key is List<String>) {
+      key.forEach((k) {
+        _addCondition(k, {'exists': true});
+      });
+    } else {
+      throw HError(605);
+    }
+  }
+
+  /// 字段不存在判断
+  /// 判断逻辑：Record[key] 是 undefined
+  /// [key] 用于查询判断的字段
+  void notExists(dynamic key) {
+    if (key is String) {
+      _addCondition(key, {'exists': false});
+    } else if (key is List<String>) {
+      key.forEach((k) {
+        _addCondition(k, {'exists': false});
+      });
+    } else {
+      throw HError(605);
+    }
+  }
+
+  /// Object 类型字段的属性存在判断
+  /// [key] 用于查询判断的字段
+  /// [fieldName] 字段名称
+  void hasKey(String key, String fieldName) {
+    _addCondition(key, {'has_key': fieldName});
+  }
+
+  /// and 操作符。将多个 Query 对象使用 and 操作符进行合并
+  /// [wheres] where 数组
+  /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
+  void and(List<Where> wheres) {
+    Map<String, dynamic> andWhere = {'\$and': []};
+    wheres.forEach((where) {
+      andWhere['\$and'].add(where._getCondition());
+    });
+
+    _setCondition(andWhere);
+  }
+
+  /// or 操作符。将多个 Query 对象使用 or 操作符进行合并
+  /// [wheres] where 数组
+  /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
+  void or(List<Where> wheres) {
+    Map<String, dynamic> andWhere = {'\$or': []};
+    wheres.forEach((where) {
+      andWhere['\$or'].add(where._getCondition());
+    });
+
+    _setCondition(andWhere);
+  }
+
+  /// 获取 where 的查询条件
+  Map<String, dynamic> _getCondition() {
+    return _condition;
+  }
+
+  void _setCondition(Map<String, dynamic> condition) {
+    _condition = condition;
+  }
+
   void _addCondition(String key, Map<String, dynamic> condition) {
     Map<String, dynamic> conditionMap = {key: {}};
 
@@ -99,6 +199,7 @@ class Where {
     _condition['\$and'].add(conditionMap);
   }
 
+  /// 获取已被 json 序列化的 where 的查询条件
   String get() {
     return jsonEncode(_condition);
   }

@@ -147,4 +147,14 @@ class TableObject {
 
     return response;
   }
+
+  /// 获取数据记录数量
+  /// [query] 查询条件
+  Future<int> count({Query query}) async {
+    query.limit(1);
+    var response = await find(query: query, withCount: true);
+
+    int count = response.data['meta']['total_count'];
+    return count;
+  }
 }

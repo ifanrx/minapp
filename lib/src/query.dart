@@ -1,4 +1,5 @@
 import 'where.dart';
+import 'h_error.dart';
 
 class Query {
   int _offset, _limit;
@@ -32,6 +33,18 @@ class Query {
 
   void where(Where where) {
     _where = where;
+  }
+
+  /// 指定需要展开的 pointer 类型字段
+  /// [key] 字段名称
+  void expand(dynamic key) {
+    if (key is String) {
+      _expand = [key];
+    } else if (key is List<String>) {
+      _expand = key;
+    } else {
+      throw HError(605);
+    }
   }
 
   Map<String, dynamic> get() {
