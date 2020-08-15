@@ -5,7 +5,7 @@ class GeoPoint {
   num latitude;
   Map<String, dynamic> geoJSON;
 
-  GeoPoint({@required this.longitude, @required this.latitude}) {
+  GeoPoint(this.longitude, this.latitude) {
     this.geoJSON = {
       'type': 'Point',
       'coordinates': [this.longitude, this.latitude]

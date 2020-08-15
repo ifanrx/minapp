@@ -5,10 +5,9 @@ import 'geo_point.dart';
 import 'geo_polygon.dart';
 
 class BaseRecord {
-  Map record;
-  String tableName;
+  Map<String, dynamic> record;
 
-  BaseRecord({this.tableName}) {
+  BaseRecord() {
     recordValueInit();
   }
 

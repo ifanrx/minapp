@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
-import 'package:collection/collection.dart';
 import 'dart:math';
 import 'dart:convert';
 import '../util.dart';
@@ -35,7 +34,7 @@ class ValueGenerator {
         [20.654, 30],
         [10.123, 10],
       ]);
-  GeoPoint point() => new GeoPoint(longitude: 10.123, latitude: 8.543);
+  GeoPoint point() => new GeoPoint(10.123, 8.543);
 }
 
 class SchemaChange extends StatefulWidget {
@@ -52,7 +51,7 @@ class _SchemaChangeState extends State<SchemaChange> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  TableObject tableObject = new TableObject(tableName: 'auto_maintable');
+  TableObject tableObject = new TableObject('auto_maintable');
   ValueGenerator valueGenerator = new ValueGenerator();
   Map<String, dynamic> record;
 
@@ -97,7 +96,7 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
-      'pointer_test_order': new TableObject(tableName: 'test_order')
+      'pointer_test_order': new TableObject('test_order')
           .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
       'array_obj': [object, object],
       'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
@@ -129,7 +128,7 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
-      'pointer_test_order': new TableObject(tableName: 'test_order')
+      'pointer_test_order': new TableObject('test_order')
           .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
       'array_obj': [object, object],
       'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
@@ -172,7 +171,7 @@ class _SchemaChangeState extends State<SchemaChange> {
 
   void updatePointer() async {
     // 获取一个 tableRecord 实例
-    TableObject order = new TableObject(tableName: 'test_order');
+    TableObject order = new TableObject('test_order');
     TableRecord orderRecord =
         order.getWithoutData(recordId: pointerIds['pointer_test_order_id2']);
 

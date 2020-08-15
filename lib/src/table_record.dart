@@ -9,7 +9,7 @@ class TableRecord extends BaseRecord {
   String recordId;
   Query query;
 
-  TableRecord({this.tableName, this.recordId, this.query});
+  TableRecord(this.tableName, {this.recordId, this.query});
 
   /// 保存数据记录
   Future<dynamic> save() async {
@@ -49,7 +49,6 @@ class TableRecord extends BaseRecord {
         method: 'PUT',
         params: {
           'tableID': tableName,
-          'recordID': recordId,
           'limit': queryData['limit'] ?? '',
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',

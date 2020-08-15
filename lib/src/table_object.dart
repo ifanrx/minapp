@@ -10,24 +10,24 @@ import 'where.dart';
 
 class TableObject {
   String tableName;
-  int tableId;
+  num tableId;
   Function serializeValue = new BaseRecord().serializeValue;
 
-  TableObject({this.tableName, this.tableId}) {
-    if (tableName == null && tableId == null) {
-      throw HError(605);
-    }
-  }
+  /// 构造函数，接收数据表名的参数（[String] 类型）
+  TableObject(this.tableName);
+
+  /// 构造函数，接收数据表 id 的参数（num 类型）
+  TableObject.withId(this.tableId);
 
   TableRecord create() {
-    return new TableRecord(tableName: tableName ?? tableId);
+    return new TableRecord(tableName ?? tableId);
   }
 
   /// 创建多条数据
   /// [records] 多条数据项
   /// [enableTrigger] 是否触发触发器
-  Future<dynamic> createMany({
-    @required List records,
+  Future<dynamic> createMany(
+    List<Map<String, dynamic>> records, {
     bool enableTrigger = true,
   }) async {
     records = records.map((record) {
@@ -50,11 +50,10 @@ class TableObject {
   /// [query] 查询数据项
   TableRecord getWithoutData({String recordId, Query query}) {
     if (recordId != null) {
-      return new TableRecord(tableName: tableName, recordId: recordId);
+      return new TableRecord(tableName, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
-        tableName: tableName,
-        recordId: recordId,
+        tableName,
         query: query,
       );
     } else {
@@ -104,11 +103,35 @@ class TableObject {
 
   /// 获取单条数据
   /// [recordId] 数据项 id
-  Future<dynamic> get({@required String recordId}) async {
+  Future<dynamic> get(String recordId, {dynamic select, dynamic expand}) async {
+    Map<String, dynamic> data = {};
+    if (select != null) {
+      if (select is String) {
+        data['keys'] = select;
+      } else if (select is List<String>) {
+        data['keys'] = select.join(',');
+      } else {
+        throw HError(605);
+      }
+    }
+
+    if (expand != null) {
+      if (expand is String) {
+        data['keys'] = expand;
+      } else if (expand is List<String>) {
+        data['keys'] = expand.join(',');
+      } else {
+        throw HError(605);
+      }
+    }
+
+    print('data: $data');
+
     Response response = await request(
-      path: Api.deleteRecord,
+      path: Api.getRecord,
       method: 'GET',
       params: {'tableID': tableName, 'recordID': recordId},
+      data: data,
     );
 
     return response;
@@ -117,7 +140,7 @@ class TableObject {
   /// 获取数据记录列表
   /// [query] 查询条件
   /// [withCount] 是否返回 total_count
-  Future<dynamic> find({Query query, bool withCount = false}) async {
+  Future<dynamic> find(Query query, {bool withCount = false}) async {
     Map<String, dynamic> data = {
       'return_total_count': withCount ? 1 : 0,
     };
@@ -150,9 +173,9 @@ class TableObject {
 
   /// 获取数据记录数量
   /// [query] 查询条件
-  Future<int> count({Query query}) async {
+  Future<int> count(Query query) async {
     query.limit(1);
-    var response = await find(query: query, withCount: true);
+    var response = await find(query, withCount: true);
 
     int count = response.data['meta']['total_count'];
     return count;
