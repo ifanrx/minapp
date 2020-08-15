@@ -3,30 +3,22 @@ import 'package:minapp/minapp.dart';
 import 'h_error.dart';
 import 'geo_point.dart';
 import 'geo_polygon.dart';
+import 'util.dart';
 
 class BaseRecord {
-  Map<String, dynamic> record;
+  Map<String, dynamic> _record;
 
   BaseRecord() {
     recordValueInit();
   }
 
+  Map<String, dynamic> get record => _record;
+
   void recordValueInit() {
-    record = {
+    _record = {
       '\$set': new Map<String, dynamic>(),
       '\$unset': new Map<String, dynamic>(),
     };
-  }
-
-  /// 解析不同类型 value 的内容
-  serializeValue(value) {
-    if (value is GeoPoint || value is GeoPolygon) {
-      return value.geoJSON;
-    } else if (value is TableRecord) {
-      return value.recordId;
-    } else {
-      return value;
-    }
   }
 
   /// 给字段赋值
@@ -37,7 +29,7 @@ class BaseRecord {
     if (arg2 == null) {
       if (arg1 is Map<String, dynamic>) {
         arg1.forEach((String key, dynamic value) {
-          if (record['\$unset'].containsKey(key)) {
+          if (_record['\$unset'].containsKey(key)) {
             throw HError(605);
           }
 
@@ -48,20 +40,20 @@ class BaseRecord {
           }
         });
 
-        record['\$set'] = arg1;
+        _record['\$set'] = arg1;
       } else {
         throw HError(605);
       }
     } else if (arg1 is String) {
-      if (record['\$unset'].containsKey(arg1)) {
+      if (_record['\$unset'].containsKey(arg1)) {
         throw HError(605);
       }
 
       if (arg2 is List) {
-        record['\$set'][arg1] =
+        _record['\$set'][arg1] =
             arg2.map((elem) => serializeValue(elem)).toList();
       } else {
-        record['\$set'][arg1] = serializeValue(arg2);
+        _record['\$set'][arg1] = serializeValue(arg2);
       }
     } else {
       throw HError(605);
@@ -73,19 +65,19 @@ class BaseRecord {
   /// 不可同时用 set 与 unset 操作同一字段，否则会报 605 错误
   void unset(dynamic arg) {
     if (arg is String) {
-      if (record['\$set'].containsKey(arg)) {
+      if (_record['\$set'].containsKey(arg)) {
         throw HError(605);
       }
-      record['\$unset'][arg] = '';
+      _record['\$unset'][arg] = '';
     } else if (arg is Map<String, dynamic>) {
       Map<String, dynamic> recordToUnset = {};
       arg.forEach((String key, dynamic value) {
-        if (record['\$set'].containsKey(key)) {
+        if (_record['\$set'].containsKey(key)) {
           throw HError(605);
         }
         recordToUnset[key] = '';
       });
-      record['\$unset'] = recordToUnset;
+      _record['\$unset'] = recordToUnset;
     } else {
       throw HError(605);
     }
@@ -95,14 +87,14 @@ class BaseRecord {
   /// [key] 字段名
   /// [value] 字段对应的值
   void patchObject(String key, Map<String, dynamic> value) {
-    record['\$set'][key] = {'\$update': value};
+    _record['\$set'][key] = {'\$update': value};
   }
 
   /// 自增（计数器原子性更新）
   /// [key] 字段名
   /// [value] 字段对应的值
   void incrementBy(String key, num value) {
-    record['\$set'][key] = {'\$incr_by': value};
+    _record['\$set'][key] = {'\$incr_by': value};
   }
 
   /// 数组添加元素
@@ -115,9 +107,9 @@ class BaseRecord {
 
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
-      record['\$set'][key] = {'\$append': geoList};
+      _record['\$set'][key] = {'\$append': geoList};
     } else {
-      record['\$set'][key] = {'\$append': value};
+      _record['\$set'][key] = {'\$append': value};
     }
   }
 
@@ -131,9 +123,9 @@ class BaseRecord {
 
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
-      record['\$set'][key] = {'\$append_unique': geoList};
+      _record['\$set'][key] = {'\$append_unique': geoList};
     } else {
-      record['\$set'][key] = {'\$append_unique': value};
+      _record['\$set'][key] = {'\$append_unique': value};
     }
   }
 
@@ -147,9 +139,9 @@ class BaseRecord {
 
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
-      record['\$set'][key] = {'\$remove': geoList};
+      _record['\$set'][key] = {'\$remove': geoList};
     } else {
-      record['\$set'][key] = {'\$remove': value};
+      _record['\$set'][key] = {'\$remove': value};
     }
   }
 }

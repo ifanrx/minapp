@@ -7,6 +7,9 @@ import 'storage.dart';
 import 'constants.dart';
 import 'h_error.dart';
 import 'dart:core';
+import 'geo_point.dart';
+import 'geo_polygon.dart';
+import 'table_record.dart';
 
 Future<Map<String, dynamic>> mergeRequestHeader(
     Map<String, dynamic> headers) async {
@@ -89,4 +92,15 @@ List parseRegExp(RegExp regExp) {
   }
 
   return result;
+}
+
+/// 解析不同类型 value 的内容
+serializeValue(value) {
+  if (value is GeoPoint || value is GeoPolygon) {
+    return value.geoJSON;
+  } else if (value is TableRecord) {
+    return value.recordId;
+  } else {
+    return value;
+  }
 }

@@ -1,26 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 import 'table_record.dart';
 import 'request.dart';
 import 'constants.dart';
 import 'h_error.dart';
 import 'query.dart';
-import 'base_record.dart';
 import 'where.dart';
+import 'util.dart';
 
 class TableObject {
-  String tableName;
-  num tableId;
-  Function serializeValue = new BaseRecord().serializeValue;
+  String _tableName;
+  num _tableId;
 
   /// 构造函数，接收数据表名的参数（[String] 类型）
-  TableObject(this.tableName);
+  TableObject(String tableName) {
+    _tableName = tableName;
+  }
 
   /// 构造函数，接收数据表 id 的参数（num 类型）
-  TableObject.withId(this.tableId);
+  TableObject.withId(num tableId) {
+    _tableId = tableId;
+  }
 
   TableRecord create() {
-    return new TableRecord(tableName ?? tableId);
+    return new TableRecord(_tableName ?? _tableId);
   }
 
   /// 创建多条数据
@@ -38,7 +40,7 @@ class TableObject {
     Response response = await request(
       path: Api.createRecordList,
       method: 'POST',
-      params: {'tableID': tableName, 'enable_trigger': enableTrigger ? 1 : 0},
+      params: {'tableID': _tableName, 'enable_trigger': enableTrigger ? 1 : 0},
       data: records,
     );
 
@@ -50,10 +52,10 @@ class TableObject {
   /// [query] 查询数据项
   TableRecord getWithoutData({String recordId, Query query}) {
     if (recordId != null) {
-      return new TableRecord(tableName, recordId: recordId);
+      return new TableRecord(_tableName, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
-        tableName,
+        _tableName,
         query: query,
       );
     } else {
@@ -77,7 +79,7 @@ class TableObject {
       Response response = await request(
         path: Api.deleteRecord,
         method: 'DELETE',
-        params: {'tableID': tableName, 'recordID': recordId},
+        params: {'tableID': _tableName, 'recordID': recordId},
       );
       return response;
     } else if (query != null) {
@@ -87,7 +89,7 @@ class TableObject {
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
-          'tableID': tableName,
+          'tableID': _tableName,
           'limit': queryData['limit'] ?? '',
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',
@@ -130,7 +132,7 @@ class TableObject {
     Response response = await request(
       path: Api.getRecord,
       method: 'GET',
-      params: {'tableID': tableName, 'recordID': recordId},
+      params: {'tableID': _tableName, 'recordID': recordId},
       data: data,
     );
 
@@ -164,7 +166,7 @@ class TableObject {
     Response response = await request(
       path: Api.queryRecordList,
       method: 'GET',
-      params: {'tableID': tableName},
+      params: {'tableID': _tableName},
       data: data,
     );
 

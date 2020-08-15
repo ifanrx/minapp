@@ -5,11 +5,17 @@ import 'constants.dart';
 import 'query.dart';
 
 class TableRecord extends BaseRecord {
-  String tableName;
-  String recordId;
-  Query query;
+  String _tableName;
+  String _recordId;
+  Query _query;
 
-  TableRecord(this.tableName, {this.recordId, this.query});
+  TableRecord(String tableName, {String recordId, Query query}) {
+    _tableName = tableName;
+    _recordId = recordId;
+    _query = query;
+  }
+
+  String get recordId => _recordId;
 
   /// 保存数据记录
   Future<dynamic> save() async {
@@ -18,7 +24,7 @@ class TableRecord extends BaseRecord {
     Response response = await request(
       path: Api.createRecord,
       method: 'POST',
-      params: {'tableID': tableName},
+      params: {'tableID': _tableName},
       data: data,
     );
 
@@ -32,23 +38,23 @@ class TableRecord extends BaseRecord {
   }) async {
     Map data = this.record;
 
-    if (recordId != null) {
+    if (_recordId != null) {
       Response response = await request(
         path: Api.updateRecord,
         method: 'PUT',
-        params: {'tableID': tableName, 'recordID': recordId},
+        params: {'tableID': _tableName, 'recordID': _recordId},
         data: data,
       );
 
       return response;
     } else {
-      Map<String, dynamic> queryData = query.get();
+      Map<String, dynamic> queryData = _query.get();
 
       Response response = await request(
         path: Api.updateRecordList,
         method: 'PUT',
         params: {
-          'tableID': tableName,
+          'tableID': _tableName,
           'limit': queryData['limit'] ?? '',
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',

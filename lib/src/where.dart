@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:minapp/minapp.dart';
 
 import 'h_error.dart';
-import 'base_record.dart';
 import 'util.dart';
 
 class Where {
   Map<String, dynamic> _condition;
-  Function serializeValue = new BaseRecord().serializeValue;
 
   Where() {
     initCondition();
