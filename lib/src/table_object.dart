@@ -128,15 +128,13 @@ class TableObject {
 
     if (expand != null) {
       if (expand is String) {
-        data['keys'] = expand;
+        data['expand'] = expand;
       } else if (expand is List<String>) {
-        data['keys'] = expand.join(',');
+        data['expand'] = expand.join(',');
       } else {
         throw HError(605);
       }
     }
-
-    print('data: $data');
 
     Response response = await request(
       path: Api.getRecord,

@@ -19,7 +19,11 @@ class BaseRecord {
 
   BaseRecord.withInfo(Map<String, dynamic> recordInfo) {
     _id = recordInfo['id'];
-    _createdById = recordInfo['created_by'];
+    _createdById = recordInfo['created_by'] is int
+        ? recordInfo['created_by']
+        : recordInfo['created_by']['id'];
+    _createdBy =
+        recordInfo['created_by'] is Map ? recordInfo['created_by'] : null;
     _createdAt = recordInfo['created_at'];
     _updatedAt = recordInfo['updated_at'];
     recordValueInit();
@@ -28,6 +32,7 @@ class BaseRecord {
   Map<String, dynamic> get record => _record;
   String get id => _id;
   int get createdById => _createdById;
+  Map<String, dynamic> get createdBy => _createdBy;
   int get createdAt => _createdAt;
   int get updatedAt => _updatedAt;
 
