@@ -19,9 +19,11 @@ class BaseRecord {
 
   BaseRecord.withInfo(Map<String, dynamic> recordInfo) {
     _id = recordInfo['id'];
-    _createdById = recordInfo['created_by'] is int
-        ? recordInfo['created_by']
-        : recordInfo['created_by']['id'];
+    if (recordInfo['created_by'] != null) {
+      _createdById = recordInfo['created_by'] is int
+          ? recordInfo['created_by']
+          : recordInfo['created_by']['id'];
+    }
     _createdBy =
         recordInfo['created_by'] is Map ? recordInfo['created_by'] : null;
     _createdAt = recordInfo['created_at'];

@@ -52,6 +52,17 @@ class Query {
     return this;
   }
 
+  Query select(dynamic key) {
+    if (select is String) {
+      _keys = [key];
+    } else if (key is List<String>) {
+      _keys = key;
+    } else {
+      throw HError(605);
+    }
+    return this;
+  }
+
   Map<String, dynamic> get() {
     Map<String, dynamic> data = {};
 
