@@ -115,16 +115,28 @@ class TableObject {
 
   /// 获取单条数据
   /// [recordId] 数据项 id
-  Future<TableRecord> get(String recordId, {Query query}) async {
+  Future<TableRecord> get(String recordId,
+      {dynamic select, dynamic expand}) async {
     Map<String, dynamic> data = {};
 
-    if (query != null) {
-      Map<String, dynamic> queryData = query.get();
-      queryData.forEach((key, value) {
-        if (key == 'keys' || key == 'expand') {
-          data[key] = value;
-        }
-      });
+    if (select != null) {
+      if (select is String) {
+        data['keys'] = select;
+      } else if (select is List<String>) {
+        data['keys'] = select.join(',');
+      } else {
+        throw HError(605);
+      }
+    }
+
+    if (expand != null) {
+      if (expand is String) {
+        data['expand'] = expand;
+      } else if (expand is List<String>) {
+        data['expand'] = expand.join(',');
+      } else {
+        throw HError(605);
+      }
     }
 
     Response response = await request(
