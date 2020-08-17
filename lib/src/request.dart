@@ -82,9 +82,13 @@ String _toPath(String path, Map<String, dynamic> params) {
     var v = Uri.encodeComponent(value.toString());
 
     var qsPat = RegExp(r'(&?)' + key + r'=:' + key);
-    path = path.replaceAllMapped(qsPat, (m) {
-      return '${m[1]}$key=$v';
-    });
+    if (value != null) {
+      path = path.replaceAllMapped(qsPat, (m) {
+        return '${m[1]}$key=$v';
+      });
+    } else {
+      path = path.replaceAllMapped(qsPat, (m) => '');
+    }
 
     var pPat = RegExp(r':' + key);
     path = path.replaceAll(pPat, v);

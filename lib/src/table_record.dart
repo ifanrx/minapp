@@ -3,6 +3,8 @@ import 'base_record.dart';
 import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
+import 'utils/getLimitationWithEnableTrigger.dart' as constants;
+import 'where.dart';
 
 class TableRecord extends BaseRecord {
   String _tableName;
@@ -58,12 +60,23 @@ class TableRecord extends BaseRecord {
     } else {
       Map<String, dynamic> queryData = _query.get();
 
+      queryData.forEach((key, value) {
+        if (value != null) {
+          if (value is Where) {
+            queryData[key] = value.get();
+          } else {
+            queryData[key] = value;
+          }
+        }
+      });
+
       Response response = await request(
         path: Api.updateRecordList,
         method: 'PUT',
         params: {
           'tableID': _tableName,
-          'limit': queryData['limit'] ?? '',
+          'limit': constants.getLimitationWithEnableTrigger(
+              queryData['limit'], enableTrigger),
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',
           'enable_trigger': enableTrigger ? 1 : 0,

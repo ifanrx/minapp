@@ -1,3 +1,5 @@
+int queryLimitationDefault = 20;
+
 class StorageKey {
   static const authToken = 'auth_token';
   static const uid = 'uid';

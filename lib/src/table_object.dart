@@ -6,6 +6,7 @@ import 'h_error.dart';
 import 'query.dart';
 import 'where.dart';
 import 'util.dart';
+import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 
 class TableObject {
   String _tableName;
@@ -99,7 +100,8 @@ class TableObject {
         method: 'DELETE',
         params: {
           'tableID': _tableName,
-          'limit': queryData['limit'] ?? 20,
+          'limit': constants.getLimitationWithEnableTrigger(
+              queryData['limit'], enableTrigger),
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',
           'enable_trigger': enableTrigger ? 1 : 0,
