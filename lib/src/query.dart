@@ -19,25 +19,29 @@ class Query {
     _expand = null;
   }
 
-  void offset(int offset) {
+  Query offset(int offset) {
     _offset = offset;
+    return this;
   }
 
-  void limit(int limit) {
+  Query limit(int limit) {
     _limit = limit;
+    return this;
   }
 
-  void orderBy(String orderBy) {
+  Query orderBy(String orderBy) {
     _orderBy = orderBy;
+    return this;
   }
 
-  void where(Where where) {
+  Query where(Where where) {
     _where = where;
+    return this;
   }
 
   /// 指定需要展开的 pointer 类型字段
   /// [key] 字段名称
-  void expand(dynamic key) {
+  Query expand(dynamic key) {
     if (key is String) {
       _expand = [key];
     } else if (key is List<String>) {
@@ -45,6 +49,7 @@ class Query {
     } else {
       throw HError(605);
     }
+    return this;
   }
 
   Map<String, dynamic> get() {
