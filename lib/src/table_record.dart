@@ -8,6 +8,7 @@ class TableRecord extends BaseRecord {
   String _tableName;
   String _recordId;
   Query _query;
+  Map<String, dynamic> _recordInfo;
 
   TableRecord(String tableName, {String recordId, Query query}) {
     _tableName = tableName;
@@ -15,10 +16,17 @@ class TableRecord extends BaseRecord {
     _query = query;
   }
 
+  /// 接收服务端返回的数据
+  TableRecord.withInfo(Map<String, dynamic> recordInfo)
+      : super.withInfo(recordInfo) {
+    _recordInfo = recordInfo;
+  }
+
   String get recordId => _recordId;
+  Map<String, dynamic> get recordInfo => _recordInfo;
 
   /// 保存数据记录
-  Future<dynamic> save() async {
+  Future<TableRecord> save() async {
     Map<String, dynamic> data = this.record['\$set'];
 
     Response response = await request(
@@ -28,7 +36,7 @@ class TableRecord extends BaseRecord {
       data: data,
     );
 
-    return response;
+    return new TableRecord.withInfo(response.data);
   }
 
   /// 更新数据记录
@@ -46,7 +54,7 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      return response;
+      return new TableRecord.withInfo(response.data);
     } else {
       Map<String, dynamic> queryData = _query.get();
 
@@ -64,7 +72,35 @@ class TableRecord extends BaseRecord {
         data: data,
       );
 
-      return response;
+      return new TableRecordList(response.data);
     }
+  }
+}
+
+class TableRecordList {
+  int _limit;
+  int _offset;
+  int _totalCount;
+  String _next;
+  String _previous;
+  List _records;
+
+  int get limit => _limit;
+  int get offset => _offset;
+  int get totalCount => _totalCount;
+  String get next => _next;
+  String get previous => _previous;
+  List get records => _records;
+
+  TableRecordList(Map<String, dynamic> recordInfo) {
+    Map<String, dynamic> meta = recordInfo['meta'];
+    _limit = meta == null ? recordInfo['limit'] : meta['limit'];
+    _offset = meta == null ? recordInfo['offset'] : meta['offset'];
+    _totalCount =
+        meta == null ? recordInfo['total_count'] : meta['total_count'];
+    _next = meta == null ? recordInfo['next'] : meta['next'];
+    _previous = meta == null ? recordInfo['previous'] : meta['previous'];
+    _records =
+        meta == null ? recordInfo['operation_result'] : recordInfo['objects'];
   }
 }

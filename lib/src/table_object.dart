@@ -44,7 +44,7 @@ class TableObject {
       data: records,
     );
 
-    return response;
+    return new TableRecordList(response.data);
   }
 
   /// 更新数据记录
@@ -69,35 +69,43 @@ class TableObject {
   /// [query] 数据记录查询条件
   /// [enableTrigger] 是否触发触发器
   /// [withCount] 是否返回 total_count
-  Future<dynamic> delete({
+  Future<void> delete({
     String recordId,
     Query query,
     bool enableTrigger = true,
     bool withCount = false,
   }) async {
     if (recordId != null) {
-      Response response = await request(
+      await request(
         path: Api.deleteRecord,
         method: 'DELETE',
         params: {'tableID': _tableName, 'recordID': recordId},
       );
-      return response;
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
 
-      Response response = await request(
+      queryData.forEach((key, value) {
+        if (value != null) {
+          if (value is Where) {
+            queryData[key] = value.get();
+          } else {
+            queryData[key] = value;
+          }
+        }
+      });
+
+      await request(
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
           'tableID': _tableName,
-          'limit': queryData['limit'] ?? '',
+          'limit': queryData['limit'] ?? 20,
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',
           'enable_trigger': enableTrigger ? 1 : 0,
           'return_total_count': withCount ? 1 : 0,
         },
       );
-      return response;
     } else {
       throw HError(605);
     }
@@ -105,7 +113,8 @@ class TableObject {
 
   /// 获取单条数据
   /// [recordId] 数据项 id
-  Future<dynamic> get(String recordId, {dynamic select, dynamic expand}) async {
+  Future<TableRecord> get(String recordId,
+      {dynamic select, dynamic expand}) async {
     Map<String, dynamic> data = {};
     if (select != null) {
       if (select is String) {
@@ -136,20 +145,19 @@ class TableObject {
       data: data,
     );
 
-    return response;
+    return new TableRecord.withInfo(response.data);
   }
 
   /// 获取数据记录列表
   /// [query] 查询条件
   /// [withCount] 是否返回 total_count
-  Future<dynamic> find(Query query, {bool withCount = false}) async {
+  Future<TableRecordList> find(Query query, {bool withCount = false}) async {
     Map<String, dynamic> data = {
       'return_total_count': withCount ? 1 : 0,
     };
 
     if (query != null) {
       Map<String, dynamic> queryData = query.get();
-      print('query get: $queryData');
       queryData.forEach((key, value) {
         if (value != null) {
           if (value is Where) {
@@ -159,8 +167,6 @@ class TableObject {
           }
         }
       });
-
-      print('data: $data');
     }
 
     Response response = await request(
@@ -170,16 +176,16 @@ class TableObject {
       data: data,
     );
 
-    return response;
+    return new TableRecordList(response.data);
   }
 
   /// 获取数据记录数量
   /// [query] 查询条件
   Future<int> count(Query query) async {
     query.limit(1);
-    var response = await find(query, withCount: true);
+    TableRecordList response = await find(query, withCount: true);
 
-    int count = response.data['meta']['total_count'];
+    int count = response.totalCount;
     return count;
   }
 }

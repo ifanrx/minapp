@@ -7,12 +7,29 @@ import 'util.dart';
 
 class BaseRecord {
   Map<String, dynamic> _record;
+  String _id;
+  int _createdById;
+  Map<String, dynamic> _createdBy;
+  int _createdAt;
+  int _updatedAt;
 
   BaseRecord() {
     recordValueInit();
   }
 
+  BaseRecord.withInfo(Map<String, dynamic> recordInfo) {
+    _id = recordInfo['id'];
+    _createdById = recordInfo['created_by'];
+    _createdAt = recordInfo['created_at'];
+    _updatedAt = recordInfo['updated_at'];
+    recordValueInit();
+  }
+
   Map<String, dynamic> get record => _record;
+  String get id => _id;
+  int get createdById => _createdById;
+  int get createdAt => _createdAt;
+  int get updatedAt => _updatedAt;
 
   void recordValueInit() {
     _record = {
