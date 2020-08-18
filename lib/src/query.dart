@@ -54,7 +54,7 @@ class Query {
   }
 
   Query select(dynamic key) {
-    if (select is String) {
+    if (key is String) {
       _keys = [key];
     } else if (key is List<String>) {
       _keys = key;
@@ -83,7 +83,8 @@ class Query {
 
     if (_where != null) data.addAll({'where': _where});
 
-    if (_returnTotalCount != null) data.addAll({'return_total_count': _returnTotalCount});
+    if (_returnTotalCount != null)
+      data.addAll({'return_total_count': _returnTotalCount});
 
     return data;
   }
