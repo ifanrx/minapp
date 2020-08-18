@@ -104,8 +104,9 @@ class _SchemaChangeState extends State<SchemaChange> {
 
     tableRecord.set(options);
     try {
-      var _record = await tableRecord.save();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.save();
+      print(_record.createdAt);
+      setState(() => record = _record.recordInfo);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
@@ -151,8 +152,8 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.set('array_geo', options['array_geo']);
 
     try {
-      var _record = await tableRecord.save();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.save();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
@@ -194,8 +195,8 @@ class _SchemaChangeState extends State<SchemaChange> {
         tableObject.getWithoutData(recordId: record['id']);
     tableRecord.set('int', 100);
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -207,8 +208,8 @@ class _SchemaChangeState extends State<SchemaChange> {
         tableObject.getWithoutData(recordId: record['id']);
     tableRecord.incrementBy(key, value);
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -234,8 +235,8 @@ class _SchemaChangeState extends State<SchemaChange> {
       tableRecord.append(key, value);
 
       try {
-        var _record = await tableRecord.update();
-        setState(() => record = _record.data);
+        TableRecord _record = await tableRecord.update();
+        setState(() => record = _record.recordInfo);
         _showSnackBar('成功');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -257,8 +258,8 @@ class _SchemaChangeState extends State<SchemaChange> {
       tableRecord.remove('array_i', numArray);
 
       try {
-        var _record = await tableRecord.update();
-        setState(() => record = _record.data);
+        TableRecord _record = await tableRecord.update();
+        setState(() => record = _record.recordInfo);
         _showSnackBar('成功');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -273,8 +274,8 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.patchObject('obj', {'num': valueGenerator.integer()});
 
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
