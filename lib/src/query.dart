@@ -10,6 +10,7 @@ class Query {
   Query() {
     _initQueryParams();
   }
+  int _returnTotalCount;
 
   void _initQueryParams() {
     _limit = null;
@@ -63,6 +64,10 @@ class Query {
     return this;
   }
 
+  void returnTotalCount(int a) {
+    _returnTotalCount = a;
+  }
+
   Map<String, dynamic> get() {
     Map<String, dynamic> data = {};
 
@@ -77,6 +82,8 @@ class Query {
     if (_keys != null) data.addAll({'keys': _keys.join(',')});
 
     if (_where != null) data.addAll({'where': _where});
+
+    if (_returnTotalCount != null) data.addAll({'return_total_count': _returnTotalCount});
 
     return data;
   }

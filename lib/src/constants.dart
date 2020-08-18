@@ -43,4 +43,9 @@ class Api {
   static const queryRecordList = '/hserve/v2.4/table/:tableID/record/';
 
   static const cloudFunction = '/hserve/v1/cloud-function/job/';
+
+  static const fileDetail = '/hserve/v2.1/uploaded-file/:fileID/';
+  static const fileList = '/hserve/v2.2/uploaded-file/';
+  static const deleteFile = '/hserve/v2.1/uploaded-file/:fileID/';
+  static const deleteFiles = '/hserve/v2.1/uploaded-file/';
 }

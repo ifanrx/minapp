@@ -18,7 +18,7 @@ class SmsPage extends StatelessWidget {
 
 class SmsForm extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SmsState();
+  State createState() => _SmsState();
 }
 
 class _SmsState extends State<SmsForm> {

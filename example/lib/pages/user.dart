@@ -66,9 +66,10 @@ class _GetUserList extends State<GetUserList> {
   Future<void> fetchUserList() async {
     try {
       BaaS.Query query = BaaS.Query();
-      query.limit(limit ?? 20);
-      query.offset(offset ?? 0);
-      query.orderBy(orderBy);
+      query
+        ..limit(limit ?? 20)
+        ..offset(offset ?? 0)
+        ..orderBy(orderBy);
 
       var _userList = await BaaS.User.find(query: query);
 
@@ -205,11 +206,14 @@ class GetUser extends StatefulWidget {
 }
 
 class _GetUser extends State<GetUser> {
-  final String userId = '36395395';
+  String userId = '36395395';
   BaaS.User user;
 
   Future<void> initUser() async {
     if (widget.userList.length <= 0) return;
+    setState(() {
+      userId = widget.userList[0].userId;
+    });
     user = await BaaS.User.user(widget.userList[0].userId);
   }
 

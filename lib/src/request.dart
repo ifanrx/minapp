@@ -68,8 +68,8 @@ String _extractErrorMsg(Response<dynamic> res) {
   if (res.data is String) {
     return res.data.length > 0 ? res.data : res.statusMessage;
   }
-  if (res.data != null && res.data['error_msg'] != null) {
-    return res.data['error_msg'] as String;
+  if (res.data != null && (res.data['error_msg'] != null || res.data['error_message'] != null)) {
+    return res.data['error_msg'] != null ? res.data['error_msg'] as String : res.data['error_message'] as String;
   }
   if (res.data != null && res.data['message'] != null) {
     return res.data['message'] as String;
