@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'dart:math';
-import 'dart:convert';
 import '../util.dart';
 import '../components/num_stepper.dart';
+
+Map<String, dynamic> pointerIds = getPointerIds();
 
 class SchemaQuery extends StatefulWidget {
   @override
@@ -479,6 +479,119 @@ class _SchemaQueryState extends State<SchemaQuery> {
     showLoading(false);
   }
 
+  void queryByTime() async {
+    showLoading(true);
+
+    try {
+      Query query = new Query();
+      Where where = new Where();
+      int startTimeStamp =
+          new DateTime(1970, 1, 19, 19, 48).millisecondsSinceEpoch;
+      int endTimeStamp = startTimeStamp + 24 * 60 * 60;
+      where.compare('created_at', '>=', startTimeStamp);
+      where.compare('created_at', '<', endTimeStamp);
+      query.where(where);
+
+      TableRecordList recordList = await product.find(query, withCount: true);
+      alert('查询成功-总记录数为：${recordList.totalCount}');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+
+    showLoading(false);
+  }
+
+  void queryByDate() async {
+    showLoading(true);
+
+    try {
+      Query query = new Query();
+      Where where = new Where();
+      String time = new DateTime(2017, 12, 31, 16).toIso8601String();
+      where.compare('date', '<=', time);
+      query.where(where);
+      TableRecordList recordList = await product.find(query, withCount: true);
+      alert('查询成功-总记录数为：${recordList.totalCount}');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+
+    showLoading(false);
+  }
+
+  void hasKey() async {
+    showLoading(true);
+
+    try {
+      Query query = new Query();
+      Where where = new Where();
+      where.hasKey('obj', 'num');
+      query.where(where);
+      TableRecordList recordList = await product.find(query, withCount: true);
+      alert('查询成功-总记录数为：${recordList.totalCount}');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+
+    showLoading(false);
+  }
+
+  void countItem() async {
+    showLoading(true);
+
+    try {
+      Query query = new Query();
+      int count = await product.count(query);
+      alert('$count');
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
+
+    showLoading(false);
+  }
+
+  Function pointerQuery(String type) {
+    return () async {
+      showLoading(true);
+
+      try {
+        Query query = new Query();
+        Where where = new Where();
+
+        if (type == 'exist') {
+          where.exists('pointer_test_order');
+        } else if (type == 'compare') {
+          where.compare(
+              'pointer_test_order',
+              '=',
+              new TableObject('pointer_test_order').getWithoutData(
+                  recordId: pointerIds['pointer_test_order_id']));
+        } else if (type == 'in') {
+          TableObject order = new TableObject('pointer_test_order');
+          where.inList('pointer_test_order', [
+            order.getWithoutData(recordId: pointerIds['pointer_test_order_id']),
+            order.getWithoutData(
+                recordId: pointerIds['pointer_test_order_id2']),
+          ]);
+        } else if (type == 'notIn') {
+          TableObject order = new TableObject('pointer_test_order');
+          where.notInList('pointer_test_order', [
+            order.getWithoutData(recordId: pointerIds['pointer_test_order_id']),
+            order.getWithoutData(recordId: 'fakeid123'),
+          ]);
+        }
+
+        query.where(where).expand('pointer_test_order');
+        TableRecordList recordList = await product.find(query, withCount: true);
+        alert('${recordList.records}');
+      } catch (e) {
+        _showSnackBar('失败 - ${e.toString()}');
+      }
+
+      showLoading(false);
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -680,17 +793,20 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   title: 'tableObject get expand',
                 ),
                 customTitle('时间类型字段查询'),
-                customButton(fn: () {}, title: 'created_at 查询'),
-                customButton(fn: () {}, title: 'date 查询'),
+                customButton(fn: queryByTime, title: 'created_at 查询'),
+                customButton(fn: queryByDate, title: 'date 查询'),
                 customTitle('hasKey 查询'),
-                customButton(fn: () {}, title: 'hasKey "num" 查询'),
+                customButton(fn: hasKey, title: 'hasKey "num" 查询'),
                 customTitle('count 查询'),
-                customButton(fn: () {}, title: 'count 查询'),
+                customButton(fn: countItem, title: 'count 查询'),
                 customTitle('pointer 查询'),
-                customButton(fn: () {}, title: 'pointer 查询 exist'),
-                customButton(fn: () {}, title: 'pointer 查询 compare'),
-                customButton(fn: () {}, title: 'pointer 查询 fn'),
-                customButton(fn: () {}, title: 'pointer 查询 not in'),
+                customButton(
+                    fn: pointerQuery('exist'), title: 'pointer 查询 exist'),
+                customButton(
+                    fn: pointerQuery('compare'), title: 'pointer 查询 compare'),
+                customButton(fn: pointerQuery('in'), title: 'pointer 查询 in'),
+                customButton(
+                    fn: pointerQuery('notIn'), title: 'pointer 查询 not in'),
               ],
             ),
           ),
