@@ -52,19 +52,21 @@ class BaseRecord {
   void set(dynamic arg1, [dynamic arg2]) {
     if (arg2 == null) {
       if (arg1 is Map<String, dynamic>) {
+        Map<String, dynamic> _map = {};
+
         arg1.forEach((String key, dynamic value) {
           if (_record['\$unset'].containsKey(key)) {
             throw HError(605);
           }
 
           if (value is List) {
-            arg1[key] = value.map((elem) => serializeValue(elem)).toList();
+            _map[key] = value.map((elem) => serializeValue(elem)).toList();
           } else {
-            arg1[key] = serializeValue(value);
+            _map[key] = serializeValue(value);
           }
         });
 
-        _record['\$set'] = arg1;
+        _record['\$set'] = _map;
       } else {
         throw HError(605);
       }
