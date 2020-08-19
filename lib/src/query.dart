@@ -20,29 +20,25 @@ class Query {
     _expand = null;
   }
 
-  Query offset(int offset) {
+  void offset(int offset) {
     _offset = offset;
-    return this;
   }
 
-  Query limit(int limit) {
+  void limit(int limit) {
     _limit = limit;
-    return this;
   }
 
-  Query orderBy(String orderBy) {
+  void orderBy(String orderBy) {
     _orderBy = orderBy;
-    return this;
   }
 
-  Query where(Where where) {
+  void where(Where where) {
     _where = where;
-    return this;
   }
 
   /// 指定需要展开的 pointer 类型字段
   /// [key] 字段名称
-  Query expand(dynamic key) {
+  void expand(dynamic key) {
     if (key is String) {
       _expand = [key];
     } else if (key is List<String>) {
@@ -50,10 +46,9 @@ class Query {
     } else {
       throw HError(605);
     }
-    return this;
   }
 
-  Query select(dynamic key) {
+  void select(dynamic key) {
     if (key is String) {
       _keys = [key];
     } else if (key is List<String>) {
@@ -61,7 +56,6 @@ class Query {
     } else {
       throw HError(605);
     }
-    return this;
   }
 
   void returnTotalCount(int a) {

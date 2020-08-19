@@ -3,6 +3,7 @@ import 'package:minapp/minapp.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import '../util.dart';
 import '../components/num_stepper.dart';
+import '../components/custom_button.dart';
 
 Map<String, dynamic> pointerIds = getPointerIds();
 
@@ -21,31 +22,6 @@ class _SchemaQueryState extends State<SchemaQuery> {
   int _counter = 10;
   TableObject product = new TableObject('auto_maintable');
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  Widget customButton({
-    Function fn,
-    String title,
-    Color titleColor = Colors.white,
-    Color bgColor = Colors.green,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: 10),
-        ButtonTheme(
-          height: 50.0,
-          child: RaisedButton(
-            onPressed: fn,
-            child: Text(
-              title,
-              style: TextStyle(color: titleColor, fontSize: 18.0),
-            ),
-            color: bgColor,
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget customTitle(
     String title, {
@@ -383,7 +359,9 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      query.limit(_limit).offset(_offset);
+      query
+        ..limit(_limit)
+        ..offset(_offset);
       if (_orderBy != null) {
         query.orderBy(_orderBy);
       }
@@ -581,7 +559,9 @@ class _SchemaQueryState extends State<SchemaQuery> {
           ]);
         }
 
-        query.where(where).expand('pointer_test_order');
+        query
+          ..where(where)
+          ..expand('pointer_test_order');
         TableRecordList recordList = await product.find(query, withCount: true);
         alert('${recordList.records}');
       } catch (e) {
@@ -590,6 +570,30 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
       showLoading(false);
     };
+  }
+
+  void handleResetData() async {
+    deleteAllRecords();
+  }
+
+  void deleteAllRecords() {
+    try {
+      TableObject tableObject = new TableObject('jiajun_test');
+      Query query = new Query();
+      query.limit(100);
+      query.offset(0);
+      print(query.get());
+      // Future<void> deleteRecord = () async {
+      //   query.limit(1000).offset(0);
+      //   var res = await tableObject.delete(query: query);
+      //   // print('res: $res');
+      //   print('123');
+      // };
+
+      // deleteRecord();
+    } catch (e) {
+      _showSnackBar('失败 - ${e.toString()}');
+    }
   }
 
   @override
@@ -610,72 +614,71 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   '重置数据',
                   style: TextStyle(color: Colors.red, fontSize: 16.0),
                 ),
-                customButton(fn: () {}, title: '重置'),
+                CustomButton(handleResetData, title: '重置'),
                 customTitle('get 查询'),
-                customButton(fn: getAllProduct, title: '获取所有产品(9)'),
-                customButton(
-                  fn: _records.length == 0 ? null : getProduct,
+                CustomButton(getAllProduct, title: '获取所有产品(9)'),
+                CustomButton(
+                  _records.length == 0 ? null : getProduct,
                   title: '获取一个产品',
                 ),
-                customButton(
-                  fn: _records.length == 0 ? null : getProductBySelectASC,
+                CustomButton(
+                  _records.length == 0 ? null : getProductBySelectASC,
                   title: '获取一个产品返回字段\'str\'',
                 ),
-                customButton(
-                  fn: _records.length == 0 ? null : getProductBySelectDESC,
+                CustomButton(
+                  _records.length == 0 ? null : getProductBySelectDESC,
                   title: '获取一个产品不返回字段\'str\'',
                 ),
                 customTitle('compare 查询'),
-                customButton(
-                  fn: compareQuery('='),
+                CustomButton(
+                  compareQuery('='),
                   title: 'compare 查询(int = 50)(1)',
                 ),
-                customButton(
-                  fn: compareQuery('!='),
+                CustomButton(
+                  compareQuery('!='),
                   title: 'compare 查询(int != 50)(8)',
                 ),
-                customButton(
-                  fn: compareQuery('>'),
+                CustomButton(
+                  compareQuery('>'),
                   title: 'compare 查询(int > 50)(3)',
                 ),
-                customButton(
-                  fn: compareQuery('>='),
+                CustomButton(
+                  compareQuery('>='),
                   title: 'compare 查询(int >= 50)(4)',
                 ),
-                customButton(
-                  fn: compareQuery('<'),
+                CustomButton(
+                  compareQuery('<'),
                   title: 'compare 查询(int < 50)(4)',
                 ),
-                customButton(
-                  fn: compareQuery('<='),
+                CustomButton(
+                  compareQuery('<='),
                   title: 'compare 查询(int <= 50)(5)',
                 ),
                 customTitle('字符串查询'),
-                customButton(
-                  fn: containsQuery,
+                CustomButton(
+                  containsQuery,
                   title: '字符串 contains \'m\' 查询(2)',
                 ),
-                customButton(
-                  fn: regxQuery,
+                CustomButton(
+                  regxQuery,
                   title: '字符串正则查询 - 构造函数(4)',
                 ),
                 customTitle('数组查询'),
-                customButton(fn: inQuery, title: '数组 in 查询(4)'),
-                customButton(fn: notInQuery, title: '数组 notIn 查询(6)'),
-                customButton(
-                  fn: arrayContainsQuery,
+                CustomButton(inQuery, title: '数组 in 查询(4)'),
+                CustomButton(notInQuery, title: '数组 notIn 查询(6)'),
+                CustomButton(
+                  arrayContainsQuery,
                   title: '数组 arrayContains 查询(1)',
                 ),
-                customButton(fn: compareSpecificQuery, title: '数组指定值查询(1)'),
+                CustomButton(compareSpecificQuery, title: '数组指定值查询(1)'),
                 customTitle('null 查询'),
-                customButton(fn: nullQuery, title: 'null 查询(1)'),
-                customButton(fn: notNullQuery, title: 'not null 查询(8)'),
+                CustomButton(nullQuery, title: 'null 查询(1)'),
+                CustomButton(notNullQuery, title: 'not null 查询(8)'),
                 customTitle('exists 查询'),
-                customButton(fn: existsQuery, title: 'exists 查询(9)'),
-                customButton(fn: notExistsQuery, title: 'notExists 查询(0)'),
+                CustomButton(existsQuery, title: 'exists 查询(9)'),
+                CustomButton(notExistsQuery, title: 'notExists 查询(0)'),
                 customTitle('多条件查询'),
-                customButton(
-                    fn: complexQueryProduct, title: '多条件查询 and / or(5)'),
+                CustomButton(complexQueryProduct, title: '多条件查询 and / or(5)'),
                 customTitle('分页与排序'),
                 customTitle('order_by:',
                     textColor: Colors.black, boxHeight: 5.0),
@@ -757,7 +760,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                     },
                   ),
                 ),
-                customButton(fn: getAllProductWithOptions, title: '查找'),
+                CustomButton(getAllProductWithOptions, title: '查找'),
                 ConstrainedBox(
                   constraints: new BoxConstraints(
                     maxHeight: 260.0,
@@ -776,37 +779,33 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   ),
                 ),
                 customTitle('字段过滤与扩展', boxHeight: 20.0),
-                customButton(fn: selectQuery, title: '返回指定字段[num]'),
-                customButton(
-                    fn: unselectQuery,
+                CustomButton(selectQuery, title: '返回指定字段[num]'),
+                CustomButton(unselectQuery,
                     title: '不返回指定字段 [-array_s, -str, -file]'),
-                customButton(fn: expandCreatedBy(), title: 'expand created_by'),
-                customButton(
-                  fn: expandCreatedBy('created_by.nickname'),
+                CustomButton(expandCreatedBy(), title: 'expand created_by'),
+                CustomButton(
+                  expandCreatedBy('created_by.nickname'),
                   title: 'expand created_by.nickname',
                 ),
-                customButton(
-                    fn: getAllProductWithExpand,
+                CustomButton(getAllProductWithExpand,
                     title: '获取所有产品(expand pointer)'),
-                customButton(
-                  fn: _records.length == 0 ? null : getExpand,
+                CustomButton(
+                  _records.length == 0 ? null : getExpand,
                   title: 'tableObject get expand',
                 ),
                 customTitle('时间类型字段查询'),
-                customButton(fn: queryByTime, title: 'created_at 查询'),
-                customButton(fn: queryByDate, title: 'date 查询'),
+                CustomButton(queryByTime, title: 'created_at 查询'),
+                CustomButton(queryByDate, title: 'date 查询'),
                 customTitle('hasKey 查询'),
-                customButton(fn: hasKey, title: 'hasKey "num" 查询'),
+                CustomButton(hasKey, title: 'hasKey "num" 查询'),
                 customTitle('count 查询'),
-                customButton(fn: countItem, title: 'count 查询'),
+                CustomButton(countItem, title: 'count 查询'),
                 customTitle('pointer 查询'),
-                customButton(
-                    fn: pointerQuery('exist'), title: 'pointer 查询 exist'),
-                customButton(
-                    fn: pointerQuery('compare'), title: 'pointer 查询 compare'),
-                customButton(fn: pointerQuery('in'), title: 'pointer 查询 in'),
-                customButton(
-                    fn: pointerQuery('notIn'), title: 'pointer 查询 not in'),
+                CustomButton(pointerQuery('exist'), title: 'pointer 查询 exist'),
+                CustomButton(pointerQuery('compare'),
+                    title: 'pointer 查询 compare'),
+                CustomButton(pointerQuery('in'), title: 'pointer 查询 in'),
+                CustomButton(pointerQuery('notIn'), title: 'pointer 查询 not in'),
               ],
             ),
           ),

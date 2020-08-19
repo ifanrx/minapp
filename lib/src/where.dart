@@ -39,24 +39,22 @@ class Where {
   /// [key] 用于查询判断的字段
   /// [operator] 判断操作符
   /// [value] 用于判断的值
-  Where compare(String key, String operator, dynamic value) {
+  void compare(String key, String operator, dynamic value) {
     String op = _convertOperator(operator);
     _addCondition(key, {op: serializeValue(value)});
-    return this;
   }
 
   /// 包含判断，筛选出符合条件（Record[key] 包含了字符串 str）的 Record
   /// [key] 需要查询的字段
   /// [value] 字段内容是否包含该字符串
-  Where contains(String key, String value) {
+  void contains(String key, String value) {
     _addCondition(key, {'contains': value});
-    return this;
   }
 
   /// 正则判断，筛选出符合条件（正则表达式 regExp 能匹配 Record[key]）的 Record
   /// [key] 用于查询判断的字段
   /// [regExp] 正则表达式
-  Where matches(String key, RegExp regExp) {
+  void matches(String key, RegExp regExp) {
     List result = parseRegExp(regExp);
 
     if (result.length > 1) {
@@ -64,38 +62,33 @@ class Where {
     } else {
       _addCondition(key, {'regex': result[0]});
     }
-
-    return this;
   }
 
   /// 包含判断，筛选出符合条件（数组 arr 包含 Record[key]）的 Record
   /// [key] 用于查询判断的字段
   /// [list] 用于判断的数组
-  Where inList(String key, List list) {
+  void inList(String key, List list) {
     _addCondition(key, {'in': list.map((e) => serializeValue(e)).toList()});
-    return this;
   }
 
   /// 不包含判断，筛选出符合条件（数组 arr 不包含 Record[key]）的 Record
   /// [key] 用于查询判断的字段
   /// [list] 用于判断的数组
-  Where notInList(String key, List list) {
+  void notInList(String key, List list) {
     _addCondition(key, {'nin': list.map((e) => serializeValue(e)).toList()});
-    return this;
   }
 
   /// 数组包含判断
   /// [key] 用于查询判断的字段
   /// [list] 用于判断的数组
-  Where arrayContains(String key, List list) {
+  void arrayContains(String key, List list) {
     _addCondition(key, {'all': list.map((e) => serializeValue(e)).toList()});
-    return this;
   }
 
   /// 字段为 Null 判断
   /// 判断逻辑：Record[key] 是 null
   /// [key] 用于查询判断的字段
-  Where isNull(dynamic key) {
+  void isNull(dynamic key) {
     if (key is String) {
       _addCondition(key, {'isnull': true});
     } else if (key is List<String>) {
@@ -105,14 +98,12 @@ class Where {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// 字段不为 Null 判断
   /// 判断逻辑：Record[key] 不是 null
   /// [key] 用于查询判断的字段
-  Where isNotNull(dynamic key) {
+  void isNotNull(dynamic key) {
     if (key is String) {
       _addCondition(key, {'isnull': false});
     } else if (key is List<String>) {
@@ -122,14 +113,12 @@ class Where {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// 字段存在判断
   /// 判断逻辑：Record[key] 不是 undefined
   /// [key] 用于查询判断的字段
-  Where exists(dynamic key) {
+  void exists(dynamic key) {
     if (key is String) {
       _addCondition(key, {'exists': true});
     } else if (key is List<String>) {
@@ -139,14 +128,12 @@ class Where {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// 字段不存在判断
   /// 判断逻辑：Record[key] 是 undefined
   /// [key] 用于查询判断的字段
-  Where notExists(dynamic key) {
+  void notExists(dynamic key) {
     if (key is String) {
       _addCondition(key, {'exists': false});
     } else if (key is List<String>) {
@@ -156,71 +143,63 @@ class Where {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// Object 类型字段的属性存在判断
   /// [key] 用于查询判断的字段
   /// [fieldName] 字段名称
-  Where hasKey(String key, String fieldName) {
+  void hasKey(String key, String fieldName) {
     _addCondition(key, {'has_key': fieldName});
-    return this;
   }
 
   /// and 操作符。将多个 Query 对象使用 and 操作符进行合并
   /// [wheres] where 数组
   /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
-  Where and(List<Where> wheres) {
+  void and(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$and': []};
     wheres.forEach((where) {
       andWhere['\$and'].add(where._condition);
     });
 
     _setCondition(andWhere);
-    return this;
   }
 
   /// or 操作符。将多个 Query 对象使用 or 操作符进行合并
   /// [wheres] where 数组
   /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
-  Where or(List<Where> wheres) {
+  void or(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$or': []};
     wheres.forEach((where) {
       andWhere['\$or'].add(where._condition);
     });
 
     _setCondition(andWhere);
-    return this;
   }
 
   /// 多边形包含判断，在指定多边形集合中找出包含某一点的多边形（geojson 类型）
   /// [key] 用于查询判断的字段
   /// [point] 点
-  Where include(String key, GeoPoint point) {
+  void include(String key, GeoPoint point) {
     _addCondition(key, {'intersects': point.geoJSON});
-    return this;
   }
 
   /// 多边形包含判断，在指定点集合中，查找包含于指定的多边形区域的点（geojson 类型）。
   /// [key] 用于查询判断的字段
   /// [polygon] 多边形
-  Where within(String key, GeoPolygon polygon) {
+  void within(String key, GeoPolygon polygon) {
     _addCondition(key, {'within': polygon.geoJSON});
-    return this;
   }
 
   /// 圆包含判断，在指定点集合中，查找包含在指定圆心和指定半径所构成的圆形区域中的点（geojson 类型）
   /// [key] 用于查询判断的字段
   /// [point] 圆心
   /// [radius] 半径
-  Where withinCircle(String key, GeoPoint point, num radius) {
+  void withinCircle(String key, GeoPoint point, num radius) {
     Map<String, dynamic> data = {
       'radius': radius,
       'coordinates': [point.longitude, point.latitude],
     };
     _addCondition(key, {'center': data});
-    return this;
   }
 
   /// 圆环包含判断，在指定点集合中，查找包含在以某点为起点的最大和最小距离所构成的圆环区域中的点（geojson 类型）
@@ -228,7 +207,7 @@ class Where {
   /// [point] 圆心
   /// [maxDistance] 最大半径
   /// [minDistance] 最小半径
-  Where withinRegion(String key, GeoPoint point,
+  void withinRegion(String key, GeoPoint point,
       {num maxDistance, num minDistance = 0}) {
     Map<String, dynamic> data = {
       'geometry': point.geoJSON,
@@ -240,7 +219,6 @@ class Where {
     }
 
     _addCondition(key, {'nearsphere': data});
-    return this;
   }
 
   void _setCondition(Map<String, dynamic> condition) {

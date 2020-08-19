@@ -49,7 +49,7 @@ class BaseRecord {
   /// 接收 [arg1] 为 Map<String, dynamic> 的参数。此为一次性赋值。
   /// 或接收 [arg1] 为字符串，[arg2] 为任意值作为参数。此为逐个赋值。
   /// 不可同时用 set 与 unset 操作同一字段，否则会报 605 错误
-  BaseRecord set(dynamic arg1, [dynamic arg2]) {
+  void set(dynamic arg1, [dynamic arg2]) {
     if (arg2 == null) {
       if (arg1 is Map<String, dynamic>) {
         arg1.forEach((String key, dynamic value) {
@@ -82,14 +82,12 @@ class BaseRecord {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// 移除字段
   /// [arg] 移除的字段或一次性赋值的键值对 map
   /// 不可同时用 set 与 unset 操作同一字段，否则会报 605 错误
-  BaseRecord unset(dynamic arg) {
+  void unset(dynamic arg) {
     if (arg is String) {
       if (_record['\$set'].containsKey(arg)) {
         throw HError(605);
@@ -107,30 +105,26 @@ class BaseRecord {
     } else {
       throw HError(605);
     }
-
-    return this;
   }
 
   /// Object 类型字段修改
   /// [key] 字段名
   /// [value] 字段对应的值
-  BaseRecord patchObject(String key, Map<String, dynamic> value) {
+  void patchObject(String key, Map<String, dynamic> value) {
     _record['\$set'][key] = {'\$update': value};
-    return this;
   }
 
   /// 自增（计数器原子性更新）
   /// [key] 字段名
   /// [value] 字段对应的值
-  BaseRecord incrementBy(String key, num value) {
+  void incrementBy(String key, num value) {
     _record['\$set'][key] = {'\$incr_by': value};
-    return this;
   }
 
   /// 数组添加元素
   /// [key] 字段名
   /// [value] 字段对应的值
-  BaseRecord append(String key, dynamic value) {
+  void append(String key, dynamic value) {
     if (value is! List) {
       value = [value];
     }
@@ -141,14 +135,12 @@ class BaseRecord {
     } else {
       _record['\$set'][key] = {'\$append': value};
     }
-
-    return this;
   }
 
   /// 数组添加不包含在原数组的元素
   /// [key] 字段名
   /// [value] 字段对应的值
-  BaseRecord uAppend(String key, dynamic value) {
+  void uAppend(String key, dynamic value) {
     if (value is! List) {
       value = [value];
     }
@@ -159,14 +151,12 @@ class BaseRecord {
     } else {
       _record['\$set'][key] = {'\$append_unique': value};
     }
-
-    return this;
   }
 
   /// 数组移除元素
   /// [key] 字段名
   /// [value] 字段对应的值
-  BaseRecord remove(String key, dynamic value) {
+  void remove(String key, dynamic value) {
     if (value is! List) {
       value = [value];
     }
@@ -177,7 +167,5 @@ class BaseRecord {
     } else {
       _record['\$set'][key] = {'\$remove': value};
     }
-
-    return this;
   }
 }
