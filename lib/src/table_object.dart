@@ -70,7 +70,7 @@ class TableObject {
   /// [query] 数据记录查询条件
   /// [enableTrigger] 是否触发触发器
   /// [withCount] 是否返回 total_count
-  Future<void> delete({
+  Future<dynamic> delete({
     String recordId,
     Query query,
     bool enableTrigger = true,
@@ -95,7 +95,7 @@ class TableObject {
         }
       });
 
-      await request(
+      Response response = await request(
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
@@ -108,6 +108,8 @@ class TableObject {
           'return_total_count': withCount ? 1 : 0,
         },
       );
+
+      return response.data;
     } else {
       throw HError(605);
     }

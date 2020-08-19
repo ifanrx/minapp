@@ -18,12 +18,10 @@ class SectionTitle extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border(
               left: BorderSide(
-                color: Colors.red,
-                width: 3,
-                style: BorderStyle.solid,
-              )
-          )
-      ),
+        color: Colors.red,
+        width: 3,
+        style: BorderStyle.solid,
+      ))),
     );
   }
 }
@@ -38,14 +36,16 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
   final double width;
   final AlignmentGeometry alignment;
   final onChange;
-  NumberInputWithIncrementDecrement({this.width, this.alignment, this.onChange});
+  NumberInputWithIncrementDecrement(
+      {this.width, this.alignment, this.onChange});
 
   @override
   _NumberInputWithIncrementDecrementState createState() =>
       _NumberInputWithIncrementDecrementState();
 }
 
-class _NumberInputWithIncrementDecrementState extends State<NumberInputWithIncrementDecrement> {
+class _NumberInputWithIncrementDecrementState
+    extends State<NumberInputWithIncrementDecrement> {
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -113,7 +113,8 @@ class _NumberInputWithIncrementDecrementState extends State<NumberInputWithIncre
                       int currentValue = int.parse(_controller.text);
                       setState(() {
                         currentValue++;
-                        _controller.text = currentValue.toString(); // incrementing value
+                        _controller.text =
+                            currentValue.toString(); // incrementing value
                       });
                       handleChange(currentValue);
                     },
@@ -128,7 +129,8 @@ class _NumberInputWithIncrementDecrementState extends State<NumberInputWithIncre
                     int currentValue = int.parse(_controller.text);
                     setState(() {
                       currentValue--;
-                      _controller.text = (currentValue > 0 ? currentValue : 0).toString(); // decrementing value
+                      _controller.text = (currentValue > 0 ? currentValue : 0)
+                          .toString(); // decrementing value
                     });
                     handleChange(currentValue);
                   },
@@ -144,25 +146,47 @@ class _NumberInputWithIncrementDecrementState extends State<NumberInputWithIncre
 
 void showSimpleDialog(BuildContext context, String content) {
   showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          children: <Widget>[
+            Text(content),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('关闭'),
+                  )
+                ],
+              ),
+            )
+          ],
+        );
+      });
+}
+
+void alert(
+  BuildContext context,
+  String content, {
+  String title = '',
+  String confirmText = '确定',
+}) {
+  showDialog(
     context: context,
-    builder: (context) {
-      return SimpleDialog(
-        children: <Widget>[
-          Text(content),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('关闭'),
-                )
-              ],
-            ),
-          )
-        ],
-      );
-    }
+    builder: (_) => new AlertDialog(
+      title: new Text(title),
+      content: new Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(confirmText),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+    ),
   );
 }

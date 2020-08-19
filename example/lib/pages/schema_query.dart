@@ -4,6 +4,9 @@ import 'package:loading_overlay/loading_overlay.dart';
 import '../util.dart';
 import '../components/num_stepper.dart';
 import '../components/custom_button.dart';
+import '../components/custom_title.dart';
+import '../common/data.dart';
+import './common.dart';
 
 Map<String, dynamic> pointerIds = getPointerIds();
 
@@ -19,53 +22,13 @@ class _SchemaQueryState extends State<SchemaQuery> {
   int _offset = 0;
   int _limit = 10;
   String sortKey = '';
-  int _counter = 10;
   TableObject product = new TableObject('auto_maintable');
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  Widget customTitle(
-    String title, {
-    num boxHeight = 10.0,
-    Color textColor = Colors.red,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: boxHeight),
-        Text(
-          title,
-          style: TextStyle(color: textColor, fontSize: 16.0),
-        ),
-      ],
-    );
-  }
 
   void _showSnackBar(String message) {
     _scaffoldKey.currentState.removeCurrentSnackBar();
     var snackBar = SnackBar(content: Text(message));
     _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  void alert(
-    String content, {
-    String title = '',
-    String confirmText = '确定',
-  }) {
-    showDialog(
-      context: context,
-      builder: (_) => new AlertDialog(
-        title: new Text(title),
-        content: new Text(content),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(confirmText),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          )
-        ],
-      ),
-    );
   }
 
   void showLoading(bool isLoading) {
@@ -79,7 +42,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       TableRecordList recordList =
           await product.find(new Query(), withCount: true);
       setState(() => _records = recordList.records);
-      alert('查询成功 - 总记录数为：${recordList.totalCount}');
+      alert(context, '查询成功 - 总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -92,7 +55,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     showLoading(true);
     try {
       TableRecord record = await product.get(_records[0]['id']);
-      alert('查询成功 - ID 为：${record.recordInfo['id']}');
+      alert(context, '查询成功 - ID 为：${record.recordInfo['id']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -106,7 +69,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       List<String> select = ['str'];
       TableRecord record = await product.get(_records[0]['id'], select: select);
-      alert('查询成功 - str: ${record.recordInfo['str']}');
+      alert(context, '查询成功 - str: ${record.recordInfo['str']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -121,7 +84,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       TableRecord record = await product.get(_records[0]['id'], select: select);
       List<String> keys = [];
       record.recordInfo.forEach((key, value) => keys.add(key));
-      alert('All keys: $keys');
+      alert(context, 'All keys: $keys');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -138,7 +101,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
         where.compare('int', operator, 50);
         query.where(where);
         TableRecordList recordList = await product.find(query, withCount: true);
-        alert('查询成功 - 记录数: ${recordList.totalCount}');
+        alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
       }
@@ -155,7 +118,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.contains('str', 'm');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -173,7 +136,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.matches('str', regExp);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -190,7 +153,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.inList('array_s', ['黑', '白']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -207,7 +170,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.notInList('array_s', ['灰']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -224,7 +187,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.arrayContains('array_s', ['黑', '白', '灰']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -241,7 +204,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -258,7 +221,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.isNull('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -275,7 +238,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.isNotNull('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -292,7 +255,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.exists(['str', 'int']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -309,7 +272,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.notExists('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -339,7 +302,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       orQuery.where(orWhere);
 
       TableRecordList recordList = await product.find(orQuery, withCount: true);
-      alert('查询成功 - 记录数: ${recordList.totalCount}');
+      alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -383,7 +346,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       query.select(['num']);
       TableRecordList recordList = await product.find(query, withCount: true);
       print(recordList.records.length);
-      alert('${recordList.records}');
+      alert(context, '${recordList.records}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -399,7 +362,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       query.select(['-array_s', '-str', '-file']);
       TableRecordList recordList = await product.find(query, withCount: true);
       print(recordList.records.length);
-      alert('${recordList.records}');
+      alert(context, '${recordList.records}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -418,7 +381,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
           query.select(field);
         }
         TableRecordList recordList = await product.find(query, withCount: true);
-        alert('created_by: ${recordList.records[0]['created_by']}');
+        alert(context, 'created_by: ${recordList.records[0]['created_by']}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
       }
@@ -449,7 +412,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       List<String> expand = ['created_by'];
       TableRecord record = await product.get(_records[0]['id'], expand: expand);
-      alert('created by: ${record.recordInfo['created_by']}');
+      alert(context, 'created by: ${record.recordInfo['created_by']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -471,7 +434,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       query.where(where);
 
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功-总记录数为：${recordList.totalCount}');
+      alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -489,7 +452,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.compare('date', '<=', time);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功-总记录数为：${recordList.totalCount}');
+      alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -506,7 +469,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       where.hasKey('obj', 'num');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
-      alert('查询成功-总记录数为：${recordList.totalCount}');
+      alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -520,7 +483,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       Query query = new Query();
       int count = await product.count(query);
-      alert('$count');
+      alert(context, '$count');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -563,7 +526,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
           ..where(where)
           ..expand('pointer_test_order');
         TableRecordList recordList = await product.find(query, withCount: true);
-        alert('${recordList.records}');
+        alert(context, '${recordList.records}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
       }
@@ -573,27 +536,35 @@ class _SchemaQueryState extends State<SchemaQuery> {
   }
 
   void handleResetData() async {
-    deleteAllRecords();
+    await deleteAllRecords();
+    createRecords();
   }
 
-  void deleteAllRecords() {
+  void createRecords() async {
     try {
-      TableObject tableObject = new TableObject('jiajun_test');
-      Query query = new Query();
-      query.limit(100);
-      query.offset(0);
-      print(query.get());
-      // Future<void> deleteRecord = () async {
-      //   query.limit(1000).offset(0);
-      //   var res = await tableObject.delete(query: query);
-      //   // print('res: $res');
-      //   print('123');
-      // };
-
-      // deleteRecord();
+      await product.createMany(mockData);
+      alert(context, '重置成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
+  }
+
+  Future<void> deleteAllRecords() async {
+    Query query = new Query();
+    query.limit(1000);
+    query.offset(0);
+    Future<void> deleteRecord() async {
+      try {
+        Map<String, dynamic> res = await product.delete(query: query);
+        if (res['next'] != null) {
+          await deleteRecord();
+        }
+      } catch (e) {
+        _showSnackBar('失败 - ${e.toString()}');
+      }
+    }
+
+    await deleteRecord();
   }
 
   @override
@@ -615,7 +586,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   style: TextStyle(color: Colors.red, fontSize: 16.0),
                 ),
                 CustomButton(handleResetData, title: '重置'),
-                customTitle('get 查询'),
+                CustomTitle('get 查询'),
                 CustomButton(getAllProduct, title: '获取所有产品(9)'),
                 CustomButton(
                   _records.length == 0 ? null : getProduct,
@@ -629,7 +600,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   _records.length == 0 ? null : getProductBySelectDESC,
                   title: '获取一个产品不返回字段\'str\'',
                 ),
-                customTitle('compare 查询'),
+                CustomTitle('compare 查询'),
                 CustomButton(
                   compareQuery('='),
                   title: 'compare 查询(int = 50)(1)',
@@ -654,7 +625,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   compareQuery('<='),
                   title: 'compare 查询(int <= 50)(5)',
                 ),
-                customTitle('字符串查询'),
+                CustomTitle('字符串查询'),
                 CustomButton(
                   containsQuery,
                   title: '字符串 contains \'m\' 查询(2)',
@@ -663,7 +634,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   regxQuery,
                   title: '字符串正则查询 - 构造函数(4)',
                 ),
-                customTitle('数组查询'),
+                CustomTitle('数组查询'),
                 CustomButton(inQuery, title: '数组 in 查询(4)'),
                 CustomButton(notInQuery, title: '数组 notIn 查询(6)'),
                 CustomButton(
@@ -671,16 +642,16 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   title: '数组 arrayContains 查询(1)',
                 ),
                 CustomButton(compareSpecificQuery, title: '数组指定值查询(1)'),
-                customTitle('null 查询'),
+                CustomTitle('null 查询'),
                 CustomButton(nullQuery, title: 'null 查询(1)'),
                 CustomButton(notNullQuery, title: 'not null 查询(8)'),
-                customTitle('exists 查询'),
+                CustomTitle('exists 查询'),
                 CustomButton(existsQuery, title: 'exists 查询(9)'),
                 CustomButton(notExistsQuery, title: 'notExists 查询(0)'),
-                customTitle('多条件查询'),
+                CustomTitle('多条件查询'),
                 CustomButton(complexQueryProduct, title: '多条件查询 and / or(5)'),
-                customTitle('分页与排序'),
-                customTitle('order_by:',
+                CustomTitle('分页与排序'),
+                CustomTitle('order_by:',
                     textColor: Colors.black, boxHeight: 5.0),
                 Row(
                   children: [
@@ -730,7 +701,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                     ),
                   ],
                 ),
-                customTitle('limit:', textColor: Colors.black, boxHeight: 5.0),
+                CustomTitle('limit:', textColor: Colors.black, boxHeight: 5.0),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: NumberStepper(
@@ -745,7 +716,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                     },
                   ),
                 ),
-                customTitle('offset:', textColor: Colors.black, boxHeight: 5.0),
+                CustomTitle('offset:', textColor: Colors.black, boxHeight: 5.0),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: NumberStepper(
@@ -778,7 +749,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                     ),
                   ),
                 ),
-                customTitle('字段过滤与扩展', boxHeight: 20.0),
+                CustomTitle('字段过滤与扩展', boxHeight: 20.0),
                 CustomButton(selectQuery, title: '返回指定字段[num]'),
                 CustomButton(unselectQuery,
                     title: '不返回指定字段 [-array_s, -str, -file]'),
@@ -793,14 +764,14 @@ class _SchemaQueryState extends State<SchemaQuery> {
                   _records.length == 0 ? null : getExpand,
                   title: 'tableObject get expand',
                 ),
-                customTitle('时间类型字段查询'),
+                CustomTitle('时间类型字段查询'),
                 CustomButton(queryByTime, title: 'created_at 查询'),
                 CustomButton(queryByDate, title: 'date 查询'),
-                customTitle('hasKey 查询'),
+                CustomTitle('hasKey 查询'),
                 CustomButton(hasKey, title: 'hasKey "num" 查询'),
-                customTitle('count 查询'),
+                CustomTitle('count 查询'),
                 CustomButton(countItem, title: 'count 查询'),
-                customTitle('pointer 查询'),
+                CustomTitle('pointer 查询'),
                 CustomButton(pointerQuery('exist'), title: 'pointer 查询 exist'),
                 CustomButton(pointerQuery('compare'),
                     title: 'pointer 查询 compare'),
