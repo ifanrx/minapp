@@ -29,7 +29,7 @@ class TableObject {
   /// 创建多条数据
   /// [records] 多条数据项
   /// [enableTrigger] 是否触发触发器
-  Future<dynamic> createMany(
+  Future<TableRecordList> createMany(
     List<Map<String, dynamic>> records, {
     bool enableTrigger = true,
   }) async {

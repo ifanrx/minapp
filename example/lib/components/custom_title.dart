@@ -4,11 +4,13 @@ class CustomTitle extends StatefulWidget {
   final String title;
   final num boxHeight;
   final Color textColor;
+  final num fontSize;
 
   CustomTitle(
     this.title, {
     this.boxHeight = 10.0,
     this.textColor = Colors.red,
+    this.fontSize = 16.0,
   });
 
   @override
@@ -24,7 +26,7 @@ class _CustomTitleState extends State<CustomTitle> {
         SizedBox(height: widget.boxHeight),
         Text(
           widget.title,
-          style: TextStyle(color: widget.textColor, fontSize: 16.0),
+          style: TextStyle(color: widget.textColor, fontSize: widget.fontSize),
         ),
       ],
     );

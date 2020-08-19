@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:minapp/minapp.dart';
 import '../components/custom_button.dart';
+import '../components/custom_title.dart';
 import './common.dart';
 
 class Geo extends StatefulWidget {
@@ -85,12 +86,13 @@ class _GeoState extends State<Geo> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text('spot 表')),
+      appBar: AppBar(title: Text('Schema Geo 类型测试')),
       body: LoadingOverlay(
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
+              CustomTitle('spot 表'),
               CustomButton(
                 addPoint,
                 title: '添加 point',
