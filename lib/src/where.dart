@@ -15,6 +15,8 @@ class Where {
     _condition = {};
   }
 
+  Map<String, dynamic> get condition => _condition;
+
   /// 运算符转换
   String _convertOperator(String operator) {
     switch (operator) {

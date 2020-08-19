@@ -83,6 +83,12 @@ List parseRegExp(RegExp regExp) {
   List result = [];
   String regExpString = regExp.pattern.toString();
 
+  String firstChar = regExpString.substring(0, 1);
+
+  if (firstChar != '/') {
+    regExpString = '/' + regExpString + '/';
+  }
+
   int lastIndex = regExpString.lastIndexOf('/');
 
   result.add(regExpString.substring(1, lastIndex));
