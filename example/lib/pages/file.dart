@@ -33,7 +33,14 @@ class _FileListView extends State<FileListView> {
   List selectedFile = [];
   String orderBy;
   int limit, offset;
-  List<String> orderByList = ['name', '-name', 'size', '-size', 'created_at', '-created_at'];
+  List<String> orderByList = [
+    'name',
+    '-name',
+    'size',
+    '-size',
+    'created_at',
+    '-created_at'
+  ];
 
   Future<void> fetchFileList() async {
     try {
@@ -41,15 +48,14 @@ class _FileListView extends State<FileListView> {
       query
         ..limit(limit ?? 10)
         ..offset(offset ?? 0)
-        ..orderBy(orderBy)
-        ..returnTotalCount(1);
+        ..orderBy(orderBy);
 
       List files = await FileManager.find(query);
       setState(() {
         fileList = files;
         selectedFile.clear();
       });
-    } on HError catch(e) {
+    } on HError catch (e) {
       showSnackBar(e.toString(), context);
     }
   }
@@ -87,7 +93,7 @@ class _FileListView extends State<FileListView> {
               await FileManager.delete(fileList[index]['id']);
               showSnackBar('删除成功', context);
               fetchFileList();
-            } on HError catch(e) {
+            } on HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -111,12 +117,14 @@ class _FileListView extends State<FileListView> {
   }
 
   List<Widget> _orderByRadioList() {
-    return orderByList.map((o) => RadioListTile<String>(
-      title: Text(o),
-      value: o,
-      groupValue: orderBy,
-      onChanged: _handleOrderByChange,
-    )).toList();
+    return orderByList
+        .map((o) => RadioListTile<String>(
+              title: Text(o),
+              value: o,
+              groupValue: orderBy,
+              onChanged: _handleOrderByChange,
+            ))
+        .toList();
   }
 
   @override
@@ -129,16 +137,17 @@ class _FileListView extends State<FileListView> {
           children: <Widget>[
             RaisedButton(
               child: Text('删除'),
-              onPressed: selectedFile.length <=0 ? null : () async {
-                try {
-                  await FileManager.delete(selectedFile);
-                  fetchFileList();
-                  showSnackBar('删除成功', context);
-                } on HError catch(e) {
-                  showSnackBar(e.toString(), context);
-                }
-
-              },
+              onPressed: selectedFile.length <= 0
+                  ? null
+                  : () async {
+                      try {
+                        await FileManager.delete(selectedFile);
+                        fetchFileList();
+                        showSnackBar('删除成功', context);
+                      } on HError catch (e) {
+                        showSnackBar(e.toString(), context);
+                      }
+                    },
             ),
           ],
         ),
@@ -203,18 +212,18 @@ class _FileListView extends State<FileListView> {
         Container(
           padding: EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: Colors.grey,
-            )
-          ),
+              border: Border.all(
+            width: 1,
+            color: Colors.grey,
+          )),
           child: SizedBox(
             height: 300.0,
             width: 350.0,
             child: ListView.separated(
               itemCount: fileList.length,
               itemBuilder: _listItemBuilder,
-              separatorBuilder: (BuildContext context, int index) => Divider(color: Colors.grey),
+              separatorBuilder: (BuildContext context, int index) =>
+                  Divider(color: Colors.grey),
             ),
           ),
         ),

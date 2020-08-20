@@ -11,15 +11,14 @@ class UserPage extends StatefulWidget {
 
 class _UserPage extends State<UserPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<BaaS.User> userList;
+  BaaS.UserList userList;
 
   @override
   void initState() {
     super.initState();
-    userList = [];
   }
 
-  void onFetchUserList(List<BaaS.User> users) {
+  void onFetchUserList(BaaS.UserList users) {
     setState(() {
       userList = users;
     });
@@ -55,7 +54,7 @@ class GetUserList extends StatefulWidget {
 class _GetUserList extends State<GetUserList> {
   String orderBy;
   int limit, offset;
-  List<BaaS.User> userList = [];
+  BaaS.UserList userList;
 
   @override
   void initState() {
@@ -71,7 +70,7 @@ class _GetUserList extends State<GetUserList> {
         ..offset(offset ?? 0)
         ..orderBy(orderBy);
 
-      var _userList = await BaaS.User.find(query: query);
+      BaaS.UserList _userList = await BaaS.User.find(query: query);
 
       setState(() {
         userList = _userList;
@@ -83,7 +82,8 @@ class _GetUserList extends State<GetUserList> {
   }
 
   List<Widget> _userListBuilder() {
-    var list = userList.map((e) {
+    if (userList == null) return null;
+    var list = userList.users.map((e) {
       return ListTile(
         title: Text(e.nickname ?? e.userId),
       );
@@ -197,7 +197,7 @@ class _GetUserList extends State<GetUserList> {
 }
 
 class GetUser extends StatefulWidget {
-  final List<BaaS.User> userList;
+  final BaaS.UserList userList;
 
   GetUser({this.userList}) : super();
 
@@ -210,11 +210,11 @@ class _GetUser extends State<GetUser> {
   BaaS.User user;
 
   Future<void> initUser() async {
-    if (widget.userList.length <= 0) return;
+    if (widget.userList == null || widget.userList.users.length <= 0) return;
     setState(() {
-      userId = widget.userList[0].userId;
+      userId = widget.userList.users[0].userId;
     });
-    user = await BaaS.User.user(widget.userList[0].userId);
+    user = await BaaS.User.user(widget.userList.users[0].userId);
   }
 
   @override
@@ -226,9 +226,9 @@ class _GetUser extends State<GetUser> {
         SectionTitle('user = "$userId"'),
         RaisedButton(
           child: Text('获取用户信息'),
-          onPressed: widget.userList.length > 0 ? () async {
+          onPressed: widget.userList.users.length > 0 ? () async {
             try {
-              String userId = widget.userList.length > 0 ? widget.userList[0].userId : this.userId;
+              String userId = widget.userList.users.length > 0 ? widget.userList.users[0].userId : this.userId;
               BaaS.User user = await BaaS.User.user(userId);
               showSimpleDialog(context, prettyJson(user.toJson()));
             } on BaaS.HError catch(e) {
@@ -240,7 +240,7 @@ class _GetUser extends State<GetUser> {
           child: Text('获取用户信息 select & expand'),
           onPressed: () async {
             try {
-              String userId = widget.userList.length > 0 ? widget.userList[0].userId : this.userId;
+              String userId = widget.userList.users.length > 0 ? widget.userList.users[0].userId : this.userId;
 
               BaaS.User user = await BaaS.User.user(
                 userId,
@@ -256,9 +256,22 @@ class _GetUser extends State<GetUser> {
         RaisedButton(
           child: Text('查找指定用户 by user_id'),
           onPressed: () async {
+            BaaS.Where where = BaaS.Where();
+            where.compare('id', '=', userId);
+
             BaaS.Query query = BaaS.Query();
             query.orderBy('created_at');
+            query.where(where);
+
             print(query.get());
+
+            try {
+              BaaS.UserList users = await BaaS.User.find(query: query);
+              print(users.users[0]);
+              alert(context, users.users[0].userId);
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
           },
         ),
         RaisedButton(
@@ -268,7 +281,35 @@ class _GetUser extends State<GetUser> {
               await user.updateUserInfo({
                 'age': 68,
               });
-              showSnackBar(user.get('age').toString(), context);
+              alert(context, user.get('age').toString());
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
+          },
+        ),
+        SectionTitle('count'),
+        RaisedButton(
+          child: Text('count 查询'),
+          onPressed: () async {
+            BaaS.Query query = BaaS.Query()
+              ..limit(1)
+              ..withTotalCount(true);
+            try {
+              BaaS.UserList users = await BaaS.User.find(query: query);
+              int totalCount = users.totalCount;
+              alert(context, totalCount.toString());
+            } on BaaS.HError catch(e) {
+              showSnackBar(e.toString(), context);
+            }
+          },
+        ),
+        SectionTitle('其他'),
+        RaisedButton(
+          child: Text('用户信息 select（只返回 nickname）'),
+          onPressed: () async {
+            try {
+              BaaS.User user = await BaaS.User.user(userId, select: ['nickname']);
+              alert(context, user.toJson().toString());
             } on BaaS.HError catch(e) {
               showSnackBar(e.toString(), context);
             }

@@ -8,7 +8,7 @@ class CurrentUser {
   Map<String, dynamic> _attribute;
   bool _anonymous;
 
-  CurrentUser(Map attribute) {
+  CurrentUser(Map<String, dynamic> attribute) {
     if (attribute is! Map) {
       throw HError(605);
     }

@@ -4,6 +4,7 @@ import 'query.dart';
 import 'request.dart';
 import 'current_user.dart';
 import 'constants.dart';
+import './user_record.dart';
 
 class User extends CurrentUser {
   User(Map<String, dynamic> userInfo) : super(userInfo);
@@ -29,18 +30,18 @@ class User extends CurrentUser {
     return User(res.data);
   }
 
-  static Future<dynamic> find({Query query}) async {
+  static Future<UserList> find({Query query}) async {
+    Map<String, dynamic> data = query?.get();
+    if (data['where'] != null) {
+      data.update('where', (value) => value.get());
+      print(data['where']);
+    }
     Response res = await request(
       path: Api.userList,
       method: 'GET',
-      data: query?.get(),
+      data: data,
     );
-    List<dynamic> objects = res.data['objects'];
-    var userList = List<User>();
-    objects.forEach((user) {
-      userList.add(User(user));
-    });
 
-    return userList;
+    return UserList(res.data);
   }
 }

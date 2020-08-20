@@ -7,6 +7,7 @@ export 'src/auth.dart';
 export 'src/h_error.dart';
 export 'src/sms.dart';
 export 'src/user.dart';
+export 'src/user_record.dart';
 export 'src/base_record.dart';
 export 'src/table_object.dart';
 export 'src/table_record.dart';
