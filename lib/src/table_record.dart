@@ -38,6 +38,8 @@ class TableRecord extends BaseRecord {
       data: data,
     );
 
+    this.recordValueInit();
+
     return new TableRecord.withInfo(response.data);
   }
 
@@ -55,6 +57,8 @@ class TableRecord extends BaseRecord {
         params: {'tableID': _tableName, 'recordID': _recordId},
         data: data,
       );
+
+      this.recordValueInit();
 
       return new TableRecord.withInfo(response.data);
     } else {
@@ -84,6 +88,8 @@ class TableRecord extends BaseRecord {
         },
         data: data,
       );
+
+      this.recordValueInit();
 
       return new TableRecordList(response.data);
     }

@@ -5,6 +5,8 @@ import 'h_error.dart';
 
 final _dio = new Dio();
 
+Map<String, dynamic> requestConfig;
+
 RegExp _urlPat = RegExp(r'https?:\/\/');
 bool _isUrl(String input) {
   return _urlPat.hasMatch(input);
@@ -28,6 +30,10 @@ Future<Response<T>> request<T>({
     throw HError(602);
   }
 
+  restoreRequestConfig();
+  requestConfig['data'] = data;
+  requestConfig['params'] = params;
+
   var merged = await mergeRequestHeader(headers);
 
   Options options = Options(
@@ -42,8 +48,6 @@ Future<Response<T>> request<T>({
   if (!_isUrl(path)) {
     path = _join(config.host, path);
   }
-
-  print(path);
 
   try {
     if (method.toUpperCase() == 'GET') {
@@ -68,8 +72,11 @@ String _extractErrorMsg(Response<dynamic> res) {
   if (res.data is String) {
     return res.data.length > 0 ? res.data : res.statusMessage;
   }
-  if (res.data != null && (res.data['error_msg'] != null || res.data['error_message'] != null)) {
-    return res.data['error_msg'] != null ? res.data['error_msg'] as String : res.data['error_message'] as String;
+  if (res.data != null &&
+      (res.data['error_msg'] != null || res.data['error_message'] != null)) {
+    return res.data['error_msg'] != null
+        ? res.data['error_msg'] as String
+        : res.data['error_message'] as String;
   }
   if (res.data != null && res.data['message'] != null) {
     return res.data['message'] as String;
@@ -94,4 +101,8 @@ String _toPath(String path, Map<String, dynamic> params) {
     path = path.replaceAll(pPat, v);
   });
   return path;
+}
+
+void restoreRequestConfig() {
+  requestConfig = {};
 }

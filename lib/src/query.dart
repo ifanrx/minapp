@@ -3,7 +3,7 @@ import 'h_error.dart';
 
 class Query {
   int _offset, _limit;
-  String _orderBy;
+  dynamic _orderBy;
   List<String> _keys, _expand;
   Where _where;
 
@@ -28,8 +28,16 @@ class Query {
     _limit = limit;
   }
 
-  void orderBy(String orderBy) {
-    _orderBy = orderBy;
+  /// 指定需要展开的 orderBy 类型字段
+  /// [key] 字段名称
+  void orderBy(dynamic key) {
+    if (key is String) {
+      _orderBy = [key];
+    } else if (key is List<String>) {
+      _orderBy = key;
+    } else {
+      throw HError(605);
+    }
   }
 
   void where(Where where) {
@@ -69,7 +77,7 @@ class Query {
 
     if (_limit != null) data.addAll({'limit': _limit});
 
-    if (_orderBy != null) data.addAll({'order_by': _orderBy});
+    if (_orderBy != null) data.addAll({'order_by': _orderBy.join(',')});
 
     if (_expand != null) data.addAll({'expand': _expand.join(',')});
 
