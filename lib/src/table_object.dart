@@ -189,7 +189,8 @@ class TableObject {
 
   /// 获取数据记录数量
   /// [query] 查询条件
-  Future<int> count(Query query) async {
+  Future<int> count({Query query}) async {
+    query = query != null ? query : new Query();
     query.limit(1);
     TableRecordList response = await find(query, withCount: true);
 

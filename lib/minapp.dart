@@ -19,3 +19,4 @@ export 'src/geo_polygon.dart';
 export 'src/where.dart';
 export 'src/file_manager.dart';
 export 'src/file.dart';
+export 'src/content_group.dart';

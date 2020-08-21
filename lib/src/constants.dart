@@ -1,3 +1,5 @@
+import 'package:minapp/src/content_group.dart';
+
 int queryLimitationDefault = 20;
 
 class StorageKey {
@@ -48,4 +50,13 @@ class Api {
   static const fileList = '/hserve/v2.2/uploaded-file/';
   static const deleteFile = '/hserve/v2.1/uploaded-file/:fileID/';
   static const deleteFiles = '/hserve/v2.1/uploaded-file/';
+
+  static const contentGroupList = '/hserve/v2.2/content/group/';
+  static const contentGroupDetail =
+      '/hserve/v2.2/content/group/:contentGroupID/';
+  static const contentDetail = '/hserve/v2.0/content/detail/:richTextID/';
+  static const contentList = '/hserve/v2.2/content/detail/';
+  static const contentCategoryDetail =
+      '/hserve/v2.0/content/category/:categoryID/';
+  static const contentCategoryList = '/hserve/v2.2/content/category/';
 }
