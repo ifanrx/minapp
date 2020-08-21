@@ -181,7 +181,6 @@ class Where {
 
   /// and 操作符。将多个 Query 对象使用 and 操作符进行合并
   /// [wheres] where 数组
-  /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
   static Where and(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$and': []};
     wheres.forEach((where) {
@@ -195,7 +194,6 @@ class Where {
 
   /// or 操作符。将多个 Query 对象使用 or 操作符进行合并
   /// [wheres] where 数组
-  /// [TODO] _setCondition 会把当前 _condition 覆盖掉，可能需要返回一个新的 where。待商讨
   static Where or(List<Where> wheres) {
     Map<String, dynamic> andWhere = {'\$or': []};
     wheres.forEach((where) {

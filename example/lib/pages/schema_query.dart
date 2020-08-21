@@ -412,8 +412,8 @@ class _SchemaQueryState extends State<SchemaQuery> {
       int startTimeStamp =
           new DateTime(1970, 1, 19, 19, 48).millisecondsSinceEpoch;
       int endTimeStamp = startTimeStamp + 24 * 60 * 60;
-      Where where1 = Where.compare('created_at', '>=', startTimeStamp);
-      Where where2 = Where.compare('created_at', '<', endTimeStamp);
+      Where where1 = Where.compare('created_at', '>=', 1597939200);
+      Where where2 = Where.compare('created_at', '<', 1598025600);
       Where andWhere = Where.and([where1, where2]);
       query.where(andWhere);
 
@@ -464,7 +464,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      int count = await product.count(query);
+      int count = await product.count(query: query);
       alert(context, '$count');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
