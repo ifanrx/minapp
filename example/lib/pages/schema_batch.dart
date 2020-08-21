@@ -95,8 +95,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('num', '>=', 200);
+      Where where = Where.compare('num', '>=', 200);
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'updated');
@@ -115,8 +114,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('num', '>=', 200);
+      Where where = Where.compare('num', '>=', 200);
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'updated');
@@ -135,8 +133,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.contains('str', 'a');
+      Where where = Where.contains('str', 'a');
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('num', 500);
@@ -155,8 +152,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
+      Where where = Where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_arr');
@@ -174,8 +170,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.notExists('int');
+      Where where = Where.notExists('int');
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_null');
@@ -193,12 +188,9 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where1 = new Where();
-      where1.matches('str', new RegExp(r'/^\w\d?/'));
-      Where where2 = new Where();
-      where2.compare('num', '>', 50);
-      Where andWhere = new Where();
-      andWhere.and([where1, where2]);
+      Where where1 = Where.matches('str', new RegExp(r'/^\w\d?/'));
+      Where where2 = Where.compare('num', '>', 50);
+      Where andWhere = Where.and([where1, where2]);
       query.where(andWhere);
 
       TableRecord record = order.getWithoutData(query: query);
@@ -217,8 +209,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('num', '>', 50);
+      Where where = Where.compare('num', '>', 50);
       query
         ..limit(2)
         ..offset(0)
@@ -239,8 +230,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('num', '>', 50);
+      Where where = Where.compare('num', '>', 50);
       query
         ..limit(2)
         ..offset(0)

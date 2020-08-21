@@ -97,8 +97,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
       try {
         Query query = new Query();
-        Where where = new Where();
-        where.compare('int', operator, 50);
+        Where where = Where.compare('int', operator, 50);
         query.where(where);
         TableRecordList recordList = await product.find(query, withCount: true);
         alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -114,8 +113,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.contains('str', 'm');
+      Where where = Where.contains('str', 'm');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -131,9 +129,8 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
       RegExp regExp = RegExp(r'/^q/i');
-      where.matches('str', regExp);
+      Where where = Where.matches('str', regExp);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -149,8 +146,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.inList('array_s', ['黑', '白']);
+      Where where = Where.inList('array_s', ['黑', '白']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -166,8 +162,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.notInList('array_s', ['灰']);
+      Where where = Where.notInList('array_s', ['灰']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -183,8 +178,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.arrayContains('array_s', ['黑', '白', '灰']);
+      Where where = Where.arrayContains('array_s', ['黑', '白', '灰']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -200,8 +194,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
+      Where where = Where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -217,8 +210,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.isNull('int');
+      Where where = Where.isNull('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -234,8 +226,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.isNotNull('int');
+      Where where = Where.isNotNull('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -251,8 +242,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.exists(['str', 'int']);
+      Where where = Where.exists(['str', 'int']);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -268,8 +258,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.notExists('int');
+      Where where = Where.notExists('int');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
@@ -284,21 +273,16 @@ class _SchemaQueryState extends State<SchemaQuery> {
     showLoading(true);
 
     try {
-      Where where1 = new Where();
-      where1.compare('int', '>', 50);
+      Where where1 = Where.compare('int', '>', 50);
 
-      Where where2 = new Where();
-      where2.isNotNull('str');
+      Where where2 = Where.isNotNull('str');
 
-      Where andWhere = new Where();
-      andWhere.and([where1, where2]);
+      Where andWhere = Where.and([where1, where2]);
 
-      Where where3 = new Where();
-      where3.inList('array_s', ['黑']);
+      Where where3 = Where.inList('array_s', ['黑']);
 
       Query orQuery = new Query();
-      Where orWhere = new Where();
-      orWhere.or([andWhere, where3]);
+      Where orWhere = Where.or([andWhere, where3]);
       orQuery.where(orWhere);
 
       TableRecordList recordList = await product.find(orQuery, withCount: true);
@@ -425,13 +409,13 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
       int startTimeStamp =
           new DateTime(1970, 1, 19, 19, 48).millisecondsSinceEpoch;
       int endTimeStamp = startTimeStamp + 24 * 60 * 60;
-      where.compare('created_at', '>=', startTimeStamp);
-      where.compare('created_at', '<', endTimeStamp);
-      query.where(where);
+      Where where1 = Where.compare('created_at', '>=', startTimeStamp);
+      Where where2 = Where.compare('created_at', '<', endTimeStamp);
+      Where andWhere = Where.and([where1, where2]);
+      query.where(andWhere);
 
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
@@ -447,9 +431,8 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
       String time = new DateTime(2017, 12, 31, 16).toIso8601String();
-      where.compare('date', '<=', time);
+      Where where = Where.compare('date', '<=', time);
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
@@ -465,8 +448,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       Query query = new Query();
-      Where where = new Where();
-      where.hasKey('obj', 'num');
+      Where where = Where.hasKey('obj', 'num');
       query.where(where);
       TableRecordList recordList = await product.find(query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
@@ -497,26 +479,26 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
       try {
         Query query = new Query();
-        Where where = new Where();
+        Where where;
 
         if (type == 'exist') {
-          where.exists('pointer_test_order');
+          where = Where.exists('pointer_test_order');
         } else if (type == 'compare') {
-          where.compare(
+          where = Where.compare(
               'pointer_test_order',
               '=',
               new TableObject('pointer_test_order').getWithoutData(
                   recordId: pointerIds['pointer_test_order_id']));
         } else if (type == 'in') {
           TableObject order = new TableObject('pointer_test_order');
-          where.inList('pointer_test_order', [
+          where = Where.inList('pointer_test_order', [
             order.getWithoutData(recordId: pointerIds['pointer_test_order_id']),
             order.getWithoutData(
                 recordId: pointerIds['pointer_test_order_id2']),
           ]);
         } else if (type == 'notIn') {
           TableObject order = new TableObject('pointer_test_order');
-          where.notInList('pointer_test_order', [
+          where = Where.notInList('pointer_test_order', [
             order.getWithoutData(recordId: pointerIds['pointer_test_order_id']),
             order.getWithoutData(recordId: 'fakeid123'),
           ]);

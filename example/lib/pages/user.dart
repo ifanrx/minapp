@@ -37,8 +37,7 @@ class _UserPage extends State<UserPage> {
               GetUser(userList: userList),
             ],
           ),
-        )
-    );
+        ));
   }
 }
 
@@ -76,7 +75,7 @@ class _GetUserList extends State<GetUserList> {
         userList = _userList;
       });
       widget.onFetchUserList(userList);
-    } on BaaS.HError catch(e) {
+    } on BaaS.HError catch (e) {
       showSnackBar(e.toString(), context);
     }
   }
@@ -178,18 +177,16 @@ class _GetUserList extends State<GetUserList> {
         ),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: Colors.grey,
-            )
-          ),
+              border: Border.all(
+            width: 1,
+            color: Colors.grey,
+          )),
           child: SizedBox(
-            height: 300.0,
-            width: 300.0,
-            child: ListView(
-              children: _userListBuilder(),
-            )
-          ),
+              height: 300.0,
+              width: 300.0,
+              child: ListView(
+                children: _userListBuilder(),
+              )),
         ),
       ],
     );
@@ -226,21 +223,27 @@ class _GetUser extends State<GetUser> {
         SectionTitle('user = "$userId"'),
         RaisedButton(
           child: Text('获取用户信息'),
-          onPressed: widget.userList.users.length > 0 ? () async {
-            try {
-              String userId = widget.userList.users.length > 0 ? widget.userList.users[0].userId : this.userId;
-              BaaS.User user = await BaaS.User.user(userId);
-              showSimpleDialog(context, prettyJson(user.toJson()));
-            } on BaaS.HError catch(e) {
-              showSnackBar(e.toString(), context);
-            }
-          } : null,
+          onPressed: widget.userList.users.length > 0
+              ? () async {
+                  try {
+                    String userId = widget.userList.users.length > 0
+                        ? widget.userList.users[0].userId
+                        : this.userId;
+                    BaaS.User user = await BaaS.User.user(userId);
+                    showSimpleDialog(context, prettyJson(user.toJson()));
+                  } on BaaS.HError catch (e) {
+                    showSnackBar(e.toString(), context);
+                  }
+                }
+              : null,
         ),
         RaisedButton(
           child: Text('获取用户信息 select & expand'),
           onPressed: () async {
             try {
-              String userId = widget.userList.users.length > 0 ? widget.userList.users[0].userId : this.userId;
+              String userId = widget.userList.users.length > 0
+                  ? widget.userList.users[0].userId
+                  : this.userId;
 
               BaaS.User user = await BaaS.User.user(
                 userId,
@@ -248,7 +251,7 @@ class _GetUser extends State<GetUser> {
                 select: ['nickname', 'pointer_test_order'],
               );
               showSimpleDialog(context, prettyJson(user.toJson()));
-            } on BaaS.HError catch(e) {
+            } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -256,8 +259,7 @@ class _GetUser extends State<GetUser> {
         RaisedButton(
           child: Text('查找指定用户 by user_id'),
           onPressed: () async {
-            BaaS.Where where = BaaS.Where();
-            where.compare('id', '=', userId);
+            BaaS.Where where = BaaS.Where.compare('id', '=', userId);
 
             BaaS.Query query = BaaS.Query();
             query.orderBy('created_at');
@@ -269,7 +271,7 @@ class _GetUser extends State<GetUser> {
               BaaS.UserList users = await BaaS.User.find(query: query);
               print(users.users[0]);
               alert(context, users.users[0].userId);
-            } on BaaS.HError catch(e) {
+            } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -282,7 +284,7 @@ class _GetUser extends State<GetUser> {
                 'age': 68,
               });
               alert(context, user.get('age').toString());
-            } on BaaS.HError catch(e) {
+            } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -298,7 +300,7 @@ class _GetUser extends State<GetUser> {
               BaaS.UserList users = await BaaS.User.find(query: query);
               int totalCount = users.totalCount;
               alert(context, totalCount.toString());
-            } on BaaS.HError catch(e) {
+            } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -308,9 +310,10 @@ class _GetUser extends State<GetUser> {
           child: Text('用户信息 select（只返回 nickname）'),
           onPressed: () async {
             try {
-              BaaS.User user = await BaaS.User.user(userId, select: ['nickname']);
+              BaaS.User user =
+                  await BaaS.User.user(userId, select: ['nickname']);
               alert(context, user.toJson().toString());
-            } on BaaS.HError catch(e) {
+            } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },

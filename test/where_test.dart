@@ -18,8 +18,7 @@ void main() {
   });
 
   test('Compare', () {
-    Where where = new Where();
-    where.compare('price', '<', randomNum1);
+    Where where = Where.compare('price', '<', randomNum1);
 
     expect(
       where.condition,
@@ -34,8 +33,7 @@ void main() {
   });
 
   test('Contains', () {
-    Where where = new Where();
-    where.contains('name', randomString);
+    Where where = Where.contains('name', randomString);
 
     expect(
       where.condition,
@@ -49,9 +47,7 @@ void main() {
     );
   });
   test('Matches', () {
-    Where where = new Where();
-
-    where.matches('name', new RegExp(r'^[a-zA-Z]+[0-9]*\\W?_$'));
+    Where where = Where.matches('name', new RegExp(r'^[a-zA-Z]+[0-9]*\\W?_$'));
 
     expect(
       where.condition,
@@ -65,8 +61,8 @@ void main() {
     );
   });
   test('Matches', () {
-    Where where = new Where();
-    where.matches('name', new RegExp(r'/^[a-zA-Z]+[0-9]*\\W?_$/gi'));
+    Where where =
+        Where.matches('name', new RegExp(r'/^[a-zA-Z]+[0-9]*\\W?_$/gi'));
 
     expect(
       where.condition,
@@ -81,8 +77,7 @@ void main() {
   });
 
   test('In', () {
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
 
     expect(
       where.condition,
@@ -97,8 +92,7 @@ void main() {
   });
 
   test('Not in', () {
-    Where where = new Where();
-    where.notInList('price', randomNumArray);
+    Where where = Where.notInList('price', randomNumArray);
 
     expect(
       where.condition,
@@ -112,8 +106,7 @@ void main() {
     );
   });
   test('arrayContains', () {
-    Where where = new Where();
-    where.arrayContains('desc', randomNumArray);
+    Where where = Where.arrayContains('desc', randomNumArray);
 
     expect(
       where.condition,
@@ -127,8 +120,7 @@ void main() {
     );
   });
   test('isNull', () {
-    Where where = new Where();
-    where.isNull('price');
+    Where where = Where.isNull('price');
 
     expect(
       where.condition,
@@ -142,8 +134,7 @@ void main() {
     );
   });
   test('isNull array', () {
-    Where where = new Where();
-    where.isNull(['price', 'amount']);
+    Where where = Where.isNull(['price', 'amount']);
 
     expect(
       where.condition,
@@ -160,8 +151,7 @@ void main() {
     );
   });
   test('isNotNull', () {
-    Where where = new Where();
-    where.isNotNull('price');
+    Where where = Where.isNotNull('price');
 
     expect(
       where.condition,
@@ -176,8 +166,7 @@ void main() {
   });
 
   test('isNotNull array', () {
-    Where where = new Where();
-    where.isNotNull(['price', 'amount']);
+    Where where = Where.isNotNull(['price', 'amount']);
 
     expect(
       where.condition,
@@ -195,8 +184,7 @@ void main() {
   });
 
   test('exists', () {
-    Where where = new Where();
-    where.exists('price');
+    Where where = Where.exists('price');
 
     expect(
       where.condition,
@@ -211,8 +199,7 @@ void main() {
   });
 
   test('exists array', () {
-    Where where = new Where();
-    where.exists(['price', 'amount']);
+    Where where = Where.exists(['price', 'amount']);
 
     expect(
       where.condition,
@@ -230,8 +217,7 @@ void main() {
   });
 
   test('not exists', () {
-    Where where = new Where();
-    where.notExists('price');
+    Where where = Where.notExists('price');
 
     expect(
       where.condition,
@@ -246,8 +232,7 @@ void main() {
   });
 
   test('not exists array', () {
-    Where where = new Where();
-    where.notExists(['price', 'amount']);
+    Where where = Where.notExists(['price', 'amount']);
 
     expect(
       where.condition,
@@ -265,10 +250,9 @@ void main() {
   });
 
   test('include', () {
-    Where where = new Where();
     GeoPoint point = new GeoPoint(randomNum1, randomNum2);
 
-    where.include('geoField', point);
+    Where where = Where.include('geoField', point);
 
     expect(
       where.condition,
@@ -290,13 +274,12 @@ void main() {
   });
 
   test('within', () {
-    Where where = new Where();
     List<List<num>> random2DArray = [];
     for (var i = 0; i < 5; i++) {
       random2DArray.add(genRandomNumbers(100, 2));
     }
     GeoPolygon polygon = new GeoPolygon(coordinates: random2DArray);
-    where.within('geoField', polygon);
+    Where where = Where.within('geoField', polygon);
 
     expect(
       where.condition,
@@ -318,10 +301,9 @@ void main() {
   });
 
   test('withinCircle', () {
-    Where where = new Where();
     GeoPoint point = new GeoPoint(randomNum1, randomNum2);
 
-    where.withinCircle('geoField', point, randomNum1);
+    Where where = Where.withinCircle('geoField', point, randomNum1);
 
     expect(
       where.condition,
@@ -343,10 +325,9 @@ void main() {
   });
 
   test('withinRegion', () {
-    Where where = new Where();
     GeoPoint point = new GeoPoint(randomNum1, randomNum2);
 
-    where.withinRegion('geoField', point);
+    Where where = Where.withinRegion('geoField', point);
 
     expect(
       where.condition,
@@ -371,12 +352,9 @@ void main() {
   });
 
   test('static and', () {
-    Where where1 = new Where();
-    Where where2 = new Where();
-    where1.contains('name', randomString);
-    where2.isNull('price');
-    Where andWhere = new Where();
-    andWhere.and([where1, where2]);
+    Where where1 = Where.contains('name', randomString);
+    Where where2 = Where.isNull('price');
+    Where andWhere = Where.and([where1, where2]);
     expect(
       andWhere.condition,
       equals({
@@ -401,12 +379,10 @@ void main() {
   });
 
   test('static or', () {
-    Where where1 = new Where();
-    Where where2 = new Where();
-    where1.contains('name', randomString);
-    where2.isNull('price');
-    Where orWhere = new Where();
-    orWhere.or([where1, where2]);
+    Where where1 = Where.contains('name', randomString);
+    Where where2 = Where.isNull('price');
+    Where orWhere = Where.or([where1, where2]);
+
     expect(
       orWhere.condition,
       equals({
@@ -431,18 +407,13 @@ void main() {
   });
 
   test('static and && or', () {
-    Where where1 = new Where();
-    Where where2 = new Where();
-    where1.contains('name', randomString);
-    where2.isNull('price');
+    Where where1 = Where.contains('name', randomString);
+    Where where2 = Where.isNull('price');
 
-    Where orWhere = new Where();
-    orWhere.or([where1, where2]);
+    Where orWhere = Where.or([where1, where2]);
 
-    Where andWhere = new Where();
-    Where where3 = new Where();
-    where3.isNotNull('name');
-    andWhere.and([orWhere, where3]);
+    Where where3 = Where.isNotNull('name');
+    Where andWhere = Where.and([orWhere, where3]);
 
     expect(andWhere.condition, {
       '\$and': [
@@ -476,8 +447,7 @@ void main() {
   });
 
   test('object - hasKey', () {
-    Where where = new Where();
-    where.hasKey('objectField', 'key1');
+    Where where = Where.hasKey('objectField', 'key1');
 
     expect(
       where.condition,
@@ -492,8 +462,8 @@ void main() {
   });
 
   test('object - eq', () {
-    Where where = new Where();
-    where.compare('objectField', '=', {'a': randomNumArray, 'b': randomNum1});
+    Where where = Where.compare(
+        'objectField', '=', {'a': randomNumArray, 'b': randomNum1});
 
     expect(
       where.condition,
@@ -510,8 +480,7 @@ void main() {
   });
 
   test('object - isnull', () {
-    Where where = new Where();
-    where.isNull('objectField');
+    Where where = Where.isNull('objectField');
 
     expect(
       where.condition,

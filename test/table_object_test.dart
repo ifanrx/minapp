@@ -58,8 +58,7 @@ void main() {
 
   test('delete multiple without enable_trigger', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -80,8 +79,7 @@ void main() {
 
   test('delete more with enable_trigger=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -102,8 +100,7 @@ void main() {
 
   test('delete more with enable_trigger=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -124,8 +121,7 @@ void main() {
 
   test('delete more with withCount=true', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -146,8 +142,7 @@ void main() {
 
   test('delete more with withCount=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -168,8 +163,7 @@ void main() {
 
   test('delete more without withCount', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -225,8 +219,7 @@ void main() {
 
   test('findwithout withCount', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -244,8 +237,7 @@ void main() {
 
   test('findwithout with withCount=true', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);
@@ -263,8 +255,7 @@ void main() {
 
   test('findwithout with withCount=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query
       ..where(where)
       ..offset(0);

@@ -56,8 +56,7 @@ void main() {
 
   test('update more without enableTrigger', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
@@ -87,8 +86,7 @@ void main() {
 
   test('update more without enableTrigger=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
@@ -118,8 +116,7 @@ void main() {
 
   test('update more without enableTrigger=true', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
@@ -149,8 +146,7 @@ void main() {
 
   test('update more without withCount', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
@@ -180,8 +176,7 @@ void main() {
 
   test('update more with withCount=true', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
@@ -211,8 +206,7 @@ void main() {
 
   test('update more with withCount=false', () async {
     Query query = new Query();
-    Where where = new Where();
-    where.inList('price', randomNumArray);
+    Where where = Where.inList('price', randomNumArray);
     query.where(where);
     TableRecord record = product.getWithoutData(query: query);
     record.set('num', 123);
