@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:minapp/minapp.dart';
 
 import 'storage.dart';
@@ -7,40 +8,60 @@ import 'request.dart';
 import 'util.dart';
 import 'current_user.dart';
 
-class Auth {
-  static Future<String> getAuthToken() =>
-      storageAsync.get(StorageKey.authToken);
-
-  static String getAuthUrl(Map<String, dynamic> data,
-      [bool isLoginFunc = false]) {
-    if (data['email'] != null) {
-      return isLoginFunc ? Api.loginEmail : Api.registerEmail;
-    }
-    if (data['phone'] != null) {
-      return isLoginFunc ? Api.loginPhone : Api.registerPhone;
-    }
-
-    return isLoginFunc ? Api.loginUsername : Api.registerUsername;
+String _getAuthUrl(Map<String, dynamic> data, [bool isLoginFunc = false]) {
+  if (data['email'] != null) {
+    return isLoginFunc ? Api.loginEmail : Api.registerEmail;
+  }
+  if (data['phone'] != null) {
+    return isLoginFunc ? Api.loginPhone : Api.registerPhone;
   }
 
-  static Future<dynamic> login(Map<String, dynamic> data) async {
-    String url = getAuthUrl(data, true);
+  return isLoginFunc ? Api.loginUsername : Api.registerUsername;
+}
+
+class Auth {
+  static Future<String> getAuthToken() => storageAsync.get(StorageKey.authToken);
+
+  static Future<CurrentUser> login({@required String password, String phone, String username, String email}) async {
+    Map<String, String> data = {
+      'password': password
+    };
+
+    if (email != null) {
+      data.addAll({'email': email});
+    } else if (phone != null) {
+      data.addAll({'phone': phone});
+    } else {
+      data.addAll({'username': username});
+    }
+
+    String url = _getAuthUrl(data, true);
     var res = await request(
       path: url,
       method: 'POST',
       data: data,
     );
 
-    print('userid==>');
-    print(res.data['user_id']);
-
     await handleLoginSuccess(res);
 
-    return res.data;
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
   }
 
-  static Future<dynamic> register(Map<String, dynamic> data) async {
-    String url = getAuthUrl(data);
+  static Future<CurrentUser> register({@required String password, String phone, String username, String email}) async {
+    Map<String, String> data = {
+      'password': password
+    };
+
+    if (email != null) {
+      data.addAll({'email': email});
+    } else if (phone != null) {
+      data.addAll({'phone': phone});
+    } else {
+      data.addAll({'username': username});
+    }
+
+    String url = _getAuthUrl(data);
     Response res = await request(
       path: url,
       method: 'POST',
@@ -48,7 +69,8 @@ class Auth {
     );
     await handleLoginSuccess(res);
 
-    return res.data;
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
   }
 
   static Future<CurrentUser> getCurrentUser() async {
@@ -68,18 +90,16 @@ class Auth {
     return currentUser;
   }
 
-  static Future<dynamic> logout() async {
-    Response res = await request(
+  static Future<void> logout() async {
+    await request(
       path: Api.logout,
       method: 'POST',
       data: {}, // 不带 data 请求会 415
     );
     await clearSession();
-
-    return res.data;
   }
 
-  static Future<dynamic> loginWithSmsVerificationCode(
+  static Future<CurrentUser> loginWithSmsVerificationCode(
       String mobilePhone, String smsCode,
       {bool createUser = true}) async {
     Response res = await request(
@@ -94,14 +114,14 @@ class Auth {
 
     await handleLoginSuccess(res);
 
-    return res.data;
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
   }
 
-  static Future requestPasswordReset(String email) async {
-    var res = await request(path: Api.passwordReset, method: 'POST', data: {
+  static Future<void> requestPasswordReset(String email) async {
+    await request(path: Api.passwordReset, method: 'POST', data: {
       'email': email,
     });
-    return res.data;
   }
 
   static Future<CurrentUser> anonymousLogin() async {

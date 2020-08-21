@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart' as BaaS;
+import 'package:loading_overlay/loading_overlay.dart';
 
 import '../util.dart';
 import 'common.dart';
@@ -66,8 +67,10 @@ class _GetUserList extends State<GetUserList> {
       BaaS.Query query = BaaS.Query();
       query
         ..limit(limit ?? 20)
-        ..offset(offset ?? 0)
-        ..orderBy(orderBy);
+        ..offset(offset ?? 0);
+      if (orderBy != null) {
+        query.orderBy(orderBy);
+      }
 
       BaaS.UserList _userList = await BaaS.User.find(query: query);
 
@@ -185,7 +188,7 @@ class _GetUserList extends State<GetUserList> {
               height: 300.0,
               width: 300.0,
               child: ListView(
-                children: _userListBuilder(),
+                children: _userListBuilder() ?? [],
               )),
         ),
       ],
@@ -223,7 +226,7 @@ class _GetUser extends State<GetUser> {
         SectionTitle('user = "$userId"'),
         RaisedButton(
           child: Text('获取用户信息'),
-          onPressed: widget.userList.users.length > 0
+          onPressed: widget.userList != null && widget.userList.users.length > 0
               ? () async {
                   try {
                     String userId = widget.userList.users.length > 0
@@ -280,10 +283,11 @@ class _GetUser extends State<GetUser> {
           child: Text('更新当前用户信息 自定义字段'),
           onPressed: () async {
             try {
-              await user.updateUserInfo({
+              BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
+              await currentUser.updateUserInfo({
                 'age': 68,
               });
-              alert(context, user.get('age').toString());
+              alert(context, currentUser.get('age').toString());
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }

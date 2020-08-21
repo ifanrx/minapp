@@ -1,5 +1,3 @@
-import 'current_user.dart';
-
 import './user.dart';
 
 class UserList {
@@ -26,10 +24,10 @@ class UserList {
     _next = meta == null ? recordInfo['next'] : meta['next'];
     _previous = meta == null ? recordInfo['previous'] : meta['previous'];
     _users =
-    meta == null ? recordInfo['operation_result'] : initUsers(recordInfo['objects']);
+    meta == null ? recordInfo['operation_result'] : _initUsers(recordInfo['objects']);
   }
 
-  List<User> initUsers(List users) {
+  List<User> _initUsers(List users) {
     var userList = List<User>();
     users.forEach((user) {
       userList.add(User(user));

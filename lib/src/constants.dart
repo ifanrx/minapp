@@ -52,11 +52,11 @@ class Api {
   static const deleteFiles = '/hserve/v2.1/uploaded-file/';
 
   static const contentGroupList = '/hserve/v2.2/content/group/';
-  static const contentGroupDetail =
-      '/hserve/v2.2/content/group/:contentGroupID/';
+  static const contentGroupDetail = '/hserve/v2.2/content/group/:contentGroupID/';
   static const contentDetail = '/hserve/v2.0/content/detail/:richTextID/';
   static const contentList = '/hserve/v2.2/content/detail/';
-  static const contentCategoryDetail =
-      '/hserve/v2.0/content/category/:categoryID/';
+  static const contentCategoryDetail = '/hserve/v2.0/content/category/:categoryID/';
   static const contentCategoryList = '/hserve/v2.2/content/category/';
+  static const fileCategoryDetail = '/hserve/v1.3/file-category/:categoryID/';
+  static const fileCategoryList = '/hserve/v2.2/file-category/';
 }

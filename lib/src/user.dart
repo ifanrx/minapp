@@ -2,15 +2,45 @@ import 'package:dio/dio.dart';
 
 import 'query.dart';
 import 'request.dart';
-import 'current_user.dart';
 import 'constants.dart';
 import './user_record.dart';
 
-class User extends CurrentUser {
-  User(Map<String, dynamic> userInfo) : super(userInfo);
+class User {
+  Map<String, dynamic> _attribute;
+  bool _anonymous;
 
-  static Future<User> user(String userId,
-      {List<String> expand, List<String> select}) async {
+  User(Map<String, dynamic> userInfo) {
+    this._attribute = userInfo;
+    this._anonymous = _attribute['_anonymous'];
+  }
+
+  String get userId => _attribute['id'].toString();
+  String get username => _attribute['_username'];
+  String get avatar => _attribute['avatar'];
+  String get email => _attribute['_email'];
+  String get city => _attribute['city'];
+  String get country => _attribute['country'];
+  String get gender => _attribute['gender'];
+  String get language => _attribute['language'];
+  String get nickname => _attribute['nickname'];
+  String get openid => _attribute['openid'];
+  String get province => _attribute['province'];
+  bool get emailVerified => _attribute['_email_verified'];
+  bool get isAnonymous => _anonymous;
+
+  get(String key) {
+    return _attribute[key];
+  }
+
+  void updateInfo(Map<String, dynamic> userInfo) {
+    this._attribute = userInfo;
+  }
+
+  Map toJson() {
+    return _attribute;
+  }
+
+  static Future<User> user(String userId, {List<String> expand, List<String> select}) async {
     Map<String, dynamic> data = {};
 
     if (expand != null && expand.length > 0) {
@@ -34,7 +64,6 @@ class User extends CurrentUser {
     Map<String, dynamic> data = query?.get();
     if (data['where'] != null) {
       data.update('where', (value) => value.get());
-      print(data['where']);
     }
     Response res = await request(
       path: Api.userList,
