@@ -11,7 +11,6 @@ export 'src/user_record.dart';
 export 'src/base_record.dart';
 export 'src/table_object.dart';
 export 'src/table_record.dart';
-export 'src/current_user.dart';
 export 'src/invoke_function.dart';
 export 'src/query.dart';
 export 'src/geo_point.dart';

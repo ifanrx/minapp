@@ -1,12 +1,10 @@
 import 'package:example/pages/common.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
 
 class FilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Map obj = {1: 123, 'abc': 123};
     return Scaffold(
       appBar: AppBar(title: Text('文件')),
       body: SingleChildScrollView(
@@ -29,10 +27,13 @@ class FileListView extends StatefulWidget {
 }
 
 class _FileListView extends State<FileListView> {
-  List fileList = [];
+  CloudFileList fileList;
   List selectedFile = [];
-  String orderBy;
+  FileCategoryList categoryList;
+  String orderBy, currentCate, currentFileID, defaultCateID;
+  Map<String, dynamic> cateAll = {};
   int limit, offset;
+  int cateLimit, cateOffset;
   List<String> orderByList = [
     'name',
     '-name',
@@ -44,16 +45,38 @@ class _FileListView extends State<FileListView> {
 
   Future<void> fetchFileList() async {
     try {
+      Where where;
+      if (currentCate != null) {
+        where = Where.compare('id', '=', currentCate);
+      }
       Query query = Query();
       query
         ..limit(limit ?? 10)
-        ..offset(offset ?? 0)
-        ..orderBy(orderBy);
+        ..offset(offset ?? 0);
+      if (orderBy != null) {
+        query.orderBy(orderBy);
+      }
+      if (where != null) {
+        query.where(where);
+      }
 
-      List files = await FileManager.find(query);
+      CloudFileList files = await FileManager.find(query);
       setState(() {
         fileList = files;
+        currentFileID = fileList.files.length > 0 ? fileList.files[0].id : null;
         selectedFile.clear();
+      });
+    } on HError catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
+  Future<void> fetchCategoryList() async {
+    try {
+      FileCategoryList list = await FileManager.getCategoryList();
+      setState(() {
+        categoryList = list;
+        defaultCateID = categoryList?.fileCategories[0]?.id;
       });
     } on HError catch (e) {
       showSnackBar(e.toString(), context);
@@ -66,9 +89,9 @@ class _FileListView extends State<FileListView> {
       children: <Widget>[
         Flexible(
           child: CheckboxListTile(
-            value: selectedFile.contains(fileList[index]['id']),
+            value: selectedFile.contains(fileList.files[index].id),
             title: Text(
-              fileList[index]['name'],
+              fileList.files[index].name,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -77,11 +100,11 @@ class _FileListView extends State<FileListView> {
             onChanged: (isChecked) {
               if (isChecked) {
                 setState(() {
-                  selectedFile.add(fileList[index]['id']);
+                  selectedFile.add(fileList.files[index].id);
                 });
               } else {
                 setState(() {
-                  selectedFile.remove(fileList[index]['id']);
+                  selectedFile.remove(fileList.files[index].id);
                 });
               }
             },
@@ -90,7 +113,7 @@ class _FileListView extends State<FileListView> {
         GestureDetector(
           onTap: () async {
             try {
-              await FileManager.delete(fileList[index]['id']);
+              await FileManager.delete(fileList.files[index].id);
               showSnackBar('删除成功', context);
               fetchFileList();
             } on HError catch (e) {
@@ -107,6 +130,7 @@ class _FileListView extends State<FileListView> {
   void initState() {
     super.initState();
     fetchFileList();
+    fetchCategoryList();
   }
 
   _handleOrderByChange(v) {
@@ -116,21 +140,97 @@ class _FileListView extends State<FileListView> {
     fetchFileList();
   }
 
-  List<Widget> _orderByRadioList() {
-    return orderByList
-        .map((o) => RadioListTile<String>(
-              title: Text(o),
-              value: o,
-              groupValue: orderBy,
-              onChanged: _handleOrderByChange,
-            ))
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        SectionTitle('分类列表'),
+        Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Text(
+                  'limit',
+                  style: TextStyle(fontSize: 16),
+                ),
+                alignment: Alignment.topLeft,
+              ),
+              NumberInputWithIncrementDecrement(
+                width: 100,
+                alignment: Alignment.bottomLeft,
+                onChange: (v) {
+                  setState(() {
+                    cateLimit = v;
+                  });
+                  fetchFileList();
+                },
+              ),
+              Container(
+                child: Text(
+                  'offset',
+                  style: TextStyle(fontSize: 16),
+                ),
+                alignment: Alignment.topLeft,
+              ),
+              NumberInputWithIncrementDecrement(
+                width: 100,
+                alignment: Alignment.bottomLeft,
+                onChange: (v) {
+                  setState(() {
+                    cateOffset = v;
+                  });
+                  fetchFileList();
+                },
+              ),
+              Container(
+                height: 20.0,
+                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categoryList != null ? categoryList.fileCategories.length : 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      child: GestureDetector(
+                        child: Container(
+                          child: Text(
+                            categoryList.fileCategories[index].name,
+                            style: TextStyle(color: categoryList.fileCategories[index].id == currentCate ? Colors.red : Colors.black),
+                          ),
+                          padding: EdgeInsets.only(right: 5.0, left: 5.0),
+                          alignment: Alignment.topLeft,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              right: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                  style: BorderStyle.solid,
+                                )
+                              )
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            currentCate = categoryList.fileCategories[index].id;
+                          });
+                          fetchFileList();
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              RaisedButton(
+                child: Text('全部'),
+                onPressed: () {
+                  setState(() {
+                    currentCate = null;
+                  });
+                  fetchFileList();
+                },
+              )
+            ],
+          ),
+        ),
         SectionTitle('文件列表'),
         Wrap(
           spacing: 10.0,
@@ -152,6 +252,7 @@ class _FileListView extends State<FileListView> {
           ],
         ),
         Container(
+          alignment: Alignment.topLeft,
           child: Column(
             children: <Widget>[
               Container(
@@ -163,7 +264,20 @@ class _FileListView extends State<FileListView> {
               ),
               Wrap(
                 spacing: 10.0,
-                children: _orderByRadioList(),
+                direction: Axis.horizontal,
+                runSpacing: 10.0,
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                children: orderByList.map((o) => Container(
+                  width: 150.0,
+                  height: 50.0,
+                  child: RadioListTile<String>(
+                    title: Text(o),
+                    value: o,
+                    groupValue: orderBy,
+                    onChanged: _handleOrderByChange,
+                  ),
+                )).toList(),
               ),
             ],
           ),
@@ -220,11 +334,49 @@ class _FileListView extends State<FileListView> {
             height: 300.0,
             width: 350.0,
             child: ListView.separated(
-              itemCount: fileList.length,
+              itemCount: fileList == null ? 0 : fileList.files.length,
               itemBuilder: _listItemBuilder,
               separatorBuilder: (BuildContext context, int index) =>
                   Divider(color: Colors.grey),
             ),
+          ),
+        ),
+        Container(
+          child: Column(
+            children: currentFileID == null ? [] : <Widget>[
+              SectionTitle('获取文件详情'),
+              SectionTitle('record id = $currentFileID'),
+              RaisedButton(
+                child: Text('获取文件详情'),
+                onPressed: () async {
+                  try {
+                    CloudFile file = await FileManager.get(currentFileID);
+                    showSimpleDialog(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mimeType}');
+                  } on HError catch(e) {
+                    showSnackBar(e.toString(), context);
+                  }
+                },
+              )
+            ],
+          ),
+        ),
+        Container(
+          child: Column(
+            children: defaultCateID == null ? [] : <Widget>[
+              SectionTitle('文件分类'),
+              SectionTitle('cate id = $defaultCateID'),
+              RaisedButton(
+                child: Text('获取分类详情'),
+                onPressed: () async {
+                  try {
+                    FileCategory cate = await FileManager.getCategory(defaultCateID);
+                    alert(context, 'id: ${cate.id}, name: ${cate.name}, files: ${cate.files}');
+                  } on HError catch(e) {
+                    showSnackBar(e.toString(), context);
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ],
