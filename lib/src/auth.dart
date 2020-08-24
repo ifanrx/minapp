@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:minapp/minapp.dart';
 
 import 'storage.dart';
 import 'constants.dart';
 import 'request.dart';
 import 'util.dart';
-import 'current_user.dart';
+import 'user.dart';
+import 'h_error.dart';
 
 String _getAuthUrl(Map<String, dynamic> data, [bool isLoginFunc = false]) {
   if (data['email'] != null) {

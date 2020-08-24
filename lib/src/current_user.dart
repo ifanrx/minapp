@@ -1,9 +1,4 @@
-import 'package:dio/dio.dart';
-import 'package:minapp/src/constants.dart';
-import 'package:minapp/src/request.dart';
-
-import 'h_error.dart';
-import 'user.dart';
+part of "user.dart";
 
 class CurrentUser extends User {
   CurrentUser(Map<String, dynamic> attribute) : super(attribute);

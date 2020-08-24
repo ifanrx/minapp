@@ -3,7 +3,10 @@ import 'package:dio/dio.dart';
 import 'query.dart';
 import 'request.dart';
 import 'constants.dart';
-import './user_record.dart';
+import 'user_record.dart';
+import 'h_error.dart';
+
+part "current_user.dart";
 
 class User {
   Map<String, dynamic> _attribute;
@@ -74,3 +77,4 @@ class User {
     return UserList(res.data);
   }
 }
+
