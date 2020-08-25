@@ -136,8 +136,6 @@ class ContentGroup {
   Future<dynamic> getCategory(int categoryID) async {
     Where where = Where.compare('group_id', '=', _contentGroupID);
 
-    print(where.get());
-
     Response response = await request(
       path: Api.contentCategoryDetail,
       method: 'GET',

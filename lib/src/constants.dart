@@ -2,6 +2,15 @@ import 'package:minapp/src/content_group.dart';
 
 int queryLimitationDefault = 20;
 
+class UploadConfig {
+  static const uploadFileKey = 'file';
+  static const headerAuth = 'Authorization';
+  static const headerClient = 'X-Hydrogen-Client-ID';
+  static const headerAuthValue = 'Hydrogen-r1 ';
+  static const ua =
+      'Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30';
+}
+
 class StorageKey {
   static const authToken = 'auth_token';
   static const uid = 'uid';
@@ -62,4 +71,9 @@ class Api {
   static const fileCategoryDetail = '/hserve/v1.3/file-category/:categoryID/';
   static const fileCategoryList = '/hserve/v2.2/file-category/';
   static const upload = '/hserve/v2.1/upload/';
+  static const videoSnapshot = '/hserve/v1/media/video-snapshot/';
+  static const m3u8Concat = '/hserve/v1/media/m3u8-concat/';
+  static const m3u8Clip = '/hserve/v1/media/m3u8-clip/';
+  static const m3u8Meta = '/hserve/v1/media/m3u8-meta/';
+  static const videoAudioMeta = '/hserve/v1/media/audio-video-meta/';
 }

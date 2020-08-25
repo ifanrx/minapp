@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:example/pages/common.dart';
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
+import 'package:file_picker/file_picker.dart';
+import '../components/custom_button.dart';
 
 class FilePage extends StatelessWidget {
   @override
@@ -30,7 +33,7 @@ class _FileListView extends State<FileListView> {
   CloudFileList fileList;
   List selectedFile = [];
   FileCategoryList categoryList;
-  String orderBy, currentCate, currentFileID, defaultCateID;
+  String orderBy, currentCate, currentFileID, defaultCateID, currentCateName;
   Map<String, dynamic> cateAll = {};
   int limit, offset;
   int cateLimit, cateOffset;
@@ -140,10 +143,44 @@ class _FileListView extends State<FileListView> {
     fetchFileList();
   }
 
+  void uploadFileWithName() async {
+    try {
+      Map<String, dynamic> metaData = {
+        'categoryName': currentCateName,
+      };
+      File file = await FilePicker.getFile();
+      await FileManager.upload(file, metaData);
+      showSnackBar('文件上传成功', context);
+    } catch (e) {
+      showSnackBar('获取文件失败', context);
+    }
+  }
+
+  void uploadFileWithId() async {
+    try {
+      Map<String, dynamic> metaData = {
+        'categoryID': currentCate,
+      };
+      File file = await FilePicker.getFile();
+      await FileManager.upload(file, metaData);
+      showSnackBar('文件上传成功', context);
+    } catch (e) {
+      showSnackBar('获取文件失败', context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        CustomButton(
+          uploadFileWithName,
+          title: '上传文件(cate name)',
+        ),
+        CustomButton(
+          uploadFileWithId,
+          title: '上传文件(cate id)',
+        ),
         SectionTitle('分类列表'),
         Container(
           child: Column(
@@ -211,6 +248,8 @@ class _FileListView extends State<FileListView> {
                         onTap: () {
                           setState(() {
                             currentCate = categoryList.fileCategories[index].id;
+                            currentCateName =
+                                categoryList.fileCategories[index].name;
                           });
                           fetchFileList();
                         },

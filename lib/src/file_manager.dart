@@ -1,10 +1,11 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
-
 import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'file.dart';
 import 'h_error.dart';
+import 'upload.dart';
 
 class FileManager {
   static Future<CloudFile> get(String fileID) async {
@@ -71,5 +72,76 @@ class FileManager {
     );
 
     return FileCategoryList(res.data);
+  }
+
+  /// 上传文件
+  /// [fileParams] 文件参数
+  /// [metaData] 文件元信息
+  static Future<dynamic> upload(
+    File file, [
+    Map<String, dynamic> metaData,
+  ]) async {
+    var data = await uploadFile(file, metaData);
+    return data;
+  }
+
+  /// 生成视频截图
+  /// [params] params 参数
+  static Future<dynamic> genVideoSnapshot(Map<String, dynamic> params) async {
+    Response response = await request(
+      path: Api.videoSnapshot,
+      method: 'POST',
+      data: params,
+    );
+
+    return response.data;
+  }
+
+  /// M3U8 视频拼接
+  /// [params] params 参数
+  static Future<dynamic> videoConcat(Map<String, dynamic> params) async {
+    Response response = await request(
+      path: Api.m3u8Concat,
+      method: 'POST',
+      data: params,
+    );
+
+    return response.data;
+  }
+
+  /// M3U8 视频剪辑
+  /// [params] params 参数
+  static Future<dynamic> videoClip(Map<String, dynamic> params) async {
+    Response response = await request(
+      path: Api.m3u8Clip,
+      method: 'POST',
+      data: params,
+    );
+
+    return response.data;
+  }
+
+  /// M3U8 时长和分片信息。
+  /// [params] params 参数
+  static Future<dynamic> videoMeta(Map<String, dynamic> params) async {
+    Response response = await request(
+      path: Api.m3u8Meta,
+      method: 'POST',
+      data: params,
+    );
+
+    return response.data;
+  }
+
+  /// 音视频的元信息
+  /// [params] params 参数
+  static Future<dynamic> videoAudioMeta(Map<String, dynamic> params) async {
+    Response response = await request(
+      path: Api.videoAudioMeta,
+      method: 'POST',
+      data: params,
+    );
+
+    return response.data;
   }
 }

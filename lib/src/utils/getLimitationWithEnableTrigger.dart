@@ -1,8 +1,6 @@
 import '../constants.dart' as constants;
 
 getLimitationWithEnableTrigger(limit, enableTrigger) {
-  print('limit: $limit');
-  print('enableTrigger: $enableTrigger');
   // 设置了 limit，直接返回
   if (limit != null) {
     return limit;

@@ -26,6 +26,7 @@ dependencies:
   minapp:
     path: ../
   loading_overlay: ^0.2.1
+  file_picker: ^1.13.3
 
 
   # The following adds the Cupertino Icons font to your application.
