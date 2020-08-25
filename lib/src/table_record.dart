@@ -44,6 +44,8 @@ class TableRecord extends BaseRecord {
   }
 
   /// 更新数据记录
+  /// [enableTrigger] 是否触发触发器
+  /// [withCount] 是否返回 total_count
   Future<dynamic> update({
     bool enableTrigger = true,
     bool withCount = false,

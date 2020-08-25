@@ -295,7 +295,6 @@ class _SchemaQueryState extends State<SchemaQuery> {
   }
 
   void changeOrderBy(String value) {
-    print(value);
     setState(() {
       _orderBy = value;
     });

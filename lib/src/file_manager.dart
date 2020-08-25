@@ -77,7 +77,7 @@ class FileManager {
   /// 上传文件
   /// [fileParams] 文件参数
   /// [metaData] 文件元信息
-  static Future<dynamic> upload(
+  static Future<Map<String, dynamic>> upload(
     File file, [
     Map<String, dynamic> metaData,
   ]) async {
@@ -87,7 +87,7 @@ class FileManager {
 
   /// 生成视频截图
   /// [params] params 参数
-  static Future<dynamic> genVideoSnapshot(Map<String, dynamic> params) async {
+  static Future<Map<String, dynamic>> genVideoSnapshot(Map<String, dynamic> params) async {
     Response response = await request(
       path: Api.videoSnapshot,
       method: 'POST',
@@ -99,7 +99,7 @@ class FileManager {
 
   /// M3U8 视频拼接
   /// [params] params 参数
-  static Future<dynamic> videoConcat(Map<String, dynamic> params) async {
+  static Future<Map<String, dynamic>> videoConcat(Map<String, dynamic> params) async {
     Response response = await request(
       path: Api.m3u8Concat,
       method: 'POST',
@@ -111,7 +111,7 @@ class FileManager {
 
   /// M3U8 视频剪辑
   /// [params] params 参数
-  static Future<dynamic> videoClip(Map<String, dynamic> params) async {
+  static Future<Map<String, dynamic>> videoClip(Map<String, dynamic> params) async {
     Response response = await request(
       path: Api.m3u8Clip,
       method: 'POST',
@@ -123,7 +123,7 @@ class FileManager {
 
   /// M3U8 时长和分片信息。
   /// [params] params 参数
-  static Future<dynamic> videoMeta(Map<String, dynamic> params) async {
+  static Future<Map<String, dynamic>> videoMeta(Map<String, dynamic> params) async {
     Response response = await request(
       path: Api.m3u8Meta,
       method: 'POST',
@@ -135,7 +135,7 @@ class FileManager {
 
   /// 音视频的元信息
   /// [params] params 参数
-  static Future<dynamic> videoAudioMeta(Map<String, dynamic> params) async {
+  static Future<Map<String, dynamic>> videoAudioMeta(Map<String, dynamic> params) async {
     Response response = await request(
       path: Api.videoAudioMeta,
       method: 'POST',

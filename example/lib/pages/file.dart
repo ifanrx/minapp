@@ -85,6 +85,31 @@ class _FileListView extends State<FileListView> {
       showSnackBar(e.toString(), context);
     }
   }
+  void uploadFileWithName() async {
+    try {
+      Map<String, dynamic> metaData = {
+        'categoryName': currentCateName,
+      };
+      File file = await FilePicker.getFile();
+      await FileManager.upload(file, metaData);
+      showSnackBar('文件上传成功', context);
+    } catch (e) {
+      showSnackBar('获取文件失败', context);
+    }
+  }
+
+  void uploadFileWithId() async {
+    try {
+      Map<String, dynamic> metaData = {
+        'categoryID': currentCate,
+      };
+      File file = await FilePicker.getFile();
+      await FileManager.upload(file, metaData);
+      showSnackBar('文件上传成功', context);
+    } catch (e) {
+      showSnackBar('获取文件失败', context);
+    }
+  }
 
   Widget _listItemBuilder(BuildContext context, int index) {
     return Row(
@@ -143,31 +168,6 @@ class _FileListView extends State<FileListView> {
     fetchFileList();
   }
 
-  void uploadFileWithName() async {
-    try {
-      Map<String, dynamic> metaData = {
-        'categoryName': currentCateName,
-      };
-      File file = await FilePicker.getFile();
-      await FileManager.upload(file, metaData);
-      showSnackBar('文件上传成功', context);
-    } catch (e) {
-      showSnackBar('获取文件失败', context);
-    }
-  }
-
-  void uploadFileWithId() async {
-    try {
-      Map<String, dynamic> metaData = {
-        'categoryID': currentCate,
-      };
-      File file = await FilePicker.getFile();
-      await FileManager.upload(file, metaData);
-      showSnackBar('文件上传成功', context);
-    } catch (e) {
-      showSnackBar('获取文件失败', context);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
