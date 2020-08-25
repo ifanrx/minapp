@@ -16,7 +16,7 @@ class ContentGroup {
   /// [withCount] 是否返回 total_count
   /// [offset] 偏移量
   /// [limit] 最大返回条数
-  static Future<dynamic> find({
+  static Future<Map<String, dynamic>> find({
     bool withCount = true,
     int offset = 0,
     int limit = 20,
@@ -36,7 +36,7 @@ class ContentGroup {
 
   /// 获取内容库详情
   /// [contentGroupID] 内容库 ID
-  static Future<dynamic> get(int contentGroupID) async {
+  static Future<Map<String, dynamic>> get(int contentGroupID) async {
     Response response = await request(
       path: Api.contentGroupDetail,
       method: 'GET',
@@ -48,7 +48,11 @@ class ContentGroup {
     return response.data;
   }
 
-  Future<dynamic> getContent(
+  /// 获取内容
+  /// [richTextID] 内容 ID
+  /// [select] 筛选字段
+  /// [expand] 扩展字段
+  Future<Map<String, dynamic>> getContent(
     int richTextID, {
     dynamic select,
     dynamic expand,
@@ -88,7 +92,7 @@ class ContentGroup {
   /// 获取内容库列表
   /// [query] 查询条件
   /// [withCount] 是否返回 total_count
-  Future<dynamic> query({
+  Future<Map<String, dynamic>> query({
     Query query,
     bool withCount = false,
   }) async {
@@ -125,7 +129,7 @@ class ContentGroup {
   Future<int> count({Query query}) async {
     query = query != null ? query : new Query();
     query.limit(1);
-    var data = await this.query(query: query, withCount: true);
+    Map<String, dynamic> data = await this.query(query: query, withCount: true);
 
     int count = data['meta']['total_count'];
     return count;
@@ -133,7 +137,7 @@ class ContentGroup {
 
   /// 获取分类详情
   /// [categoryID] 分类 ID
-  Future<dynamic> getCategory(int categoryID) async {
+  Future<Map<String, dynamic>> getCategory(int categoryID) async {
     Where where = Where.compare('group_id', '=', _contentGroupID);
 
     Response response = await request(
@@ -150,8 +154,8 @@ class ContentGroup {
     return response.data;
   }
 
-  /// 获取分类详情
-  Future<dynamic> getCategoryList({bool withCount = false}) async {
+  /// 获取内容分类列表
+  Future<Map<String, dynamic>> getCategoryList({bool withCount = false}) async {
     Response response = await request(
       path: Api.contentCategoryList,
       method: 'GET',

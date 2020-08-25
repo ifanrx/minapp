@@ -121,7 +121,7 @@ class FileManager {
     return response.data;
   }
 
-  /// M3U8 时长和分片信息。
+  /// M3U8 时长和分片信息
   /// [params] params 参数
   static Future<Map<String, dynamic>> videoMeta(Map<String, dynamic> params) async {
     Response response = await request(
