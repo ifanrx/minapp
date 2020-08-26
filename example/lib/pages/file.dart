@@ -48,10 +48,6 @@ class _FileListView extends State<FileListView> {
 
   Future<void> fetchFileList() async {
     try {
-      Where where;
-      if (currentCate != null) {
-        where = Where.compare('id', '=', currentCate);
-      }
       Query query = Query();
       query
         ..limit(limit ?? 10)
@@ -59,7 +55,8 @@ class _FileListView extends State<FileListView> {
       if (orderBy != null) {
         query.orderBy(orderBy);
       }
-      if (where != null) {
+      if (currentCate != null) {
+        Where where = Where.compare(CloudFileList.QUERY_CATEGORY_ID, '=', currentCate);
         query.where(where);
       }
 
@@ -390,7 +387,7 @@ class _FileListView extends State<FileListView> {
                 onPressed: () async {
                   try {
                     CloudFile file = await FileManager.get(currentFileID);
-                    showSimpleDialog(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mimeType}');
+                    alert(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mimeType}');
                   } on HError catch(e) {
                     showSnackBar(e.toString(), context);
                   }
@@ -410,6 +407,19 @@ class _FileListView extends State<FileListView> {
                   try {
                     FileCategory cate = await FileManager.getCategory(defaultCateID);
                     alert(context, 'id: ${cate.id}, name: ${cate.name}, files: ${cate.files}');
+                  } on HError catch(e) {
+                    showSnackBar(e.toString(), context);
+                  }
+                },
+              ),
+              RaisedButton(
+                child: Text('获取分类下所有文件'),
+                onPressed: () async {
+                  try {
+                    Where where = Where.compare(CloudFileList.QUERY_CATEGORY_ID, '=', currentCate);
+                    Query query = Query()..where(where);
+                    CloudFileList files = await FileManager.find(query);
+                    alert(context, files.files.length.toString());
                   } on HError catch(e) {
                     showSnackBar(e.toString(), context);
                   }

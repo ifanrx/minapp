@@ -23,8 +23,7 @@ class UserList {
     meta == null ? recordInfo['total_count'] : meta['total_count'];
     _next = meta == null ? recordInfo['next'] : meta['next'];
     _previous = meta == null ? recordInfo['previous'] : meta['previous'];
-    _users =
-    meta == null ? recordInfo['operation_result'] : _initUsers(recordInfo['objects']);
+    _users = _initUsers(recordInfo['objects']);
   }
 
   List<User> _initUsers(List users) {

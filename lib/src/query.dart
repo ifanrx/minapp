@@ -5,12 +5,12 @@ class Query {
   int _offset, _limit;
   dynamic _orderBy;
   List<String> _keys, _expand;
+  bool _returnTotalCount;
   Where _where;
 
   Query() {
     _initQueryParams();
   }
-  bool _returnTotalCount;
 
   void _initQueryParams() {
     _limit = null;
@@ -85,8 +85,9 @@ class Query {
 
     if (_where != null) data.addAll({'where': _where});
 
-    if (_returnTotalCount != null)
+    if (_returnTotalCount != null) {
       data.addAll({'return_total_count': _returnTotalCount == true ? 1 : 0});
+    }
 
     return data;
   }

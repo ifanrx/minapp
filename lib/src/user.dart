@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'query.dart';
 import 'request.dart';
 import 'constants.dart';
-import 'user_record.dart';
+import 'user_list.dart';
 import 'h_error.dart';
 
 part "current_user.dart";
@@ -23,20 +23,16 @@ class User {
   String get email => _attribute['_email'];
   String get city => _attribute['city'];
   String get country => _attribute['country'];
-  String get gender => _attribute['gender'];
   String get language => _attribute['language'];
   String get nickname => _attribute['nickname'];
   String get openid => _attribute['openid'];
   String get province => _attribute['province'];
+  int get gender => _attribute['gender'];
   bool get emailVerified => _attribute['_email_verified'];
   bool get isAnonymous => _anonymous;
 
   get(String key) {
     return _attribute[key];
-  }
-
-  void updateInfo(Map<String, dynamic> userInfo) {
-    this._attribute = userInfo;
   }
 
   Map toJson() {

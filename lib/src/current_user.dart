@@ -10,7 +10,7 @@ class CurrentUser extends User {
       data: userInfo,
     );
 
-    this.updateInfo(res.data);
+    this._attribute = res.data;
   }
 
   Future<void> updatePassword(String password, String newPassword) async {
@@ -36,7 +36,7 @@ class CurrentUser extends User {
       }
     );
 
-    this.updateInfo(res.data);
+    this._attribute = res.data;
 
     if (sendVerificationEmail) {
       this.requestEmailVerification();
@@ -55,7 +55,7 @@ class CurrentUser extends User {
         }
       );
 
-      this.updateInfo(res.data);
+      this._attribute = res.data;
     }
   }
 
@@ -88,7 +88,7 @@ class CurrentUser extends User {
       );
 
 
-      this.updateInfo(res.data);
+      this._attribute = res.data;
     }
   }
 
@@ -101,7 +101,7 @@ class CurrentUser extends User {
       }
     );
 
-    this.updateInfo(res.data);
+    this._attribute = res.data;
   }
 
   Future<void> verifyMobilePhone(String code) async {

@@ -22,28 +22,27 @@ class RecordListBase {
 }
 
 class CloudFile {
-  final Map<String, dynamic> file;
+  final Map<String, dynamic> _file;
 
-  CloudFile(this.file);
+  CloudFile(this._file);
 
-  String get id => file['id'];
-  String get name => file['name'];
-  String get mimeType => file['mimeType'];
-  String get path => file['path'];
-  String get cdnPath => file['cdn_path'];
-  String get category => file['category'];
-  int get size => file['size'];
-  int get createdAt => file['created_at'];
+  String get id => _file['id'];
+  String get name => _file['name'];
+  String get mimeType => _file['mime_type'];
+  String get path => _file['path'];
+  String get cdnPath => _file['cdn_path'];
+  Map<String, String> get category => _file['category'] != null ? Map<String, String>.from(_file['category']) : _file['category'];
+  int get size => _file['size'];
+  int get createdAt => _file['created_at'];
 }
 
 class CloudFileList extends RecordListBase {
   List _files;
 
-  List get files => _files;
+  List<CloudFile> get files => _files;
 
   CloudFileList(Map<String, dynamic> recordInfo) : super(recordInfo) {
-    Map<String, dynamic> meta = recordInfo['meta'];
-    _files = meta == null ? recordInfo['operation_result'] : _initFiles(recordInfo['objects']);
+    _files = _initFiles(recordInfo['objects']);
   }
 
   List<CloudFile> _initFiles(List files) {
@@ -54,6 +53,8 @@ class CloudFileList extends RecordListBase {
 
     return fileList;
   }
+
+  static const String QUERY_CATEGORY_ID = 'category_id';
 }
 
 class FileCategory {
@@ -63,7 +64,7 @@ class FileCategory {
   String get name => category['name'];
   int get files => category['files'];
   int get createdAt => category['created_at'];
-  int get updatedAt => category['updatedAt'];
+  int get updatedAt => category['updated_at'];
 
   FileCategory(this.category);
 }
@@ -74,8 +75,7 @@ class FileCategoryList extends RecordListBase {
   List get fileCategories => _categories;
 
   FileCategoryList(Map<String, dynamic> recordInfo) : super(recordInfo) {
-    Map<String, dynamic> meta = recordInfo['meta'];
-    _categories = meta == null ? recordInfo['operation_result'] : _initCategories(recordInfo['objects']);
+    _categories = _initCategories(recordInfo['objects']);
   }
 
   List<FileCategory> _initCategories(List categories) {
