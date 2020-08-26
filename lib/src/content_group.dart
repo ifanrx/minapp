@@ -7,16 +7,22 @@ import 'where.dart';
 
 class ContentGroup {
   int _contentGroupID;
+  Map<String, dynamic> _data = {};
 
   ContentGroup(int contentGroupID) {
     _contentGroupID = contentGroupID;
   }
 
+  ContentGroup.withInfo(this._data); // 获取内容库详情
+
+  int get id => _data['id'];
+  String get name => _data['name'];
+
   /// 获取内容库列表
   /// [withCount] 是否返回 total_count
   /// [offset] 偏移量
   /// [limit] 最大返回条数
-  static Future<Map<String, dynamic>> find({
+  static Future<ContentList> find({
     bool withCount = true,
     int offset = 0,
     int limit = 20,
@@ -31,12 +37,12 @@ class ContentGroup {
       },
     );
 
-    return response.data;
+    return ContentList(response.data);
   }
 
   /// 获取内容库详情
   /// [contentGroupID] 内容库 ID
-  static Future<Map<String, dynamic>> get(int contentGroupID) async {
+  static Future<ContentGroup> get(int contentGroupID) async {
     Response response = await request(
       path: Api.contentGroupDetail,
       method: 'GET',
@@ -45,14 +51,14 @@ class ContentGroup {
       },
     );
 
-    return response.data;
+    return ContentGroup.withInfo(response.data);
   }
 
   /// 获取内容
   /// [richTextID] 内容 ID
   /// [select] 筛选字段
   /// [expand] 扩展字段
-  Future<Map<String, dynamic>> getContent(
+  Future<Content> getContent(
     int richTextID, {
     dynamic select,
     dynamic expand,
@@ -86,7 +92,7 @@ class ContentGroup {
       data: data,
     );
 
-    return response.data;
+    return Content(response.data);
   }
 
   /// 获取内容库列表
@@ -137,7 +143,7 @@ class ContentGroup {
 
   /// 获取分类详情
   /// [categoryID] 分类 ID
-  Future<Map<String, dynamic>> getCategory(int categoryID) async {
+  Future<ContentCategory> getCategory(int categoryID) async {
     Where where = Where.compare('group_id', '=', _contentGroupID);
 
     Response response = await request(
@@ -151,11 +157,11 @@ class ContentGroup {
       },
     );
 
-    return response.data;
+    return ContentCategory(response.data);
   }
 
   /// 获取内容分类列表
-  Future<Map<String, dynamic>> getCategoryList({bool withCount = false}) async {
+  Future<ContentCategoryList> getCategoryList({bool withCount = false}) async {
     Response response = await request(
       path: Api.contentCategoryList,
       method: 'GET',
@@ -166,6 +172,59 @@ class ContentGroup {
       },
     );
 
-    return response.data;
+    return ContentCategoryList(response.data);
   }
+}
+
+class Content {
+  Map<String, dynamic> _data;
+
+  Content(this._data);
+
+  List<int> get categories => _data['categories'];
+  String get content => _data['content'];
+  String get cover => _data['cover'];
+  int get created_at => _data['created_at'];
+  int get created_by => _data['created_by'];
+  String get description => _data['description'];
+  int get group_id => _data['group_id'];
+  int get id => _data['id'];
+  String get title => _data['title'];
+  int get update_at => _data['update_at'];
+  int get visit_count => _data['visit_count'];
+}
+
+class ContentList {
+  Map<String, dynamic> _data;
+  ContentList(this._data);
+
+  int get limit => _data['meta']['limit'];
+  int get offset => _data['meta']['offset'];
+  int get totalCount => _data['meta']['total_count'];
+  String get next => _data['meta']['next'];
+  String get revious => _data['meta']['previous'];
+  List get contents => _data['objects'];
+}
+
+
+class ContentCategory {
+  Map<String, dynamic> _data;
+  ContentCategory(this._data);
+
+  List get children => _data['children'];
+  bool get have_children => _data['have_children'];
+  int get id => _data['id'];
+  String get name => _data['name'];
+}
+
+class ContentCategoryList {
+  Map<String, dynamic> _data;
+  ContentCategoryList(this._data);
+
+  int get limit => _data['meta']['limit'];
+  int get offset => _data['meta']['offset'];
+  int get totalCount => _data['meta']['total_count'];
+  String get next => _data['meta']['next'];
+  String get revious => _data['meta']['previous'];
+  List get contents => _data['objects'];
 }

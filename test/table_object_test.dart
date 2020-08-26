@@ -16,10 +16,10 @@ void main() {
   setUpAll(() async {
     init('a4d2d62965ddb57fa4d6');
 
-    await Auth.login({
-      'email': loginInfo.email,
-      'password': loginInfo.password,
-    });
+    await Auth.login(
+      email: loginInfo.email,
+      password: loginInfo.password,
+    );
 
     randomNumArray = genRandomNumbers(100, 3);
   });

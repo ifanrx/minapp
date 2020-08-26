@@ -40,7 +40,7 @@ class _ContentPageState extends State<ContentPage> {
     try {
       var data = await contentGroup.getCategoryList();
       setState(() {
-        categoryList.addAll(data['objects']);
+        categoryList.addAll(data.contents);
       });
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -131,7 +131,7 @@ class _ContentPageState extends State<ContentPage> {
           select: withConfig ? ['title', 'pointer_test_order'] : '',
         );
 
-        alert(context, '查询成功 - $data');
+        alert(context, '查询成功 - ${data.title}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
       }
@@ -146,7 +146,8 @@ class _ContentPageState extends State<ContentPage> {
 
     try {
       var data = await contentGroup.getCategory(categoryList[1]['id']);
-      alert(context, '查询成功 - $data');
+      alert(context,
+          '查询成功 - children: ${data.children}, have_children: ${data.have_children}, name: ${data.name}, id: ${data.id}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -171,7 +172,7 @@ class _ContentPageState extends State<ContentPage> {
     showLoading(true);
     try {
       var data = await ContentGroup.get(groupId);
-      alert(context, '查询成功 - $data');
+      alert(context, '查询成功 - id: ${data.id}, name: ${data.name}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -183,7 +184,7 @@ class _ContentPageState extends State<ContentPage> {
     showLoading(true);
     try {
       var data = await ContentGroup.find();
-      alert(context, '查询成功 - $data');
+      alert(context, '查询成功 - ${data.contents}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
