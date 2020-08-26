@@ -56,7 +56,7 @@ class _FileListView extends State<FileListView> {
         query.orderBy(orderBy);
       }
       if (currentCate != null) {
-        Where where = Where.compare(CloudFileList.QUERY_CATEGORY_ID, '=', currentCate);
+        Where where = Where.compare(CloudFile.QUERY_CATEGORY_ID, '=', currentCate);
         query.where(where);
       }
 
@@ -416,7 +416,7 @@ class _FileListView extends State<FileListView> {
                 child: Text('获取分类下所有文件'),
                 onPressed: () async {
                   try {
-                    Where where = Where.compare(CloudFileList.QUERY_CATEGORY_ID, '=', currentCate);
+                    Where where = Where.compare(CloudFile.QUERY_CATEGORY_ID, '=', currentCate);
                     Query query = Query()..where(where);
                     CloudFileList files = await FileManager.find(query);
                     alert(context, files.files.length.toString());

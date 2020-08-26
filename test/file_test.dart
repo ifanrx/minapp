@@ -71,7 +71,7 @@ void main() {
     expect(cloudFile.name, FILE_NAME);
     expect(cloudFile.path, PATH);
     expect(cloudFile.cdnPath, CDN_PATH);
-    expect(cloudFile.category, equals(CATEGORY));
+    expect(cloudFile.category.runtimeType, FileCategory);
     expect(cloudFile.size, SIZE);
     expect(cloudFile.createdAt, FILE_CREATED_AT);
   });
