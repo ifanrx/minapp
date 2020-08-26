@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'request.dart';
 import 'constants.dart';
+import 'file.dart';
 
 /// 获取上传文件配置信息
 /// [fileName] 文件名
@@ -72,5 +73,5 @@ Future<dynamic> uploadFile(
     'cdn_path': data['url'],
     'size': data['file_size'],
   };
-  return result;
+  return CloudFile(result);
 }

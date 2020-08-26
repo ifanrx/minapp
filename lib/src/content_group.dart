@@ -98,7 +98,7 @@ class ContentGroup {
   /// 获取内容库列表
   /// [query] 查询条件
   /// [withCount] 是否返回 total_count
-  Future<Map<String, dynamic>> query({
+  Future<ContentList> query({
     Query query,
     bool withCount = false,
   }) async {
@@ -127,7 +127,7 @@ class ContentGroup {
       data: data,
     );
 
-    return response.data;
+    return ContentList(response.data);
   }
 
   /// 获取数据记录数量
@@ -135,9 +135,9 @@ class ContentGroup {
   Future<int> count({Query query}) async {
     query = query != null ? query : new Query();
     query.limit(1);
-    Map<String, dynamic> data = await this.query(query: query, withCount: true);
+    ContentList data = await this.query(query: query, withCount: true);
 
-    int count = data['meta']['total_count'];
+    int count = data.totalCount;
     return count;
   }
 
@@ -176,6 +176,7 @@ class ContentGroup {
   }
 }
 
+// 内容详情 get content 使用
 class Content {
   Map<String, dynamic> _data;
 
@@ -184,16 +185,17 @@ class Content {
   List<int> get categories => _data['categories'];
   String get content => _data['content'];
   String get cover => _data['cover'];
-  int get created_at => _data['created_at'];
-  int get created_by => _data['created_by'];
+  int get createdAt => _data['created_at'];
+  int get createdBy => _data['created_by'];
   String get description => _data['description'];
-  int get group_id => _data['group_id'];
+  int get groupId => _data['group_id'];
   int get id => _data['id'];
   String get title => _data['title'];
-  int get update_at => _data['update_at'];
-  int get visit_count => _data['visit_count'];
+  int get updateAt => _data['update_at'];
+  int get visitCount => _data['visit_count'];
 }
 
+// 内容库列表
 class ContentList {
   Map<String, dynamic> _data;
   ContentList(this._data);
@@ -206,25 +208,18 @@ class ContentList {
   List get contents => _data['objects'];
 }
 
-
+//
 class ContentCategory {
   Map<String, dynamic> _data;
   ContentCategory(this._data);
 
   List get children => _data['children'];
-  bool get have_children => _data['have_children'];
+  bool get haveChildren => _data['have_children'];
   int get id => _data['id'];
   String get name => _data['name'];
 }
 
-class ContentCategoryList {
+class ContentCategoryList extends ContentList {
   Map<String, dynamic> _data;
-  ContentCategoryList(this._data);
-
-  int get limit => _data['meta']['limit'];
-  int get offset => _data['meta']['offset'];
-  int get totalCount => _data['meta']['total_count'];
-  String get next => _data['meta']['next'];
-  String get revious => _data['meta']['previous'];
-  List get contents => _data['objects'];
+  ContentCategoryList(this._data):super(_data);
 }

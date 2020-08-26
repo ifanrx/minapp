@@ -78,11 +78,11 @@ class FileManager {
   /// 上传文件
   /// [fileParams] 文件参数
   /// [metaData] 文件元信息
-  static Future<Map<String, dynamic>> upload(
+  static Future<CloudFile> upload(
     File file, [
     Map<String, dynamic> metaData,
   ]) async {
-    var data = await uploadFile(file, metaData);
+    CloudFile data = await uploadFile(file, metaData);
     return data;
   }
 
