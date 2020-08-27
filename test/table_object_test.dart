@@ -12,6 +12,7 @@ void main() {
   List<num> randomNumArray;
   String tableName = 'jiajun_test';
   String recordId = '5f3631bb6526327bfa037ae8';
+  String id = '104192';
 
   setUpAll(() async {
     init('a4d2d62965ddb57fa4d6');
@@ -26,6 +27,20 @@ void main() {
 
   setUp(() {
     product = new TableObject(tableName);
+  });
+
+  test('with id', () async {
+    TableObject productWithId = new TableObject.withId(id);
+    List<Map<String, dynamic>> data = [
+      {'num': 123}
+    ];
+
+    await productWithId.createMany(data);
+    print(requestConfig['params']);
+    expect(
+      requestConfig['params']['tableID'],
+      equals(id),
+    );
   });
 
   test('createMany', () async {
