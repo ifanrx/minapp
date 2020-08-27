@@ -176,7 +176,7 @@ class ContentGroup {
   }
 }
 
-// 内容详情 get content 使用
+// 内容详情
 class Content {
   Map<String, dynamic> _data;
 
@@ -191,7 +191,7 @@ class Content {
   int get groupId => _data['group_id'];
   int get id => _data['id'];
   String get title => _data['title'];
-  int get updateAt => _data['update_at'];
+  int get updatedAt => _data['updated_at'];
   int get visitCount => _data['visit_count'];
 }
 
@@ -204,11 +204,11 @@ class ContentList {
   int get offset => _data['meta']['offset'];
   int get totalCount => _data['meta']['total_count'];
   String get next => _data['meta']['next'];
-  String get revious => _data['meta']['previous'];
+  String get previous => _data['meta']['previous'];
   List get contents => _data['objects'];
 }
 
-//
+// 内容分类
 class ContentCategory {
   Map<String, dynamic> _data;
   ContentCategory(this._data);
@@ -219,7 +219,15 @@ class ContentCategory {
   String get name => _data['name'];
 }
 
-class ContentCategoryList extends ContentList {
+// 内容分类列表
+class ContentCategoryList {
   Map<String, dynamic> _data;
-  ContentCategoryList(this._data):super(_data);
+  ContentCategoryList(this._data);
+
+  int get limit => _data['meta']['limit'];
+  int get offset => _data['meta']['offset'];
+  int get totalCount => _data['meta']['total_count'];
+  String get next => _data['meta']['next'];
+  String get previous => _data['meta']['previous'];
+  List get contents => _data['objects'];
 }
