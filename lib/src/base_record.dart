@@ -12,6 +12,7 @@ class BaseRecord {
   Map<String, dynamic> _createdBy;
   int _createdAt;
   int _updatedAt;
+  Map<String, dynamic> _recordInfo;
 
   BaseRecord() {
     recordValueInit();
@@ -28,6 +29,7 @@ class BaseRecord {
         recordInfo['created_by'] is Map ? recordInfo['created_by'] : null;
     _createdAt = recordInfo['created_at'];
     _updatedAt = recordInfo['updated_at'];
+    _recordInfo = recordInfo;
     recordValueInit();
   }
 
@@ -37,6 +39,7 @@ class BaseRecord {
   Map<String, dynamic> get createdBy => _createdBy;
   int get createdAt => _createdAt;
   int get updatedAt => _updatedAt;
+  Map<String, dynamic> get recordInfo => _recordInfo;
 
   void recordValueInit() {
     _record = {

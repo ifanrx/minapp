@@ -220,14 +220,7 @@ class ContentCategory {
 }
 
 // 内容分类列表
-class ContentCategoryList {
+class ContentCategoryList extends ContentList{
   Map<String, dynamic> _data;
-  ContentCategoryList(this._data);
-
-  int get limit => _data['meta']['limit'];
-  int get offset => _data['meta']['offset'];
-  int get totalCount => _data['meta']['total_count'];
-  String get next => _data['meta']['next'];
-  String get previous => _data['meta']['previous'];
-  List get contents => _data['objects'];
+  ContentCategoryList(this._data): super(_data);
 }

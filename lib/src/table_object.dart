@@ -12,7 +12,6 @@ class TableObject {
   String _tableName;
   String _tableId;
 
-
   /// 构造函数，接收数据表名的参数（[String] 类型）
   TableObject(String tableName) {
     _tableName = tableName;
@@ -42,7 +41,10 @@ class TableObject {
     Response response = await request(
       path: Api.createRecordList,
       method: 'POST',
-      params: {'tableID': _tableName ?? _tableId, 'enable_trigger': enableTrigger ? 1 : 0},
+      params: {
+        'tableID': _tableName ?? _tableId,
+        'enable_trigger': enableTrigger ? 1 : 0
+      },
       data: records,
     );
 

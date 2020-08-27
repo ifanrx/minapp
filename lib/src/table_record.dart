@@ -10,7 +10,6 @@ class TableRecord extends BaseRecord {
   String _tableName;
   String _recordId;
   Query _query;
-  Map<String, dynamic> _recordInfo;
 
   TableRecord(String tableName, {String recordId, Query query}) {
     _tableName = tableName;
@@ -20,12 +19,9 @@ class TableRecord extends BaseRecord {
 
   /// 接收服务端返回的数据
   TableRecord.withInfo(Map<String, dynamic> recordInfo)
-      : super.withInfo(recordInfo) {
-    _recordInfo = recordInfo;
-  }
+      : super.withInfo(recordInfo);
 
   String get recordId => _recordId;
-  Map<String, dynamic> get recordInfo => _recordInfo;
 
   /// 保存数据记录
   Future<TableRecord> save() async {
