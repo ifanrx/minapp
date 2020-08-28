@@ -18,9 +18,6 @@ class FileManager {
     Map<String, dynamic> data;
     if (query != null) {
       data = query.get();
-      if (data['where'] != null) {
-        data.update('where', (value) => value.get());
-      }
     }
     Response res = await request(
       path: Api.fileList,
@@ -61,9 +58,6 @@ class FileManager {
 
     if (query != null) {
       data = query.get();
-      if (data['where'] != null) {
-        data.update('where', (value) => value.get());
-      }
     }
 
     Response res = await request(

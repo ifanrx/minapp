@@ -83,7 +83,7 @@ class Query {
 
     if (_keys != null) data.addAll({'keys': _keys.join(',')});
 
-    if (_where != null) data.addAll({'where': _where});
+    if (_where != null) data.addAll({'where': _where.get()});
 
     if (_returnTotalCount != null) {
       data.addAll({'return_total_count': _returnTotalCount == true ? 1 : 0});

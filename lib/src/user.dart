@@ -61,9 +61,7 @@ class User {
 
   static Future<UserList> find({Query query}) async {
     Map<String, dynamic> data = query?.get();
-    if (data['where'] != null) {
-      data.update('where', (value) => value.get());
-    }
+
     Response res = await request(
       path: Api.userList,
       method: 'GET',

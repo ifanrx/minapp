@@ -62,16 +62,6 @@ class TableRecord extends BaseRecord {
     } else {
       Map<String, dynamic> queryData = _query.get();
 
-      queryData.forEach((key, value) {
-        if (value != null) {
-          if (value is Where) {
-            queryData[key] = value.get();
-          } else {
-            queryData[key] = value;
-          }
-        }
-      });
-
       Response response = await request(
         path: Api.updateRecordList,
         method: 'PUT',

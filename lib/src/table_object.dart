@@ -88,16 +88,6 @@ class TableObject {
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
 
-      queryData.forEach((key, value) {
-        if (value != null) {
-          if (value is Where) {
-            queryData[key] = value.get();
-          } else {
-            queryData[key] = value;
-          }
-        }
-      });
-
       Response response = await request(
         path: Api.deleteRecordList,
         method: 'DELETE',
@@ -163,22 +153,8 @@ class TableObject {
     dynamic select,
     dynamic expand,
   }) async {
-    Map<String, dynamic> data = {
-      'return_total_count': withCount ? 1 : 0,
-    };
-
-    if (query != null) {
-      Map<String, dynamic> queryData = query.get();
-      queryData.forEach((key, value) {
-        if (value != null) {
-          if (value is Where) {
-            data[key] = value.get();
-          } else {
-            data[key] = value;
-          }
-        }
-      });
-    }
+    Map<String, dynamic> data = query == null ? {} : query.get();
+    data['return_total_count'] = withCount ? 1 : 0;
 
     Response response = await request(
       path: Api.queryRecordList,
