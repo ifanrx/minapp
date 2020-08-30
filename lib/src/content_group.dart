@@ -4,6 +4,7 @@ import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'where.dart';
+import 'table_record.dart';
 
 class ContentGroup {
   int _contentGroupID;
@@ -181,15 +182,10 @@ class Content {
 }
 
 // 内容库列表
-class ContentList {
+class ContentList extends RecordListBase {
   Map<String, dynamic> _data;
-  ContentList(this._data);
+  ContentList(this._data): super(_data);
 
-  int get limit => _data['meta']['limit'];
-  int get offset => _data['meta']['offset'];
-  int get totalCount => _data['meta']['total_count'];
-  String get next => _data['meta']['next'];
-  String get previous => _data['meta']['previous'];
   List get contents => _data['objects'];
 }
 

@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
 import 'package:minapp/src/file.dart';
+import 'package:minapp/src/table_record.dart';
 
 void main() {
   const int LIMIT = 20;
