@@ -70,10 +70,10 @@ void main() {
     expect(cloudFile.id, FILE_ID);
     expect(cloudFile.name, FILE_NAME);
     expect(cloudFile.path, PATH);
-    expect(cloudFile.cdnPath, CDN_PATH);
+    expect(cloudFile.cdn_path, CDN_PATH);
     expect(cloudFile.category.runtimeType, FileCategory);
     expect(cloudFile.size, SIZE);
-    expect(cloudFile.createdAt, FILE_CREATED_AT);
+    expect(cloudFile.created_at, FILE_CREATED_AT);
   });
 
   test('class CloudFile without category', () {
@@ -147,8 +147,8 @@ void main() {
     expect(fileCategory.id, CATEGORY_ID);
     expect(fileCategory.name, CATEGORY_NAME);
     expect(fileCategory.files, FILES);
-    expect(fileCategory.createdAt, CATEGORY_CREATED_AT);
-    expect(fileCategory.updatedAt, CATEGORY_UPDATED_AT);
+    expect(fileCategory.created_at, CATEGORY_CREATED_AT);
+    expect(fileCategory.updated_at, CATEGORY_UPDATED_AT);
   });
 
   test('class FileCategoryList', (){

@@ -81,7 +81,6 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.set(options);
     try {
       TableRecord _record = await tableRecord.save();
-      print(_record.createdAt);
       setState(() => record = _record.recordInfo);
       _showSnackBar('创建成功');
     } on HError catch (e) {

@@ -4,7 +4,6 @@ import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
-import 'where.dart';
 
 class TableRecord extends BaseRecord {
   String _tableName;

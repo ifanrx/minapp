@@ -170,14 +170,14 @@ class Content {
   List<int> get categories => _data['categories'];
   String get content => _data['content'];
   String get cover => _data['cover'];
-  int get createdAt => _data['created_at'];
-  int get createdBy => _data['created_by'];
+  int get created_at => _data['created_at'];
+  int get created_by => _data['created_by'];
   String get description => _data['description'];
-  int get groupId => _data['group_id'];
+  int get group_id => _data['group_id'];
   int get id => _data['id'];
   String get title => _data['title'];
-  int get updatedAt => _data['updated_at'];
-  int get visitCount => _data['visit_count'];
+  int get updated_at => _data['updated_at'];
+  int get visit_count => _data['visit_count'];
 }
 
 // 内容库列表
@@ -199,7 +199,7 @@ class ContentCategory {
   ContentCategory(this._data);
 
   List get children => _data['children'];
-  bool get haveChildren => _data['have_children'];
+  bool get have_children => _data['have_children'];
   int get id => _data['id'];
   String get name => _data['name'];
 }

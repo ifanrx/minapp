@@ -8,10 +8,10 @@ import 'util.dart';
 class BaseRecord {
   Map<String, dynamic> _record;
   String _id;
-  int _createdById;
-  Map<String, dynamic> _createdBy;
-  int _createdAt;
-  int _updatedAt;
+  int _created_by_id;
+  Map<String, dynamic> _created_by;
+  int _created_at;
+  int _updated_at;
   Map<String, dynamic> _recordInfo;
 
   BaseRecord() {
@@ -21,24 +21,24 @@ class BaseRecord {
   BaseRecord.withInfo(Map<String, dynamic> recordInfo) {
     _id = recordInfo['id'];
     if (recordInfo['created_by'] != null) {
-      _createdById = recordInfo['created_by'] is int
+      _created_by_id = recordInfo['created_by'] is int
           ? recordInfo['created_by']
           : recordInfo['created_by']['id'];
     }
-    _createdBy =
+    _created_by =
         recordInfo['created_by'] is Map ? recordInfo['created_by'] : null;
-    _createdAt = recordInfo['created_at'];
-    _updatedAt = recordInfo['updated_at'];
+    _created_at = recordInfo['created_at'];
+    _updated_at = recordInfo['updated_at'];
     _recordInfo = recordInfo;
     recordValueInit();
   }
 
   Map<String, dynamic> get record => _record;
   String get id => _id;
-  int get createdById => _createdById;
-  Map<String, dynamic> get createdBy => _createdBy;
-  int get createdAt => _createdAt;
-  int get updatedAt => _updatedAt;
+  int get created_by_id => _created_by_id;
+  Map<String, dynamic> get created_by => _created_by;
+  int get created_at => _created_at;
+  int get updated_at => _updated_at;
   Map<String, dynamic> get recordInfo => _recordInfo;
 
   void recordValueInit() {

@@ -80,14 +80,14 @@ void main() {
     expect(content.categories, CATEGORIES);
     expect(content.content, CONTENT);
     expect(content.cover, COVER);
-    expect(content.createdAt, CREATED_AT);
-    expect(content.createdBy, CREATED_BY);
+    expect(content.created_at, CREATED_AT);
+    expect(content.created_by, CREATED_BY);
     expect(content.description, DESCRIPTION);
-    expect(content.groupId, GROUP_ID);
+    expect(content.group_id, GROUP_ID);
     expect(content.id, ID);
     expect(content.title, TITLE);
-    expect(content.updatedAt, UPDATED_AT);
-    expect(content.visitCount, VISIT_COUNT);
+    expect(content.updated_at, UPDATED_AT);
+    expect(content.visit_count, VISIT_COUNT);
   });
 
   test('content list', () {
@@ -102,7 +102,7 @@ void main() {
   test('content category', () {
     ContentCategory contentCategory = new ContentCategory(contentCategoryData);
     expect(contentCategory.children, CHILDREN);
-    expect(contentCategory.haveChildren, HAVE_CHILDREN);
+    expect(contentCategory.have_children, HAVE_CHILDREN);
     expect(contentCategory.id, ID);
     expect(contentCategory.name, NAME);
   });

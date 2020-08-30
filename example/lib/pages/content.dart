@@ -147,7 +147,7 @@ class _ContentPageState extends State<ContentPage> {
     try {
       var data = await contentGroup.getCategory(categoryList[1]['id']);
       alert(context,
-          '查询成功 - children: ${data.children}, have_children: ${data.haveChildren}, name: ${data.name}, id: ${data.id}');
+          '查询成功 - children: ${data.children}, have_children: ${data.have_children}, name: ${data.name}, id: ${data.id}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }

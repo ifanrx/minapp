@@ -387,7 +387,7 @@ class _FileListView extends State<FileListView> {
                 onPressed: () async {
                   try {
                     CloudFile file = await FileManager.get(currentFileID);
-                    alert(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mimeType}');
+                    alert(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mime_type}');
                   } on HError catch(e) {
                     showSnackBar(e.toString(), context);
                   }

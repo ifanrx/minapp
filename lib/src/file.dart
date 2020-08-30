@@ -38,13 +38,13 @@ class CloudFile {
 
   String get id => _file['id'];
   String get name => _file['name'];
-  String get mimeType => _file['mime_type'];
-  String get mediaType => _file['media_type'];
+  String get mime_type => _file['mime_type'];
+  String get media_type => _file['media_type'];
   String get path => _file['path'];
-  String get cdnPath => _file['cdn_path'];
+  String get cdn_path => _file['cdn_path'];
   FileCategory get category => _category;
   int get size => _file['size'];
-  int get createdAt => _file['created_at'];
+  int get created_at => _file['created_at'];
 }
 
 class CloudFileList extends RecordListBase {
@@ -72,8 +72,8 @@ class FileCategory {
   String get id => category['id'];
   String get name => category['name'];
   int get files => category['files'];
-  int get createdAt => category['created_at'];
-  int get updatedAt => category['updated_at'];
+  int get created_at => category['created_at'];
+  int get updated_at => category['updated_at'];
 
   FileCategory(this.category);
 }
