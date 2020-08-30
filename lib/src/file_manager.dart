@@ -7,10 +7,11 @@ import 'query.dart';
 import 'file.dart';
 import 'h_error.dart';
 import 'upload.dart';
+import 'config.dart';
 
 class FileManager {
   static Future<CloudFile> get(String fileID) async {
-    Response res = await request(path: Api.fileDetail, method: 'GET', params: {'fileID': fileID});
+    Response res = await config.request(path: Api.fileDetail, method: 'GET', params: {'fileID': fileID});
     return CloudFile(res.data);
   }
 
@@ -19,7 +20,7 @@ class FileManager {
     if (query != null) {
       data = query.get();
     }
-    Response res = await request(
+    Response res = await config.request(
       path: Api.fileList,
       method: 'GET',
       data: data,
@@ -31,11 +32,11 @@ class FileManager {
     if (id == null) throw HError(604);
 
     if (id is String) {
-      await request(path: Api.deleteFile, method: 'DELETE', params: {
+      await config.request(path: Api.deleteFile, method: 'DELETE', params: {
         'fileID': id,
       });
     } else if (id is List) {
-      await request(path: Api.deleteFiles, method: 'DELETE', data: {
+      await config.request(path: Api.deleteFiles, method: 'DELETE', data: {
         'id__in': id,
       });
     } else {
@@ -44,7 +45,7 @@ class FileManager {
   }
 
   static Future<FileCategory> getCategory(String cateID) async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.fileCategoryDetail,
       method: 'GET',
       params: {'categoryID': cateID},
@@ -60,7 +61,7 @@ class FileManager {
       data = query.get();
     }
 
-    Response res = await request(
+    Response res = await config.request(
       path: Api.fileCategoryList,
       method: 'GET',
       data: data,
@@ -83,7 +84,7 @@ class FileManager {
   /// 生成视频截图
   /// [params] params 参数
   static Future<Map<String, dynamic>> genVideoSnapshot(Map<String, dynamic> params) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.videoSnapshot,
       method: 'POST',
       data: params,
@@ -95,7 +96,7 @@ class FileManager {
   /// M3U8 视频拼接
   /// [params] params 参数
   static Future<Map<String, dynamic>> videoConcat(Map<String, dynamic> params) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.m3u8Concat,
       method: 'POST',
       data: params,
@@ -107,7 +108,7 @@ class FileManager {
   /// M3U8 视频剪辑
   /// [params] params 参数
   static Future<Map<String, dynamic>> videoClip(Map<String, dynamic> params) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.m3u8Clip,
       method: 'POST',
       data: params,
@@ -119,7 +120,7 @@ class FileManager {
   /// M3U8 时长和分片信息
   /// [params] params 参数
   static Future<Map<String, dynamic>> videoMeta(Map<String, dynamic> params) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.m3u8Meta,
       method: 'POST',
       data: params,
@@ -131,7 +132,7 @@ class FileManager {
   /// 音视频的元信息
   /// [params] params 参数
   static Future<Map<String, dynamic>> videoAudioMeta(Map<String, dynamic> params) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.videoAudioMeta,
       method: 'POST',
       data: params,

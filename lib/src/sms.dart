@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'request.dart';
 import 'constants.dart';
+import 'config.dart';
 
 Future<void> sendSmsCode({@required String phone, String signatureID}) async {
   Map<String, dynamic> data = {
@@ -10,7 +11,7 @@ Future<void> sendSmsCode({@required String phone, String signatureID}) async {
   if (signatureID != null) {
     data.addAll({'signature_id': signatureID});
   }
-  await request(
+  await config.request(
     path: Api.sendSmsCode,
     method: 'POST',
     data: data,
@@ -18,7 +19,7 @@ Future<void> sendSmsCode({@required String phone, String signatureID}) async {
 }
 
 Future<void> verifySmsCode({@required String phone, @required int code}) async {
-  await request(
+  await config.request(
     path: Api.verifySmsCode,
     method: 'POST',
     data: {

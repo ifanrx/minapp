@@ -4,7 +4,7 @@ class CurrentUser extends User {
   CurrentUser(Map<String, dynamic> attribute) : super(attribute);
 
   Future<void> updateUserInfo(Map<String, dynamic> userInfo) async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.updateUser,
       method: 'PUT',
       data: userInfo,
@@ -17,7 +17,7 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     }
-    await request(
+    await config.request(
       path: Api.accountInfo,
       method: 'PUT',
       data: {
@@ -28,7 +28,7 @@ class CurrentUser extends User {
   }
 
   Future<void> setEmail(String email, {bool sendVerificationEmail = false}) async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.accountInfo,
       method: 'PUT',
       data: {
@@ -47,7 +47,7 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     } else {
-      Response res = await request(
+      Response res = await config.request(
         path: Api.accountInfo,
         method: 'PUT',
         data: {
@@ -64,7 +64,7 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     } else {
-      await request(
+      await config.request(
         path: Api.emailVerify,
         method: 'POST',
         data: {},
@@ -81,7 +81,7 @@ class CurrentUser extends User {
         accountInfo.addAll({'new_password': accountInfo['password']});
         accountInfo.remove('password');
       }
-      Response res = await request(
+      Response res = await config.request(
         path: Api.accountInfo,
         method: 'PUT',
         data: accountInfo,
@@ -93,7 +93,7 @@ class CurrentUser extends User {
   }
 
   Future<void> setMobilePhone(String phone) async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.accountInfo,
       method: 'PUT',
       data: {
@@ -108,7 +108,7 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     }
-    await request(
+    await config.request(
       path: Api.phoneVerify,
       method: 'POST',
       data: {

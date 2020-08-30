@@ -1,13 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:minapp/minapp.dart';
 import 'package:faker/faker.dart';
-import 'package:minapp/src/request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './login_info.dart' as loginInfo;
+import 'request.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
-
   TableObject product;
   List<num> randomNumArray;
   String tableName = 'jiajun_test';
@@ -15,14 +11,8 @@ void main() {
   String id = '104192';
 
   setUpAll(() async {
-    init('a4d2d62965ddb57fa4d6');
-
-    await Auth.login(
-      email: loginInfo.email,
-      password: loginInfo.password,
-    );
-
     randomNumArray = genRandomNumbers(100, 3);
+    init('a4d2d62965ddb57fa4d6', request: testRequest);
   });
 
   setUp(() {
@@ -36,7 +26,6 @@ void main() {
     ];
 
     await productWithId.createMany(data);
-    print(requestConfig['params']);
     expect(
       requestConfig['params']['tableID'],
       equals(id),
@@ -60,10 +49,7 @@ void main() {
   });
 
   test('delete one', () async {
-    TableRecord record = product.create();
-    record.set('num', 999);
-    TableRecord itemAdded = await record.save();
-    String recordId = itemAdded.recordInfo['id'];
+    String recordId = '123';
     await product.delete(recordId: recordId);
     expect(requestConfig['params'], {
       'tableID': tableName,

@@ -5,8 +5,6 @@ import 'h_error.dart';
 
 final _dio = new Dio();
 
-Map<String, dynamic> requestConfig;
-
 RegExp _urlPat = RegExp(r'https?:\/\/');
 bool _isUrl(String input) {
   return _urlPat.hasMatch(input);
@@ -29,10 +27,6 @@ Future<Response<T>> request<T>({
   if (config.clientID == null) {
     throw HError(602);
   }
-
-  restoreRequestConfig();
-  requestConfig['data'] = data;
-  requestConfig['params'] = params;
 
   var merged = await mergeRequestHeader(headers);
 
@@ -104,6 +98,3 @@ String _toPath(String path, Map<String, dynamic> params) {
   return path;
 }
 
-void restoreRequestConfig() {
-  requestConfig = {};
-}

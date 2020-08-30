@@ -5,6 +5,7 @@ import 'constants.dart';
 import 'query.dart';
 import 'where.dart';
 import 'table_record.dart';
+import 'config.dart';
 
 class ContentGroup {
   int _contentGroupID;
@@ -28,7 +29,7 @@ class ContentGroup {
     int offset = 0,
     int limit = 20,
   }) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentGroupList,
       method: 'GET',
       data: {
@@ -44,7 +45,7 @@ class ContentGroup {
   /// 获取内容库详情
   /// [contentGroupID] 内容库 ID
   static Future<ContentGroup> get(int contentGroupID) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentGroupDetail,
       method: 'GET',
       params: {
@@ -86,7 +87,7 @@ class ContentGroup {
       }
     }
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentDetail,
       method: 'GET',
       params: {'richTextID': richTextID},
@@ -107,7 +108,7 @@ class ContentGroup {
     data['return_total_count'] = withCount ? 1 : 0;
     data['content_group_id'] = _contentGroupID;
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentList,
       method: 'GET',
       data: data,
@@ -132,7 +133,7 @@ class ContentGroup {
   Future<ContentCategory> getCategory(int categoryID) async {
     Where where = Where.compare('group_id', '=', _contentGroupID);
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentCategoryDetail,
       method: 'GET',
       params: {
@@ -148,7 +149,7 @@ class ContentGroup {
 
   /// 获取内容分类列表
   Future<ContentCategoryList> getCategoryList({bool withCount = false}) async {
-    Response response = await request(
+    Response response = await config.request(
       path: Api.contentCategoryList,
       method: 'GET',
       data: {

@@ -3,6 +3,7 @@ import 'base_record.dart';
 import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
+import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 
 class TableRecord extends BaseRecord {
@@ -26,7 +27,7 @@ class TableRecord extends BaseRecord {
   Future<TableRecord> save() async {
     Map<String, dynamic> data = this.record['\$set'];
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.createRecord,
       method: 'POST',
       params: {'tableID': _tableName},
@@ -48,7 +49,7 @@ class TableRecord extends BaseRecord {
     Map data = this.record;
 
     if (_recordId != null) {
-      Response response = await request(
+      Response response = await config.request(
         path: Api.updateRecord,
         method: 'PUT',
         params: {'tableID': _tableName, 'recordID': _recordId},
@@ -61,7 +62,7 @@ class TableRecord extends BaseRecord {
     } else {
       Map<String, dynamic> queryData = _query.get();
 
-      Response response = await request(
+      Response response = await config.request(
         path: Api.updateRecordList,
         method: 'PUT',
         params: {

@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'request.dart';
 import 'constants.dart';
 import 'file.dart';
+import 'config.dart';
 
 /// 获取上传文件配置信息
 /// [fileName] 文件名
@@ -17,7 +18,7 @@ Future<dynamic> getUploadFileConfig(
   metaData = metaData ?? {};
   metaData['filename'] = fileName;
 
-  Response response = await request(
+  Response response = await config.request(
     path: Api.upload,
     method: 'POST',
     data: metaData,

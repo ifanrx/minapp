@@ -5,6 +5,7 @@ import 'constants.dart';
 import 'h_error.dart';
 import 'query.dart';
 import 'util.dart';
+import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 
 class TableObject {
@@ -37,7 +38,7 @@ class TableObject {
       return record;
     }).toList();
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.createRecordList,
       method: 'POST',
       params: {
@@ -79,7 +80,7 @@ class TableObject {
     bool withCount = false,
   }) async {
     if (recordId != null) {
-      await request(
+      await config.request(
         path: Api.deleteRecord,
         method: 'DELETE',
         params: {'tableID': _tableName ?? _tableId, 'recordID': recordId},
@@ -87,7 +88,7 @@ class TableObject {
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
 
-      Response response = await request(
+      Response response = await config.request(
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
@@ -133,7 +134,7 @@ class TableObject {
       }
     }
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.getRecord,
       method: 'GET',
       params: {'tableID': _tableName ?? _tableId, 'recordID': recordId},
@@ -155,7 +156,7 @@ class TableObject {
     Map<String, dynamic> data = query == null ? {} : query.get();
     data['return_total_count'] = withCount ? 1 : 0;
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.queryRecordList,
       method: 'GET',
       params: {'tableID': _tableName ?? _tableId},

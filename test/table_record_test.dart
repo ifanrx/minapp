@@ -1,25 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:minapp/minapp.dart';
 import 'package:faker/faker.dart';
-import 'package:minapp/src/request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './login_info.dart' as loginInfo;
+import 'request.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
-
   TableObject product;
   List<num> randomNumArray;
   String tableName = 'jiajun_test';
   String recordId = '5f3631bb6526327bfa037ae8';
 
   setUpAll(() async {
-    init('a4d2d62965ddb57fa4d6');
-
-    await Auth.login(
-      email: loginInfo.email,
-      password: loginInfo.password,
-    );
+    init('a4d2d62965ddb57fa4d6', request: testRequest);
 
     randomNumArray = genRandomNumbers(100, 3);
   });

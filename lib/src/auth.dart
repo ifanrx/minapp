@@ -7,6 +7,7 @@ import 'request.dart';
 import 'util.dart';
 import 'user.dart';
 import 'h_error.dart';
+import 'config.dart';
 
 String _getAuthUrl(Map<String, dynamic> data, [bool isLoginFunc = false]) {
   if (data['email'] != null) {
@@ -36,7 +37,7 @@ class Auth {
     }
 
     String url = _getAuthUrl(data, true);
-    var res = await request(
+    var res = await config.request(
       path: url,
       method: 'POST',
       data: data,
@@ -62,7 +63,7 @@ class Auth {
     }
 
     String url = _getAuthUrl(data);
-    Response res = await request(
+    Response res = await config.request(
       path: url,
       method: 'POST',
       data: data,
@@ -82,7 +83,7 @@ class Auth {
       return throw HError(604);
     }
 
-    var res = await request(
+    var res = await config.request(
       path: Api.userDetail,
       params: {'userID': id},
     );
@@ -91,7 +92,7 @@ class Auth {
   }
 
   static Future<void> logout() async {
-    await request(
+    await config.request(
       path: Api.logout,
       method: 'POST',
       data: {}, // 不带 data 请求会 415
@@ -102,7 +103,7 @@ class Auth {
   static Future<CurrentUser> loginWithSmsVerificationCode(
       String mobilePhone, String smsCode,
       {bool createUser = true}) async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.loginSms,
       method: 'POST',
       data: {
@@ -119,13 +120,13 @@ class Auth {
   }
 
   static Future<void> requestPasswordReset(String email) async {
-    await request(path: Api.passwordReset, method: 'POST', data: {
+    await config.request(path: Api.passwordReset, method: 'POST', data: {
       'email': email,
     });
   }
 
   static Future<CurrentUser> anonymousLogin() async {
-    Response res = await request(
+    Response res = await config.request(
       path: Api.anonymousLogin,
       method: 'POST',
       data: {},

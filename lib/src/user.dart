@@ -5,6 +5,7 @@ import 'request.dart';
 import 'constants.dart';
 import 'user_list.dart';
 import 'h_error.dart';
+import 'config.dart';
 
 part "current_user.dart";
 
@@ -50,7 +51,7 @@ class User {
       data.addAll({'keys': select.join(',')});
     }
 
-    Response res = await request(
+    Response res = await config.request(
       path: Api.userDetail,
       method: 'GET',
       params: {'userID': userId},
@@ -62,7 +63,7 @@ class User {
   static Future<UserList> find({Query query}) async {
     Map<String, dynamic> data = query?.get();
 
-    Response res = await request(
+    Response res = await config.request(
       path: Api.userList,
       method: 'GET',
       data: data,
