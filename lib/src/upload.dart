@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'constants.dart';
 import 'file.dart';
 import 'config.dart';
+import 'util.dart';
 
 /// 获取上传文件配置信息
 /// [fileName] 文件名
@@ -62,6 +63,7 @@ Future<dynamic> uploadFile(
     "file": await MultipartFile.fromFile(filePath, filename: fileName)
   });
 
+  log.i('uploading => ${config['uploadUrl']}');
   Response response = await new Dio().post(config['uploadUrl'], data: formData);
   Map<String, dynamic> data = jsonDecode(response.data);
   Map<String, dynamic> result = {

@@ -9,6 +9,7 @@ class Config {
   final String sdkType;
   final String version;
   final dynamic request;
+  final bool shouldLog;
 
   Config({
     this.authPrefix,
@@ -19,6 +20,7 @@ class Config {
     this.sdkType,
     this.version,
     this.request,
+    this.shouldLog,
   });
 }
 
@@ -27,6 +29,7 @@ Config config;
 void init(
   String clientID, {
   String host,
+  bool shouldLog = true,
   dynamic request,
 }) {
   if (host == null) {
@@ -42,6 +45,7 @@ void init(
     clientID: clientID,
     host: host,
     request: request,
+    shouldLog: shouldLog,
     platform: 'FLUTTER',
     sdkType: 'file',
     version: '1.0.0',

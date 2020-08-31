@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:clock/clock.dart';
+import 'package:logger/logger.dart';
 
 import 'auth.dart';
 import 'config.dart';
@@ -10,6 +11,9 @@ import 'dart:core';
 import 'geo_point.dart';
 import 'geo_polygon.dart';
 import 'table_record.dart';
+import 'log.dart';
+
+Logger log = new Logger(filter: CustomLogFilter());
 
 Future<Map<String, dynamic>> mergeRequestHeader(
     Map<String, dynamic> headers) async {
