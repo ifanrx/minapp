@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'h_error.dart';
-import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'where.dart';

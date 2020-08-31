@@ -1,7 +1,10 @@
 import 'package:test/test.dart';
 import 'package:minapp/minapp.dart';
+import 'request.dart';
 
 void main() {
+  const num randomNumber = 123123123123123;
+  const List<num> randomNumArray = [123, 234];
   const List<int> CATEGORIES = [1513076252710475];
   const String CONTENT = '<h1 style="text-align: center;">iPhone&nbsp;</h1>';
   const String COVER = null;
@@ -75,6 +78,10 @@ void main() {
     'name': NAME
   };
 
+  setUpAll(() {
+    init('123', request: testRequest);
+  });
+
   test('content', () {
     Content content = new Content(contentData);
     expect(content.categories, CATEGORIES);
@@ -115,5 +122,98 @@ void main() {
     expect(contentCategoryList.offset, OFFSET);
     expect(contentCategoryList.previous, PREVIOUS);
     expect(contentCategoryList.totalCount, TOTAL_COUNT);
+  });
+
+  test('query without withCount', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    Query query = new Query();
+    query.where(Where.inList('price', randomNumArray));
+    contentGroup.query(query: query);
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'where': '{"\$and":[{"price":{"\$in":[${randomNumArray.join(',')}]}}]}',
+        'offset': 0,
+        'return_total_count': 0,
+      }),
+    );
+  });
+
+  test('query with withCount=true', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    Query query = new Query();
+    query.where(Where.inList('price', randomNumArray));
+    contentGroup.query(query: query, withCount: true);
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'where': '{"\$and":[{"price":{"\$in":[${randomNumArray.join(',')}]}}]}',
+        'offset': 0,
+        'return_total_count': 1,
+      }),
+    );
+  });
+
+  test('query with withCount=false', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    Query query = new Query();
+    query.where(Where.inList('price', randomNumArray));
+    contentGroup.query(query: query, withCount: false);
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'where': '{"\$and":[{"price":{"\$in":[${randomNumArray.join(',')}]}}]}',
+        'offset': 0,
+        'return_total_count': 0,
+      }),
+    );
+  });
+
+  test('getCategoryList without withCount', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    contentGroup.getCategoryList();
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'limit': 100,
+        'return_total_count': 0,
+      }),
+    );
+  });
+
+  test('getCategoryList with withCount=true', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    contentGroup.getCategoryList(withCount: true);
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'limit': 100,
+        'return_total_count': 1,
+      }),
+    );
+  });
+
+  test('getCategoryList with withCount=false', () {
+    ContentGroup contentGroup = new ContentGroup(randomNumber);
+    contentGroup.getCategoryList(withCount: false);
+
+    expect(
+      requestConfig['data'],
+      equals({
+        'content_group_id': randomNumber,
+        'limit': 100,
+        'return_total_count': 0,
+      }),
+    );
   });
 }
