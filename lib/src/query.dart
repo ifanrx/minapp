@@ -44,7 +44,7 @@ class Query {
     _where = where;
   }
 
-  /// 指定需要展开的 pointer 类型字段
+  /// 指定需要展开的 expand 类型字段
   /// [key] 字段名称
   void expand(dynamic key) {
     if (key is String) {

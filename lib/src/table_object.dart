@@ -9,21 +9,15 @@ import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 
 class TableObject {
-  String _tableName;
   String _tableId;
 
-  /// 构造函数，接收数据表名的参数（[String] 类型）
-  TableObject(String tableName) {
-    _tableName = tableName;
-  }
-
-  /// 构造函数，接收数据表 id 的参数（num 类型）
-  TableObject.withId(String tableId) {
+  /// 构造函数，传入数据表名或数据表 id（[String] 类型）
+  TableObject(String tableId) {
     _tableId = tableId;
   }
 
   TableRecord create() {
-    return new TableRecord(_tableName ?? _tableId);
+    return new TableRecord(_tableId);
   }
 
   /// 创建多条数据
@@ -42,7 +36,7 @@ class TableObject {
       path: Api.createRecordList,
       method: 'POST',
       params: {
-        'tableID': _tableName ?? _tableId,
+        'tableID': _tableId,
         'enable_trigger': enableTrigger ? 1 : 0
       },
       data: records,
@@ -56,10 +50,10 @@ class TableObject {
   /// [query] 查询数据项
   TableRecord getWithoutData({String recordId, Query query}) {
     if (recordId != null) {
-      return new TableRecord(_tableName ?? _tableId, recordId: recordId);
+      return new TableRecord(_tableId, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
-        _tableName ?? _tableId,
+        _tableId,
         query: query,
       );
     } else {
@@ -83,7 +77,7 @@ class TableObject {
       await config.request(
         path: Api.deleteRecord,
         method: 'DELETE',
-        params: {'tableID': _tableName ?? _tableId, 'recordID': recordId},
+        params: {'tableID': _tableId, 'recordID': recordId},
       );
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
@@ -92,7 +86,7 @@ class TableObject {
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
-          'tableID': _tableName ?? _tableId,
+          'tableID': _tableId,
           'limit': constants.getLimitationWithEnableTrigger(
               queryData['limit'], enableTrigger),
           'offset': queryData['offset'] ?? 0,
@@ -137,7 +131,7 @@ class TableObject {
     Response response = await config.request(
       path: Api.getRecord,
       method: 'GET',
-      params: {'tableID': _tableName ?? _tableId, 'recordID': recordId},
+      params: {'tableID': _tableId, 'recordID': recordId},
       data: data,
     );
 
@@ -159,7 +153,7 @@ class TableObject {
     Response response = await config.request(
       path: Api.queryRecordList,
       method: 'GET',
-      params: {'tableID': _tableName ?? _tableId},
+      params: {'tableID': _tableId},
       data: data,
     );
 

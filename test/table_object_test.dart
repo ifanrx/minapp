@@ -19,19 +19,6 @@ void main() {
     product = new TableObject(tableName);
   });
 
-  test('with id', () async {
-    TableObject productWithId = new TableObject.withId(id);
-    List<Map<String, dynamic>> data = [
-      {'num': 123}
-    ];
-
-    await productWithId.createMany(data);
-    expect(
-      requestConfig['params']['tableID'],
-      equals(id),
-    );
-  });
-
   test('createMany', () async {
     List<Map<String, dynamic>> data = [
       {'num': 123}
