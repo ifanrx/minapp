@@ -1,5 +1,3 @@
-import 'package:minapp/src/content_group.dart';
-
 int queryLimitationDefault = 20;
 
 class UploadConfig {

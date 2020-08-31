@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'base_record.dart';
-import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'config.dart';

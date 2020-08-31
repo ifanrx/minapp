@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:minapp/src/request.dart';
 
 import 'constants.dart';
 import 'config.dart';

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-import 'request.dart';
 import 'constants.dart';
 import 'query.dart';
 import 'file.dart';

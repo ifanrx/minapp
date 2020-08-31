@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-import 'request.dart';
 import 'constants.dart';
 import 'config.dart';
 

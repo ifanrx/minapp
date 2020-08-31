@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import 'query.dart';
-import 'request.dart';
 import 'constants.dart';
 import 'user_list.dart';
 import 'h_error.dart';

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 
 import 'storage.dart';
 import 'constants.dart';
-import 'request.dart';
 import 'util.dart';
 import 'user.dart';
 import 'h_error.dart';

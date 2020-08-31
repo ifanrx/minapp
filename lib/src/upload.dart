@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:path/path.dart';
-import 'request.dart';
 import 'constants.dart';
 import 'file.dart';
 import 'config.dart';
