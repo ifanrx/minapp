@@ -78,7 +78,7 @@ class TableRecord extends BaseRecord {
 
       this.recordValueInit();
 
-      return new TableRecordList(response.data);
+      return new TableRecordOperationList(response.data);
     }
   }
 }
@@ -107,11 +107,57 @@ class RecordListMeta {
   }
 }
 
+/// 数据表数据列表。
+/// 一般在查询 find 时返回处理
 class TableRecordList extends RecordListMeta {
   Map<String, dynamic> _recordInfo;
-  List get records => _recordInfo['meta'] == null
-      ? _recordInfo['operation_result']
-      : _recordInfo['objects'];
+  List get records => _recordInfo['objects'];
 
   TableRecordList(this._recordInfo) : super(_recordInfo);
+}
+
+class TableRecordOperation {
+  Map<String, dynamic> _success;
+  Map<String, dynamic> _error;
+  Map<String, dynamic> _operation_result_item;
+
+  Map<String, dynamic> get success => _success;
+  Map<String, dynamic> get error => _error;
+
+  TableRecordOperation(this._operation_result_item) {
+    _success = _operation_result_item['success'];
+    _error = _operation_result_item['error'];
+  }
+}
+
+/// 数据表操作数据列表
+/// 一般在批量新增、更新等情况下使用
+class TableRecordOperationList {
+  String _next;
+  String _previous;
+  int _offset;
+  int _limit;
+  int _succeed;
+  int _total_count;
+  List _operation_result = [];
+  Map<String, dynamic> _operationList;
+
+  String get next => _next;
+  String get previous => _previous;
+  int get offset => _offset;
+  int get limit => _limit;
+  int get succeed => _succeed;
+  int get total_count => _total_count;
+  List get operation_result => _operation_result;
+
+  TableRecordOperationList(this._operationList) {
+    _next = _operationList['next'];
+    _previous = _operationList['previous'];
+    _offset = _operationList['offset'];
+    _limit = _operationList['limit'];
+    _succeed = _operationList['succeed'];
+    _operationList['operation_result']?.forEach((result) {
+      _operation_result.add(TableRecordOperation(result));
+    });
+  }
 }

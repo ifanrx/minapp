@@ -44,11 +44,11 @@ Future<Response<T>> request<T>({
   }
 
   try {
+    log.i('request => $path');
     if (method.toUpperCase() == 'GET') {
       return await _dio.request(path, queryParameters: data, options: options);
     }
 
-    log.i('request => $path');
     return await _dio.request(path, data: data, options: options);
   } on DioError catch (e) {
     if (e.response != null) {

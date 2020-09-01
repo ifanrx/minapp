@@ -38,9 +38,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
         {"rum": 203, "str": '5a33406909a805412e3169c3'},
       ];
 
-      TableRecordList records =
+      TableRecordOperationList records =
           await order.createMany(data, enableTrigger: true);
-      alert(context, '${records.records}');
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -58,8 +66,16 @@ class _SchemaBatchState extends State<SchemaBatch> {
         {"rum": 203, "str": '5a33406909a805412e3169c3'},
       ];
 
-      TableRecordList records = await order.createMany(data);
-      alert(context, '${records.records}');
+      TableRecordOperationList records = await order.createMany(data);
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -81,8 +97,16 @@ class _SchemaBatchState extends State<SchemaBatch> {
         }
       ];
 
-      TableRecordList records = await order.createMany(data);
-      alert(context, '${records.records}');
+      TableRecordOperationList records = await order.createMany(data);
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -99,9 +123,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'updated');
-      TableRecordList recordList =
+      TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: true);
-      alert(context, '${recordList.records}');
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -118,9 +150,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'updated');
-      TableRecordList recordList =
+      TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: false);
-      alert(context, '${recordList.records}');
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -137,9 +177,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('num', 500);
-      TableRecordList recordList =
+      TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: false);
-      alert(context, '${recordList.records}');
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -156,8 +204,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_arr');
-      TableRecordList recordList = await record.update(withCount: true);
-      alert(context, '${recordList.records}');
+      TableRecordOperationList records =
+          await record.update(withCount: true);
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -174,8 +231,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_null');
-      TableRecordList recordList = await record.update(withCount: true);
-      alert(context, '${recordList.records}');
+      TableRecordOperationList records =
+          await record.update(withCount: true);
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -195,8 +261,17 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
       TableRecord record = order.getWithoutData(query: query);
       record.append('array_s', 'update_and_or');
-      TableRecordList recordList = await record.update(withCount: true);
-      alert(context, '${recordList.records}');
+      TableRecordOperationList records =
+          await record.update(withCount: true);
+      var result = records.operation_result.map((element) {
+        if (element.success != null) {
+          return {'success': element.success};
+        }
+        if (element.error != null) {
+          return {'error': element.error};
+        }
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
