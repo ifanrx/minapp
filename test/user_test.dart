@@ -41,7 +41,7 @@ void main() {
     User user = User(userInfo);
 
     expect(user.username, USERNAME);
-    expect(user.userId, ID.toString());
+    expect(user.id, ID.toString());
     expect(user.nickname, NICKNAME);
     expect(user.avatar, AVATAR);
     expect(user.email, EMAIL);
@@ -61,7 +61,7 @@ void main() {
     CurrentUser user = CurrentUser(userInfo);
 
     expect(user.username, USERNAME);
-    expect(user.userId, ID.toString());
+    expect(user.id, ID.toString());
     expect(user.nickname, NICKNAME);
     expect(user.avatar, AVATAR);
     expect(user.email, EMAIL);

@@ -8,71 +8,124 @@ import 'user.dart';
 import 'h_error.dart';
 import 'config.dart';
 
-String _getAuthUrl(Map<String, dynamic> data, [bool isLoginFunc = false]) {
-  if (data['email'] != null) {
-    return isLoginFunc ? Api.loginEmail : Api.registerEmail;
-  }
-  if (data['phone'] != null) {
-    return isLoginFunc ? Api.loginPhone : Api.registerPhone;
-  }
-
-  return isLoginFunc ? Api.loginUsername : Api.registerUsername;
-}
-
 class Auth {
   static Future<String> getAuthToken() => storageAsync.get(StorageKey.authToken);
 
-  static Future<CurrentUser> login({@required String password, String phone, String username, String email}) async {
-    Map<String, String> data = {
-      'password': password
-    };
-
-    if (email != null) {
-      data.addAll({'email': email});
-    } else if (phone != null) {
-      data.addAll({'phone': phone});
-    } else {
-      data.addAll({'username': username});
-    }
-
-    String url = _getAuthUrl(data, true);
-    var res = await config.request(
-      path: url,
-      method: 'POST',
-      data: data,
-    );
-
-    await handleLoginSuccess(res);
-
-    CurrentUser currentUser = CurrentUser(res.data);
-    return currentUser;
-  }
-
-  static Future<CurrentUser> register({@required String password, String phone, String username, String email}) async {
-    Map<String, String> data = {
-      'password': password
-    };
-
-    if (email != null) {
-      data.addAll({'email': email});
-    } else if (phone != null) {
-      data.addAll({'phone': phone});
-    } else {
-      data.addAll({'username': username});
-    }
-
-    String url = _getAuthUrl(data);
+  /// 手机号码登录
+  /// [phone] 手机号码
+  /// [password] 密码
+  static Future<CurrentUser> loginWithPhone({@required String phone, @required String password}) async {
     Response res = await config.request(
-      path: url,
+      path: Api.loginWithPhone,
       method: 'POST',
-      data: data,
+      data: {
+        'phone': phone,
+        'password': password,
+      },
     );
+
     await handleLoginSuccess(res);
 
     CurrentUser currentUser = CurrentUser(res.data);
     return currentUser;
   }
 
+  /// 用户名登录
+  /// [username] 用户名
+  /// [password] 密码
+  static Future<CurrentUser> loginWithUsername({@required String username, @required String password}) async {
+    Response res = await config.request(
+      path: Api.loginWithUsername,
+      method: 'POST',
+      data: {
+        'username': username,
+        'password': password,
+      },
+    );
+
+    await handleLoginSuccess(res);
+
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
+  }
+
+  /// 用户名登录
+  /// [email] 邮箱地址
+  /// [password] 密码
+  static Future<CurrentUser> loginWithEmail({@required String email, @required String password}) async {
+    Response res = await config.request(
+      path: Api.loginWithUsername,
+      method: 'POST',
+      data: {
+        'email': email,
+        'password': password,
+      },
+    );
+
+    await handleLoginSuccess(res);
+
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
+  }
+
+  /// 通过用户名注册
+  /// [username] 用户名
+  /// [password] 密码
+  static Future<CurrentUser> registerWithUsername({@required String username, @required String password}) async {
+    Response res = await config.request(
+      path: Api.registerWithUsername,
+      method: 'POST',
+      data: {
+        'username': username,
+        'password': password,
+      },
+    );
+
+    await handleLoginSuccess(res);
+
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
+  }
+
+  /// 通过邮箱注册
+  /// [email] 邮箱地址
+  /// [password] 密码
+  static Future<CurrentUser> registerWithEmail({@required String email, @required String password}) async {
+    Response res = await config.request(
+      path: Api.registerWithEmail,
+      method: 'POST',
+      data: {
+        'email': email,
+        'password': password,
+      },
+    );
+
+    await handleLoginSuccess(res);
+
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
+  }
+
+  /// 通过手机号码注册
+  /// [phone] 手机号码
+  /// [password] 密码
+  static Future<CurrentUser> registerWithPhone({@required String phone, @required String password}) async {
+    Response res = await config.request(
+      path: Api.registerWithPhone,
+      method: 'POST',
+      data: {
+        'phone': phone,
+        'password': password,
+      },
+    );
+
+    await handleLoginSuccess(res);
+
+    CurrentUser currentUser = CurrentUser(res.data);
+    return currentUser;
+  }
+
+  /// 获取当前登录用户
   static Future<CurrentUser> getCurrentUser() async {
     var id = await storageAsync.get(StorageKey.uid);
     String expiresAt = await storageAsync.get(StorageKey.expiresAt);
@@ -99,11 +152,15 @@ class Auth {
     await clearSession();
   }
 
+  /// 短信验证码登录
+  /// [mobilePhone] 手机号码
+  /// [smsCode] 验证码
+  /// [createUser] 是否创建用户，默认创建
   static Future<CurrentUser> loginWithSmsVerificationCode(
       String mobilePhone, String smsCode,
       {bool createUser = true}) async {
     Response res = await config.request(
-      path: Api.loginSms,
+      path: Api.loginWithSms,
       method: 'POST',
       data: {
         'phone': mobilePhone,
@@ -118,12 +175,19 @@ class Auth {
     return currentUser;
   }
 
+  /// 重置密码
+  /// [email] 邮箱
   static Future<void> requestPasswordReset(String email) async {
-    await config.request(path: Api.passwordReset, method: 'POST', data: {
-      'email': email,
-    });
+    await config.request(
+      path: Api.passwordReset,
+      method: 'POST',
+      data: {
+        'email': email,
+      },
+    );
   }
 
+  /// 匿名登录
   static Future<CurrentUser> anonymousLogin() async {
     Response res = await config.request(
       path: Api.anonymousLogin,

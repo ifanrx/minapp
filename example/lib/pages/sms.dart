@@ -70,7 +70,7 @@ class _SmsState extends State<SmsForm> {
             try {
               await verifySmsCode(
                 phone: _phoneController.text,
-                code: int.parse(_codeController.text),
+                code: num.parse(_codeController.text),
               );
               showSnackBar('验证成功', context);
             } on HError catch(e) {

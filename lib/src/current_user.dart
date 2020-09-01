@@ -3,6 +3,8 @@ part of "user.dart";
 class CurrentUser extends User {
   CurrentUser(Map<String, dynamic> attribute) : super(attribute);
 
+  /// 更新用户信息
+  /// [userInfo] 需要更新的用户信息
   Future<void> updateUserInfo(Map<String, dynamic> userInfo) async {
     Response res = await config.request(
       path: Api.updateUser,
@@ -13,6 +15,7 @@ class CurrentUser extends User {
     this._attribute = res.data;
   }
 
+  /// 更新密码
   Future<void> updatePassword(String password, String newPassword) async {
     if (this.isAnonymous) {
       throw HError(612);
@@ -27,6 +30,9 @@ class CurrentUser extends User {
     );
   }
 
+  /// 更新邮箱
+  /// [email] email 地址
+  /// [sendVerificationEmail] 是否发送验证邮件，默认 false
   Future<void> setEmail(String email, {bool sendVerificationEmail = false}) async {
     Response res = await config.request(
       path: Api.accountInfo,
@@ -43,6 +49,8 @@ class CurrentUser extends User {
     }
   }
 
+  /// 设置用户名
+  /// [username] 新用户名
   Future<void> setUsername(String username) async {
     if (this.isAnonymous) {
       throw HError(612);
@@ -59,7 +67,7 @@ class CurrentUser extends User {
     }
   }
 
-  // 发送验证邮件
+  /// 发送验证邮件
   Future<void> requestEmailVerification() async {
     if (this.isAnonymous) {
       throw HError(612);
@@ -72,7 +80,8 @@ class CurrentUser extends User {
     }
   }
 
-  // 初次设置账号信息
+  /// 初次设置账号信息
+  /// [accountInfo]
   Future<void> setAccount([Map<String, dynamic> accountInfo = const {}]) async {
     if (this.isAnonymous) {
       throw HError(612);

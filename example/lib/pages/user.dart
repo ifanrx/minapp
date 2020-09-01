@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart' as BaaS;
-import 'package:loading_overlay/loading_overlay.dart';
 
 import '../util.dart';
 import 'common.dart';
@@ -87,7 +86,7 @@ class _GetUserList extends State<GetUserList> {
     if (userList == null) return null;
     var list = userList.users.map((e) {
       return ListTile(
-        title: Text(e.nickname ?? e.userId),
+        title: Text(e.nickname ?? e.id),
       );
     });
     return list.toList();
@@ -212,9 +211,9 @@ class _GetUser extends State<GetUser> {
   Future<void> initUser() async {
     if (widget.userList == null || widget.userList.users.length <= 0) return;
     setState(() {
-      userId = widget.userList.users[0].userId;
+      userId = widget.userList.users[0].id;
     });
-    user = await BaaS.User.user(widget.userList.users[0].userId);
+    user = await BaaS.User.getUser(widget.userList.users[0].id);
   }
 
   @override
@@ -230,10 +229,10 @@ class _GetUser extends State<GetUser> {
               ? () async {
                   try {
                     String userId = widget.userList.users.length > 0
-                        ? widget.userList.users[0].userId
+                        ? widget.userList.users[0].id
                         : this.userId;
-                    BaaS.User user = await BaaS.User.user(userId);
-                    showSimpleDialog(context, prettyJson(user.toJson()));
+                    BaaS.User user = await BaaS.User.getUser(userId);
+                    showSimpleDialog(context, prettyJson(user.toJSON()));
                   } on BaaS.HError catch (e) {
                     showSnackBar(e.toString(), context);
                   }
@@ -245,15 +244,15 @@ class _GetUser extends State<GetUser> {
           onPressed: () async {
             try {
               String userId = widget.userList.users.length > 0
-                  ? widget.userList.users[0].userId
+                  ? widget.userList.users[0].id
                   : this.userId;
 
-              BaaS.User user = await BaaS.User.user(
+              BaaS.User user = await BaaS.User.getUser(
                 userId,
                 expand: ['pointer_test_order'],
                 select: ['nickname', 'pointer_test_order'],
               );
-              showSimpleDialog(context, prettyJson(user.toJson()));
+              showSimpleDialog(context, prettyJson(user.toJSON()));
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
@@ -273,7 +272,7 @@ class _GetUser extends State<GetUser> {
             try {
               BaaS.UserList users = await BaaS.User.find(query: query);
               print(users.users[0]);
-              alert(context, users.users[0].userId);
+              alert(context, users.users[0].id);
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }
@@ -297,12 +296,8 @@ class _GetUser extends State<GetUser> {
         RaisedButton(
           child: Text('count 查询'),
           onPressed: () async {
-            BaaS.Query query = BaaS.Query()
-              ..limit(1)
-              ..withTotalCount(true);
             try {
-              BaaS.UserList users = await BaaS.User.find(query: query);
-              int totalCount = users.totalCount;
+              int totalCount = await BaaS.User.count();
               alert(context, totalCount.toString());
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
@@ -314,9 +309,8 @@ class _GetUser extends State<GetUser> {
           child: Text('用户信息 select（只返回 nickname）'),
           onPressed: () async {
             try {
-              BaaS.User user =
-                  await BaaS.User.user(userId, select: ['nickname']);
-              alert(context, user.toJson().toString());
+              BaaS.User user = await BaaS.User.getUser(userId, select: ['nickname']);
+              alert(context, prettyJson(user.toJSON()));
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
             }

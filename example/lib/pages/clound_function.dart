@@ -3,7 +3,7 @@ import 'package:minapp/minapp.dart';
 
 import 'common.dart';
 
-class CloundFunctionPage extends StatelessWidget {
+class CloudFunctionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

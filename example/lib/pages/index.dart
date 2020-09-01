@@ -24,7 +24,7 @@ final _features = [
   _Feature(name: '数据表', page: SchemaPage()),
   _Feature(name: '内容库', page: ContentPage()),
   _Feature(name: '文件', page: FilePage()),
-  _Feature(name: '调用云函数', page: CloundFunctionPage()),
+  _Feature(name: '调用云函数', page: CloudFunctionPage()),
   _Feature(name: '短信验证码', page: SmsPage()),
 ];
 

@@ -17,10 +17,11 @@ class User {
     this._anonymous = _attribute['_anonymous'];
   }
 
-  String get userId => _attribute['id'].toString();
+  String get id => _attribute['id'].toString();
   String get username => _attribute['_username'];
   String get avatar => _attribute['avatar'];
   String get email => _attribute['_email'];
+  String get phone => _attribute['_phone'];
   String get city => _attribute['city'];
   String get country => _attribute['country'];
   String get language => _attribute['language'];
@@ -35,11 +36,16 @@ class User {
     return _attribute[key];
   }
 
-  Map toJson() {
-    return _attribute;
+  /// 以 Map 的形式返回用户信息
+  Map<String, dynamic> toJSON() {
+    return Map<String, dynamic>.from(this._attribute);
   }
 
-  static Future<User> user(String userId, {List<String> expand, List<String> select}) async {
+  /// 获取单个用户
+  /// [usrId] 用户 ID
+  /// [expand] 需要展开的字段
+  /// [select] 返回指定的字段
+  static Future<User> getUser(String userId, {List<String> expand, List<String> select}) async {
     Map<String, dynamic> data = {};
 
     if (expand != null && expand.length > 0) {
@@ -59,6 +65,8 @@ class User {
     return User(res.data);
   }
 
+  /// 获取用户列表
+  /// [query] 筛选条件 Query 对象
   static Future<UserList> find({Query query}) async {
     Map<String, dynamic> data = query?.get();
 
@@ -69,6 +77,20 @@ class User {
     );
 
     return UserList(res.data);
+  }
+
+  /// 获取用户数量
+  static Future<int> count() async {
+    Query query = Query();
+    query.limit(1);
+    query.withTotalCount(true);
+    Response res = config.request(
+      path: Api.userList,
+      method: 'GET',
+      data: query.get(),
+    );
+
+    return res.data['meta']['total_count'];
   }
 }
 
