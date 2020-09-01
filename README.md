@@ -33,24 +33,40 @@
 * [小游戏](https://cloud.minapp.com/solution/minigame/)：利用知晓云提供的核心组件，轻松实现小游戏
 
 
-
-
-
-
 ## 文档
 
 * [SDK 使用文档](https://doc.minapp.com/)
 
 ## 目录结构
 
-TODO
+```
+├── CHANGELOG.md
+├── README.md
+├── lib                       // 核心模块
+├── test                      // 单元测试
+├── example                   // 测试用例
+├── images                   
+├── pubspec.yaml              // 项目配置文件
+└── pubspec.lock
+```
 
 ## 贡献
 
 ### 开发流程
 
-TODO
+* 构建 Flutter 环境，详见[这里](https://flutter.dev/docs/get-started/install)。
+* `flutter pub get` 安装依赖
+* 开发、测试并提交代码
+* [SDK 使用文档](https://github.com/ifanrx/hydrogen-sdk-doc) 中添加对应的内容
+* PR ( SDK 与文档共两个 PR )
 
 ### 代码提交规范
 
-TODO
+* 内部方法的注释可以使用以下方式：
+
+    ```
+    /// 这是一条注释。
+    /// 使用了 [param] 作为参数
+    ```
+
+* 代码中的逻辑部分需要写单元测试，后端接口调用部分不需要单元测试（这部分由集成测试应用来完成）。
