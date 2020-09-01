@@ -47,8 +47,8 @@ void main() {
     'updated_at': CATEGORY_UPDATED_AT,
   };
 
-  test('class RecordListBase', () {
-    Map<String, dynamic> recordListBase = {
+  test('class RecordListMeta', () {
+    Map<String, dynamic> recordListMeta = {
       'limit': LIMIT,
       'offset': OFFSET,
       'total_count': TOTAL_COUNT,
@@ -56,7 +56,7 @@ void main() {
       'previous': PREVIOUS,
     };
 
-    RecordListBase recordList = RecordListBase(recordListBase);
+    RecordListMeta recordList = RecordListMeta(recordListMeta);
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);
@@ -87,14 +87,14 @@ void main() {
   });
 
   test('class FileListBase', () {
-    Map<String, dynamic> recordListBase = {
+    Map<String, dynamic> recordListMeta = {
       'limit': LIMIT,
       'offset': OFFSET,
       'total_count': TOTAL_COUNT,
       'next': NEXT,
       'previous': PREVIOUS,
     };
-    RecordListBase recordList = RecordListBase(recordListBase);
+    RecordListMeta recordList = RecordListMeta(recordListMeta);
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);

@@ -182,7 +182,7 @@ class Content {
 }
 
 // 内容库列表
-class ContentList extends RecordListBase {
+class ContentList extends RecordListMeta {
   Map<String, dynamic> _data;
   ContentList(this._data): super(_data);
 

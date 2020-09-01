@@ -83,7 +83,7 @@ class TableRecord extends BaseRecord {
   }
 }
 
-class RecordListBase {
+class RecordListMeta {
   int _limit;
   int _offset;
   int _totalCount;
@@ -96,7 +96,7 @@ class RecordListBase {
   String get next => _next;
   String get previous => _previous;
 
-  RecordListBase(Map<String, dynamic> recordInfo) {
+  RecordListMeta(Map<String, dynamic> recordInfo) {
     Map<String, dynamic> meta = recordInfo['meta'];
     _limit = meta == null ? recordInfo['limit'] : meta['limit'];
     _offset = meta == null ? recordInfo['offset'] : meta['offset'];
@@ -107,7 +107,7 @@ class RecordListBase {
   }
 }
 
-class TableRecordList extends RecordListBase {
+class TableRecordList extends RecordListMeta {
   Map<String, dynamic> _recordInfo;
   List get records => _recordInfo['meta'] == null
       ? _recordInfo['operation_result']

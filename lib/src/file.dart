@@ -25,7 +25,7 @@ class CloudFile {
   int get created_at => _file['created_at'];
 }
 
-class CloudFileList extends RecordListBase {
+class CloudFileList extends RecordListMeta {
   List<CloudFile> _files;
 
   List<CloudFile> get files => _files;
@@ -56,7 +56,7 @@ class FileCategory {
   FileCategory(this.category);
 }
 
-class FileCategoryList extends RecordListBase {
+class FileCategoryList extends RecordListMeta {
   List<FileCategory> _categories;
 
   List<FileCategory> get fileCategories => _categories;
