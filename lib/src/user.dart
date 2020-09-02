@@ -84,7 +84,7 @@ class User {
     Query query = Query();
     query.limit(1);
     query.withTotalCount(true);
-    Response res = config.request(
+    Response res = await config.request(
       path: Api.userList,
       method: 'GET',
       data: query.get(),

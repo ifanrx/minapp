@@ -346,7 +346,7 @@ class _OtherSettings extends State<OtherSettings> {
             onPressed: () async {
               try{
                 BaaS.CurrentUser currentUser = await BaaS.Auth.anonymousLogin();
-                showSnackBar(prettyJson(currentUser?.toJson()), context);
+                showSnackBar(prettyJson(currentUser?.toJSON()), context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
               }
@@ -357,7 +357,7 @@ class _OtherSettings extends State<OtherSettings> {
             onPressed: () async {
               try {
                 BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
-                showSnackBar(prettyJson(currentUser?.toJson()), context);
+                showSnackBar(prettyJson(currentUser?.toJSON()), context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
               }
@@ -408,7 +408,7 @@ class _OtherSettings extends State<OtherSettings> {
                     try {
                       BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
                       await currentUser.setAccount(data);
-                      showSnackBar(prettyJson(currentUser?.toJson()), context);
+                      showSnackBar(prettyJson(currentUser?.toJSON()), context);
                     } on BaaS.HError catch(e) {
                       showSnackBar(e.toString(), context);
                     }
