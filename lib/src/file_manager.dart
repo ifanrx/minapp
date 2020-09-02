@@ -9,11 +9,13 @@ import 'upload.dart';
 import 'config.dart';
 
 class FileManager {
+  /// 根据文件 ID 获取单个文件
   static Future<CloudFile> get(String fileID) async {
     Response res = await config.request(path: Api.fileDetail, method: 'GET', params: {'fileID': fileID});
     return CloudFile(res.data);
   }
 
+  /// 获取文件列表
   static Future<CloudFileList> find([Query query]) async {
     Map<String, dynamic> data;
     if (query != null) {
@@ -27,6 +29,9 @@ class FileManager {
     return CloudFileList(res.data);
   }
 
+  /// 删除单个文件或批量删除
+  /// [id] 可以为 String 或 List<String> 类型，String 则为单个文件 ID，删除单个文件
+  /// List<String> 则为文件 ID 列表，批量删除
   static Future<void> delete(id) async {
     if (id == null) throw HError(604);
 
@@ -34,7 +39,7 @@ class FileManager {
       await config.request(path: Api.deleteFile, method: 'DELETE', params: {
         'fileID': id,
       });
-    } else if (id is List) {
+    } else if (id is List<String>) {
       await config.request(path: Api.deleteFiles, method: 'DELETE', data: {
         'id__in': id,
       });
@@ -43,6 +48,7 @@ class FileManager {
     }
   }
 
+  /// 根据分类 ID 获取文件分类详情
   static Future<FileCategory> getCategory(String cateID) async {
     Response res = await config.request(
       path: Api.fileCategoryDetail,
@@ -53,6 +59,7 @@ class FileManager {
     return FileCategory(res.data);
   }
 
+  /// 获取分类列表
   static Future<FileCategoryList> getCategoryList([Query query]) async {
     Map<String, dynamic> data;
 

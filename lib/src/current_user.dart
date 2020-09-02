@@ -101,6 +101,8 @@ class CurrentUser extends User {
     }
   }
 
+  /// 更改手机号码
+  /// [phone] 新的手机号码
   Future<void> setMobilePhone(String phone) async {
     Response res = await config.request(
       path: Api.accountInfo,
@@ -113,6 +115,8 @@ class CurrentUser extends User {
     this._attribute = res.data;
   }
 
+  /// 验证手机号
+  /// [code] 短信验证码
   Future<void> verifyMobilePhone(String code) async {
     if (this.isAnonymous) {
       throw HError(612);

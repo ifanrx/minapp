@@ -31,7 +31,7 @@ class FileListView extends StatefulWidget {
 
 class _FileListView extends State<FileListView> {
   CloudFileList fileList;
-  List selectedFile = [];
+  List<String> selectedFile = [];
   FileCategoryList categoryList;
   String orderBy, currentCate, currentFileID, defaultCateID, currentCateName;
   Map<String, dynamic> cateAll = {};
@@ -125,11 +125,11 @@ class _FileListView extends State<FileListView> {
             onChanged: (isChecked) {
               if (isChecked) {
                 setState(() {
-                  selectedFile.add(fileList.files[index].id);
+                  selectedFile.add(fileList.files[index].id.toString());
                 });
               } else {
                 setState(() {
-                  selectedFile.remove(fileList.files[index].id);
+                  selectedFile.remove(fileList.files[index].id.toString());
                 });
               }
             },
