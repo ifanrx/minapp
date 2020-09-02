@@ -54,7 +54,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     if (_records.length == 0) return;
     showLoading(true);
     try {
-      TableRecord record = await product.get(_records[0]['id']);
+      TableRecord record = await product.get(_records[0].id);
       alert(context, '查询成功 - ID 为：${record.recordInfo['id']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -68,7 +68,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     showLoading(true);
     try {
       List<String> select = ['str'];
-      TableRecord record = await product.get(_records[0]['id'], select: select);
+      TableRecord record = await product.get(_records[0].id, select: select);
       alert(context, '查询成功 - str: ${record.recordInfo['str']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -81,7 +81,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     showLoading(true);
     try {
       List<String> select = ['-str', '-array_i'];
-      TableRecord record = await product.get(_records[0]['id'], select: select);
+      TableRecord record = await product.get(_records[0].id, select: select);
       List<String> keys = [];
       record.recordInfo.forEach((key, value) => keys.add(key));
       alert(context, 'All keys: $keys');
@@ -328,8 +328,12 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       query.select(['num']);
       TableRecordList recordList = await product.find(query, withCount: true);
-      print(recordList.records.length);
-      alert(context, '${recordList.records}');
+      var result = recordList.records.map((item) {
+        Map map = {};
+        item.recordInfo.forEach((k, v) => map[k] = v);
+        return map;
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -344,8 +348,12 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       query.select(['-array_s', '-str', '-file']);
       TableRecordList recordList = await product.find(query, withCount: true);
-      print(recordList.records.length);
-      alert(context, '${recordList.records}');
+      var result = recordList.records.map((item) {
+        Map map = {};
+        item.recordInfo.forEach((k, v) => map[k] = v);
+        return map;
+      }).toList();
+      alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -364,7 +372,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
           query.select(field);
         }
         TableRecordList recordList = await product.find(query, withCount: true);
-        alert(context, 'created_by: ${recordList.records[0]['created_by']}');
+        alert(context, 'created_by: ${recordList.records[0].recordInfo['created_by']}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
       }
@@ -394,7 +402,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       List<String> expand = ['created_by'];
-      TableRecord record = await product.get(_records[0]['id'], expand: expand);
+      TableRecord record = await product.get(_records[0].id, expand: expand);
       alert(context, 'created by: ${record.recordInfo['created_by']}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -724,7 +732,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                              'num: ${record['num']}, str: ${record['str']}'),
+                              'num: ${record.recordInfo['num']}, str: ${record.recordInfo['str']}'),
                         );
                       }).toList(),
                     ),

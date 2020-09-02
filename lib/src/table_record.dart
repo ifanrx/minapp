@@ -111,9 +111,14 @@ class RecordListMeta {
 /// 一般在查询 find 时返回处理
 class TableRecordList extends RecordListMeta {
   Map<String, dynamic> _recordInfo;
-  List get records => _recordInfo['objects'];
+  List _records = [];
+  List get records => _records;
 
-  TableRecordList(this._recordInfo) : super(_recordInfo);
+  TableRecordList(this._recordInfo) : super(_recordInfo) {
+    // print(_recordInfo['objects']);
+    _recordInfo['objects']
+        ?.forEach((item) => records.add(TableRecord.withInfo(item)));
+  }
 }
 
 class TableRecordOperation {
