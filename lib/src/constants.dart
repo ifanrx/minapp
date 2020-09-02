@@ -1,14 +1,5 @@
 int queryLimitationDefault = 20;
 
-class UploadConfig {
-  static const uploadFileKey = 'file';
-  static const headerAuth = 'Authorization';
-  static const headerClient = 'X-Hydrogen-Client-ID';
-  static const headerAuthValue = 'Hydrogen-r1 ';
-  static const ua =
-      'Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30';
-}
-
 class StorageKey {
   static const authToken = 'auth_token';
   static const uid = 'uid';
