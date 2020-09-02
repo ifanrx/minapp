@@ -23,6 +23,9 @@ class CloudFile {
   FileCategory get category => _category;
   int get size => _file['size'];
   int get created_at => _file['created_at'];
+  Map<String, dynamic> get() {
+    return _file;
+  }
 }
 
 class CloudFileList extends RecordListMeta {

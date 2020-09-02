@@ -12,6 +12,7 @@ import 'geo_point.dart';
 import 'geo_polygon.dart';
 import 'table_record.dart';
 import 'log.dart';
+import 'file.dart';
 
 Logger log = new Logger(filter: CustomLogFilter());
 
@@ -110,6 +111,8 @@ serializeValue(value) {
     return value.geoJSON;
   } else if (value is TableRecord) {
     return value.recordId;
+  } else if (value is CloudFile) {
+    return value.get();
   } else {
     return value;
   }

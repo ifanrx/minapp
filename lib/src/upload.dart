@@ -38,7 +38,7 @@ Future<dynamic> uploadFile(
   String fileName = basename(filePath);
 
   Map<String, dynamic> newMetadata = {};
-  metaData.forEach((key, value) {
+  metaData?.forEach((key, value) {
     if (key == 'categoryID') newMetadata['category_id'] = value;
     if (key == 'categoryName') newMetadata['category_name'] = value;
   });
