@@ -119,21 +119,21 @@ void main() {
     try {
       product.set('');
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
       product.set('string', 'test');
       product.unset('string');
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
       product.unset('string');
       product.set('string', 'test');
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
@@ -143,7 +143,7 @@ void main() {
       });
       product.set('string', 'test');
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
@@ -153,7 +153,7 @@ void main() {
       });
       product.unset('string');
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
@@ -163,7 +163,7 @@ void main() {
       });
       product.unset({'string': ''});
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
   });
 

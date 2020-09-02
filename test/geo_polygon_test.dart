@@ -45,12 +45,11 @@ void main() {
     );
   });
 
-  /// [TODO] 抛错写法有误，待研究
   test('Falsy arguments', () {
     try {
       new GeoPolygon();
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
 
     try {
@@ -58,7 +57,7 @@ void main() {
       GeoPoint point2 = new GeoPoint(1, 1);
       new GeoPolygon(points: [point1, point2]);
     } catch (e) {
-      expect(e.toString(), new HError(605).toString());
+      expect(e, isInstanceOf<HError>());
     }
   });
 
