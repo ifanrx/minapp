@@ -28,6 +28,32 @@ class _SchemaBatchState extends State<SchemaBatch> {
     setState(() => _isLoading = isLoading);
   }
 
+  Map getResult(records) {
+    var list = records.operation_result.map((element) {
+      if (element.success != null) {
+        return {'success': element.success};
+      }
+      if (element.error != null) {
+        return {'error': element.error};
+      }
+    }).toList();
+
+    Map result = {
+      'succeed': records.succeed,
+      'total_count': records.total_count,
+      'operation_result': list
+    };
+
+    if (records.limit != null || records.offset != null) {
+      result['limit'] = records.limit;
+      result['next'] = records.next;
+      result['previous'] = records.previous;
+      result['offset'] = records.offset;
+    }
+
+    return result;
+  }
+
   void batchCreate() async {
     showLoading(true);
 
@@ -40,14 +66,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
       TableRecordOperationList records =
           await order.createMany(data, enableTrigger: true);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -67,14 +86,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
       ];
 
       TableRecordOperationList records = await order.createMany(data);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -98,14 +110,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
       ];
 
       TableRecordOperationList records = await order.createMany(data);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -125,14 +130,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
       record.set('str', 'updated');
       TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: true);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -152,14 +150,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
       record.set('str', 'updated');
       TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: false);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -179,14 +170,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
       record.set('num', 500);
       TableRecordOperationList records =
           await record.update(withCount: true, enableTrigger: false);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -204,16 +188,8 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_arr');
-      TableRecordOperationList records =
-          await record.update(withCount: true);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      TableRecordOperationList records = await record.update(withCount: true);
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -231,16 +207,8 @@ class _SchemaBatchState extends State<SchemaBatch> {
       query.where(where);
       TableRecord record = order.getWithoutData(query: query);
       record.set('str', 'update_null');
-      TableRecordOperationList records =
-          await record.update(withCount: true);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      TableRecordOperationList records = await record.update(withCount: true);
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -261,16 +229,8 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
       TableRecord record = order.getWithoutData(query: query);
       record.append('array_s', 'update_and_or');
-      TableRecordOperationList records =
-          await record.update(withCount: true);
-      var result = records.operation_result.map((element) {
-        if (element.success != null) {
-          return {'success': element.success};
-        }
-        if (element.error != null) {
-          return {'error': element.error};
-        }
-      }).toList();
+      TableRecordOperationList records = await record.update(withCount: true);
+      Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -292,7 +252,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
       var res = await order.delete(
           query: query, withCount: true, enableTrigger: true);
-      alert(context, 'succeed: ${res['succeed']}');
+      alert(context, 'succeed: $res');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -313,7 +273,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
 
       var res = await order.delete(
           query: query, withCount: true, enableTrigger: false);
-      alert(context, 'succeed: ${res['succeed']}');
+      alert(context, 'succeed: $res');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -354,7 +314,7 @@ class _SchemaBatchState extends State<SchemaBatch> {
                   title: '比较查询批量更新数据',
                 ),
                 CustomButton(
-                  batchCreateWithoutTrigger,
+                  batchUpdateCompareWithoutTrigger,
                   title: '比较查询批量更新数据（不触发触发器）',
                 ),
                 CustomButton(

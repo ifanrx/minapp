@@ -23,7 +23,7 @@ class TableObject {
   /// [records] 多条数据项
   /// [enableTrigger] 是否触发触发器
   Future<TableRecordOperationList> createMany(
-    List<Map<String, dynamic>> records, {
+    List records, {
     bool enableTrigger = true,
   }) async {
     records = records.map((record) {
@@ -36,7 +36,7 @@ class TableObject {
       method: 'POST',
       params: {
         'tableID': _tableId,
-        'enable_trigger': enableTrigger ? 1 : 0
+        'enable_trigger': enableTrigger ? 1 : 0,
       },
       data: records,
     );

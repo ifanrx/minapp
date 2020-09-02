@@ -161,6 +161,7 @@ class TableRecordOperationList {
     _offset = _operationList['offset'];
     _limit = _operationList['limit'];
     _succeed = _operationList['succeed'];
+    _total_count = _operationList['total_count'];
     _operationList['operation_result']?.forEach((result) {
       _operation_result.add(TableRecordOperation(result));
     });
