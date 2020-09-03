@@ -24,7 +24,7 @@ class ContentGroup {
   /// [offset] 偏移量
   /// [limit] 最大返回条数
   static Future<ContentList> find({
-    bool withCount = true,
+    bool withCount = false,
     int offset = 0,
     int limit = 20,
   }) async {
@@ -172,21 +172,33 @@ class Content {
   String get content => _data['content'];
   String get cover => _data['cover'];
   int get created_at => _data['created_at'];
-  int get created_by => _data['created_by'];
+  int get created_by {
+    if (_data['created_by'] != null) {
+      return _data['created_by'] is int
+          ? _data['created_by']
+          : _data['created_by']['id'];
+    }
+    return null;
+  }
+
+  Map<String, dynamic> get created_by_map =>
+      _data['created_by'] is Map ? _data['created_by'] : null;
   String get description => _data['description'];
   int get group_id => _data['group_id'];
   int get id => _data['id'];
   String get title => _data['title'];
   int get updated_at => _data['updated_at'];
   int get visit_count => _data['visit_count'];
+  String get name => _data['name'];
 }
 
 // 内容库列表
 class ContentList extends RecordListMeta {
   Map<String, dynamic> _data;
-  ContentList(this._data): super(_data);
+  ContentList(this._data) : super(_data);
 
-  List get contents => _data['objects'];
+  List get contents =>
+      _data['objects']?.map((object) => Content(object))?.toList();
 }
 
 // 内容分类
@@ -201,7 +213,10 @@ class ContentCategory {
 }
 
 // 内容分类列表
-class ContentCategoryList extends ContentList {
+class ContentCategoryList extends RecordListMeta {
   Map<String, dynamic> _data;
   ContentCategoryList(this._data) : super(_data);
+
+  List get contentCategories =>
+      _data['objects']?.map((object) => ContentCategory(object))?.toList();
 }

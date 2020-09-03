@@ -2,13 +2,13 @@ import 'h_error.dart';
 import 'geo_point.dart';
 
 class GeoPolygon {
-  List<List<num>> _coordinates;
+  List _coordinates;
   List<GeoPoint> _points;
   Map<String, dynamic> _geoJSON;
 
   Map<String, dynamic> get geoJSON => _geoJSON;
 
-  GeoPolygon({List<List<num>> coordinates, List<GeoPoint> points}) {
+  GeoPolygon({List coordinates, List<GeoPoint> points}) {
     _coordinates = coordinates;
     _points = points;
     // 当有 coordinates 时（如果 coordinates 和 points 都传，则只会处理 coordinates）

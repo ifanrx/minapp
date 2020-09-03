@@ -16,13 +16,13 @@ class _ContentPageState extends State<ContentPage> {
   int groupId = 1513076211190694;
   ContentGroup contentGroup;
   List categoryList = [
-    {'name': '全部', 'id': 'all'},
+    ContentCategory({'name': '全部', 'id': -1}),
   ];
   int limit = 10;
   int offset = 0;
   List contentList = [];
   String orderBy;
-  String categoryId = 'all';
+  int categoryId = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _showSnackBar(String message) {
@@ -40,7 +40,8 @@ class _ContentPageState extends State<ContentPage> {
     try {
       var data = await contentGroup.getCategoryList();
       setState(() {
-        categoryList.addAll(data.contents);
+        categoryList.addAll(data.contentCategories);
+        print('categoryList: $categoryList');
       });
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -63,9 +64,8 @@ class _ContentPageState extends State<ContentPage> {
         query.orderBy(orderBy);
       }
 
-      if (categoryId != 'all') {
-        Where where =
-            Where.arrayContains('categories', [int.parse(categoryId)]);
+      if (categoryId != -1) {
+        Where where = Where.arrayContains('categories', [categoryId]);
         query.where(where);
       }
 
@@ -95,7 +95,7 @@ class _ContentPageState extends State<ContentPage> {
         ..limit(limit)
         ..offset(offset);
 
-      Where where = Where.compare('title', '!=', contentList[0]['title']);
+      Where where = Where.compare('title', '!=', contentList[0].title);
       query.where(where);
 
       var data = await contentGroup.query(
@@ -126,7 +126,7 @@ class _ContentPageState extends State<ContentPage> {
 
       try {
         var data = await contentGroup.getContent(
-          contentList[0]['id'],
+          contentList[0].id,
           expand: withConfig ? ['pointer_test_order'] : '',
           select: withConfig ? ['title', 'pointer_test_order'] : '',
         );
@@ -145,7 +145,7 @@ class _ContentPageState extends State<ContentPage> {
     showLoading(true);
 
     try {
-      var data = await contentGroup.getCategory(categoryList[1]['id']);
+      var data = await contentGroup.getCategory(categoryList[1].id);
       alert(context,
           '查询成功 - children: ${data.children}, have_children: ${data.have_children}, name: ${data.name}, id: ${data.id}');
     } catch (e) {
@@ -183,8 +183,21 @@ class _ContentPageState extends State<ContentPage> {
   void getContentGroupList() async {
     showLoading(true);
     try {
-      var data = await ContentGroup.find();
-      alert(context, '查询成功 - ${data.contents}');
+      ContentList data = await ContentGroup.find();
+      var list = data.contents.map((content) {
+        return {
+          'id': content.id,
+          'name': content.name,
+        };
+      }).toList();
+      var result = {
+        'limit': data.limit,
+        'next': data.next,
+        'previous': data.previous,
+        'offset': data.offset,
+        'objects': list
+      };
+      alert(context, '查询成功 - $result');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
@@ -218,15 +231,15 @@ class _ContentPageState extends State<ContentPage> {
                   children: categoryList.map((category) {
                     return GestureDetector(
                       child: Text(
-                        '${category['name']} | ',
+                        '${category.name} | ',
                         style: TextStyle(
-                          color: categoryId == category['id'].toString()
+                          color: categoryId == category.id
                               ? Colors.red
                               : Colors.black,
                         ),
                       ),
                       onTap: () {
-                        setState(() => categoryId = category['id'].toString());
+                        setState(() => categoryId = category.id);
                         queryContent();
                       },
                     );
@@ -335,7 +348,7 @@ class _ContentPageState extends State<ContentPage> {
                       children: contentList.map((record) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(record['title']),
+                          child: Text(record.title),
                         );
                       }).toList(),
                     ),
@@ -345,7 +358,7 @@ class _ContentPageState extends State<ContentPage> {
                 CustomTitle(
                     contentList.length == 0
                         ? '没有文件'
-                        : '获取 title != \'${contentList[0]['title']}\' 的内容',
+                        : '获取 title != \'${contentList[0].title}\' 的内容',
                     boxHeight: 20.0),
                 CustomButton(
                     contentList.length == 0 ? null : queryContentByName,
@@ -353,14 +366,14 @@ class _ContentPageState extends State<ContentPage> {
                 CustomTitle(
                     contentList.length == 0
                         ? '没有文件'
-                        : '获取内容详情 title = \'${contentList[0]['title']}\'',
+                        : '获取内容详情 title = \'${contentList[0].title}\'',
                     boxHeight: 20.0),
                 CustomButton(contentList.length == 0 ? null : getContent(),
                     title: '获取内容详情'),
                 CustomButton(contentList.length == 0 ? null : getContent(true),
                     title: '获取内容详情 select & expand'),
                 CustomTitle(
-                    '获取分类详情 name = \'${categoryList.length > 1 ? categoryList[1]['name'] : ''}\'',
+                    '获取分类详情 name = \'${categoryList.length > 1 ? categoryList[1].name : ''}\'',
                     boxHeight: 20.0),
                 CustomButton(getCategory, title: '获取分类详情'),
                 CustomTitle('count', boxHeight: 20.0),
