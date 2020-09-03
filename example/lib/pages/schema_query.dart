@@ -40,7 +40,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
 
     try {
       TableRecordList recordList =
-          await product.find(new Query(), withCount: true);
+          await product.find(query: new Query(), withCount: true);
       setState(() => _records = recordList.records);
       alert(context, '查询成功 - 总记录数为：${recordList.totalCount}');
     } catch (e) {
@@ -99,7 +99,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
         Query query = new Query();
         Where where = Where.compare('int', operator, 50);
         query.where(where);
-        TableRecordList recordList = await product.find(query, withCount: true);
+        TableRecordList recordList = await product.find(query: query, withCount: true);
         alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -115,7 +115,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.contains('str', 'm');
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -132,7 +132,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       RegExp regExp = RegExp(r'/^q/i');
       Where where = Where.matches('str', regExp);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -148,7 +148,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.inList('array_s', ['黑', '白']);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -164,7 +164,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.notInList('array_s', ['灰']);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -180,7 +180,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.arrayContains('array_s', ['黑', '白', '灰']);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -196,7 +196,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.compare('array_s', '=', ['a', 'b', 'c', 'd']);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -212,7 +212,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.isNull('int');
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -228,7 +228,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.isNotNull('int');
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -244,7 +244,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.exists(['str', 'int']);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -260,7 +260,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.notExists('int');
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -285,7 +285,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Where orWhere = Where.or([andWhere, where3]);
       orQuery.where(orWhere);
 
-      TableRecordList recordList = await product.find(orQuery, withCount: true);
+      TableRecordList recordList = await product.find(query: orQuery, withCount: true);
       alert(context, '查询成功 - 记录数: ${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -311,7 +311,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       if (_orderBy != null) {
         query.orderBy(_orderBy);
       }
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       print(recordList.records.length);
       setState(() => _records = recordList.records);
     } catch (e) {
@@ -327,7 +327,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       Query query = new Query();
       query.select(['num']);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       var result = recordList.records.map((item) {
         Map map = {};
         item.recordInfo.forEach((k, v) => map[k] = v);
@@ -347,7 +347,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       Query query = new Query();
       query.select(['-array_s', '-str', '-file']);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       var result = recordList.records.map((item) {
         Map map = {};
         item.recordInfo.forEach((k, v) => map[k] = v);
@@ -371,7 +371,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
         if (field != null) {
           query.select(field);
         }
-        TableRecordList recordList = await product.find(query, withCount: true);
+        TableRecordList recordList = await product.find(query: query, withCount: true);
         alert(context, 'created_by: ${recordList.records[0].recordInfo['created_by']}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -387,7 +387,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
     try {
       Query query = new Query();
       query.expand(['pointer_userprofile', 'pointer_test_order']);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       setState(() => _records = recordList.records);
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -424,7 +424,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Where andWhere = Where.and([where1, where2]);
       query.where(andWhere);
 
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -441,7 +441,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       String time = new DateTime(2017, 12, 31, 16).toIso8601String();
       Where where = Where.compare('date', '<=', time);
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -457,7 +457,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
       Query query = new Query();
       Where where = Where.hasKey('obj', 'num');
       query.where(where);
-      TableRecordList recordList = await product.find(query, withCount: true);
+      TableRecordList recordList = await product.find(query: query, withCount: true);
       alert(context, '查询成功-总记录数为：${recordList.totalCount}');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -514,7 +514,7 @@ class _SchemaQueryState extends State<SchemaQuery> {
         query
           ..where(where)
           ..expand('pointer_test_order');
-        TableRecordList recordList = await product.find(query, withCount: true);
+        TableRecordList recordList = await product.find(query: query, withCount: true);
         alert(context, '${recordList.records}');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');

@@ -140,8 +140,8 @@ class TableObject {
   /// 获取数据记录列表
   /// [query] 查询条件
   /// [withCount] 是否返回 total_count
-  Future<TableRecordList> find(
-    Query query, {
+  Future<TableRecordList> find({
+    Query query,
     bool withCount = false,
     dynamic select,
     dynamic expand,
@@ -164,7 +164,7 @@ class TableObject {
   Future<int> count({Query query}) async {
     query = query != null ? query : new Query();
     query.limit(1);
-    TableRecordList response = await find(query, withCount: true);
+    TableRecordList response = await find(query: query, withCount: true);
 
     int count = response.totalCount;
     return count;

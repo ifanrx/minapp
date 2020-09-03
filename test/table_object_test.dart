@@ -212,7 +212,7 @@ void main() {
       ..where(where)
       ..offset(0);
 
-    await product.find(query);
+    await product.find(query: query);
     expect(
       requestConfig['data'],
       equals({
@@ -230,7 +230,7 @@ void main() {
       ..where(where)
       ..offset(0);
 
-    await product.find(query, withCount: true);
+    await product.find(query: query, withCount: true);
     expect(
       requestConfig['data'],
       equals({
@@ -248,7 +248,7 @@ void main() {
       ..where(where)
       ..offset(0);
 
-    await product.find(query, withCount: false);
+    await product.find(query: query, withCount: false);
     expect(
       requestConfig['data'],
       equals({
