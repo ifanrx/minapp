@@ -143,8 +143,6 @@ class TableObject {
   Future<TableRecordList> find({
     Query query,
     bool withCount = false,
-    dynamic select,
-    dynamic expand,
   }) async {
     Map<String, dynamic> data = query == null ? {} : query.get();
     data['return_total_count'] = withCount ? 1 : 0;
