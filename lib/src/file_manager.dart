@@ -30,18 +30,18 @@ class FileManager {
   }
 
   /// 删除单个文件或批量删除
-  /// [id] 可以为 String 或 List<String> 类型，String 则为单个文件 ID，删除单个文件
+  /// [fileID] 可以为 String 或 List<String> 类型，String 则为单个文件 ID，删除单个文件
   /// List<String> 则为文件 ID 列表，批量删除
-  static Future<void> delete(id) async {
-    if (id == null) throw HError(604);
+  static Future<void> delete(fileID) async {
+    if (fileID == null) throw HError(604);
 
-    if (id is String) {
+    if (fileID is String) {
       await config.request(path: Api.deleteFile, method: 'DELETE', params: {
-        'fileID': id,
+        'fileID': fileID,
       });
-    } else if (id is List<String>) {
+    } else if (fileID is List<String>) {
       await config.request(path: Api.deleteFiles, method: 'DELETE', data: {
-        'id__in': id,
+        'id__in': fileID,
       });
     } else {
       throw HError(605);

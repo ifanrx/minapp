@@ -2,9 +2,9 @@ import './user.dart';
 import 'table_record.dart';
 
 class UserList extends RecordListMeta {
-  List _users;
+  List<User> _users;
 
-  List get users => _users;
+  List<User> get users => _users;
 
   UserList(Map<String, dynamic> recordInfo) : super(recordInfo) {
     _users = _initUsers(recordInfo['objects']);

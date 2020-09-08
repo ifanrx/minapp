@@ -12,8 +12,6 @@ class CloudFile {
     }
   }
 
-  static const String QUERY_CATEGORY_ID = 'category_id';
-
   String get id => _file['id'];
   String get name => _file['name'];
   String get mime_type => _file['mime_type'];
@@ -23,8 +21,9 @@ class CloudFile {
   FileCategory get category => _category;
   int get size => _file['size'];
   int get created_at => _file['created_at'];
+
   Map<String, dynamic> get() {
-    return _file;
+    return Map<String, dynamic>.from(_file);
   }
 }
 
