@@ -13,7 +13,7 @@ class TableRecord extends BaseRecord {
   TableRecord(String tableName, {String recordId, Query query}) {
     _tableName = tableName;
     _recordId = recordId;
-    _query = query;
+    _query = query ?? new Query();
   }
 
   /// 接收服务端返回的数据

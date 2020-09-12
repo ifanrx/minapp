@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/adapter.dart';
 import 'util.dart';
 import 'config.dart';
 import 'h_error.dart';
@@ -99,3 +101,14 @@ String _toPath(String path, Map<String, dynamic> params) {
   return path;
 }
 
+void debugHttpRequest() {
+  (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = 
+    (HttpClient client) {
+    client.findProxy = (uri) {
+      //proxy all request to localhost:8888
+      return "PROXY localhost:8888";
+    };
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+  };
+}

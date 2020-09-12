@@ -40,6 +40,10 @@ void init(
     request = r.request;
   }
 
+  if (debug == true) {
+    r.debugHttpRequest();
+  }
+
   config = Config(
     authPrefix: 'Hydrogen-r1',
     clientID: clientID,
@@ -50,4 +54,5 @@ void init(
     sdkType: 'file',
     version: '1.0.0',
   );
+
 }
