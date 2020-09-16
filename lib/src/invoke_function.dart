@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'constants.dart';
 import 'config.dart';
 
-Future invokeCloudFunction({@required String name, Map<String, dynamic> data, bool async: true}) async {
+Future invokeCloudFunction({@required String name, Map<String, dynamic> data, bool sync: true}) async {
   Map<String, dynamic> params = {
     'function_name': name,
-    'async': async,
+    'sync': sync,
   };
 
   if (data != null) {
