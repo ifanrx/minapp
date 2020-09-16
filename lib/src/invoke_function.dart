@@ -11,7 +11,7 @@ Future invokeCloudFunction({@required String name, Map<String, dynamic> data, bo
   };
 
   if (data != null) {
-    params.addAll(data);
+    params.addAll({'data': data});
   }
 
   Response res = await config.request(

@@ -24,9 +24,8 @@ class InvokeButtons extends StatelessWidget {
           child: Text('helloWorld'),
           onPressed: () async {
             try {
-              var res = await invokeCloudFunction(name: 'helloWorld');
-              print(res);
-              showSimpleDialog(context, res['data']);
+              var res = await invokeCloudFunction(name: 'helloWorld', data: {'name': 'helloWorld'});
+              showSimpleDialog(context, res['data'] ?? 'null');
             } on HError catch(e) {
               showSnackBar(e.toString(), context);
             }
