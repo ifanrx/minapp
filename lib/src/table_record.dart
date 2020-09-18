@@ -86,13 +86,13 @@ class TableRecord extends BaseRecord {
 class RecordListMeta {
   int _limit;
   int _offset;
-  int _totalCount;
+  int _total_count;
   String _next;
   String _previous;
 
   int get limit => _limit;
   int get offset => _offset;
-  int get totalCount => _totalCount;
+  int get total_count => _total_count;
   String get next => _next;
   String get previous => _previous;
 
@@ -100,7 +100,7 @@ class RecordListMeta {
     Map<String, dynamic> meta = recordInfo['meta'];
     _limit = meta == null ? recordInfo['limit'] : meta['limit'];
     _offset = meta == null ? recordInfo['offset'] : meta['offset'];
-    _totalCount =
+    _total_count =
         meta == null ? recordInfo['total_count'] : meta['total_count'];
     _next = meta == null ? recordInfo['next'] : meta['next'];
     _previous = meta == null ? recordInfo['previous'] : meta['previous'];

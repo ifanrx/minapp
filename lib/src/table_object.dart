@@ -164,7 +164,7 @@ class TableObject {
     query.limit(1);
     TableRecordList response = await find(query: query, withCount: true);
 
-    int count = response.totalCount;
+    int count = response.total_count;
     return count;
   }
 }

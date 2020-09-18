@@ -60,7 +60,7 @@ void main() {
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);
-    expect(recordList.totalCount, TOTAL_COUNT);
+    expect(recordList.total_count, TOTAL_COUNT);
     expect(recordList.next, NEXT);
     expect(recordList.previous, PREVIOUS);
   });
@@ -98,7 +98,7 @@ void main() {
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);
-    expect(recordList.totalCount, TOTAL_COUNT);
+    expect(recordList.total_count, TOTAL_COUNT);
     expect(recordList.next, NEXT);
     expect(recordList.previous, PREVIOUS);
   });
@@ -117,7 +117,7 @@ void main() {
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);
-    expect(recordList.totalCount, TOTAL_COUNT);
+    expect(recordList.total_count, TOTAL_COUNT);
     expect(recordList.next, NEXT);
     expect(recordList.previous, PREVIOUS);
     expect(recordList.files.length, fileList.length);
@@ -136,7 +136,7 @@ void main() {
 
     expect(recordList.limit, LIMIT);
     expect(recordList.offset, OFFSET);
-    expect(recordList.totalCount, TOTAL_COUNT);
+    expect(recordList.total_count, TOTAL_COUNT);
     expect(recordList.next, NEXT);
     expect(recordList.previous, PREVIOUS);
     expect(recordList.files.length, 0);
@@ -167,7 +167,7 @@ void main() {
 
     expect(fileCategoryList.limit, LIMIT);
     expect(fileCategoryList.offset, OFFSET);
-    expect(fileCategoryList.totalCount, TOTAL_COUNT);
+    expect(fileCategoryList.total_count, TOTAL_COUNT);
     expect(fileCategoryList.next, NEXT);
     expect(fileCategoryList.previous, PREVIOUS);
     expect(fileCategoryList.fileCategories.length, categoryList.length);
@@ -187,7 +187,7 @@ void main() {
 
     expect(fileCategoryList.limit, LIMIT);
     expect(fileCategoryList.offset, OFFSET);
-    expect(fileCategoryList.totalCount, TOTAL_COUNT);
+    expect(fileCategoryList.total_count, TOTAL_COUNT);
     expect(fileCategoryList.next, NEXT);
     expect(fileCategoryList.previous, PREVIOUS);
     expect(fileCategoryList.fileCategories.length, 0);

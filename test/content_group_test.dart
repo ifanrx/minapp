@@ -103,7 +103,7 @@ void main() {
     expect(contentList.next, NEXT);
     expect(contentList.offset, OFFSET);
     expect(contentList.previous, PREVIOUS);
-    expect(contentList.totalCount, TOTAL_COUNT);
+    expect(contentList.total_count, TOTAL_COUNT);
   });
 
   test('content category', () {
@@ -121,7 +121,7 @@ void main() {
     expect(contentCategoryList.next, NEXT);
     expect(contentCategoryList.offset, OFFSET);
     expect(contentCategoryList.previous, PREVIOUS);
-    expect(contentCategoryList.totalCount, TOTAL_COUNT);
+    expect(contentCategoryList.total_count, TOTAL_COUNT);
   });
 
   test('query without withCount', () {

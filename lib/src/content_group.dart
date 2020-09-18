@@ -123,7 +123,7 @@ class ContentGroup {
     query.limit(1);
     ContentList data = await this.query(query: query, withCount: true);
 
-    int count = data.totalCount;
+    int count = data.total_count;
     return count;
   }
 
