@@ -1,3 +1,3 @@
-## [0.0.1-dev.1]
+## [1.0.0-alpha]
 
-* Publish the packages to pub.dev
+* 内测版本发布
