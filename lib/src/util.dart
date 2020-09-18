@@ -107,7 +107,17 @@ List parseRegExp(RegExp regExp) {
 
 /// 解析不同类型 value 的内容
 serializeValue(value) {
-  if (value is GeoPoint || value is GeoPolygon) {
+  if (value is List) {
+    return value.map((item) {
+      return serializeValue(item);
+    }).toList();
+  } else if (value is Map) {
+    Map map = new Map();
+    value.forEach((k, v) {
+      map[k] = serializeValue(v);
+    });
+    return map;
+  } else if (value is GeoPoint || value is GeoPolygon) {
     return value.geoJSON;
   } else if (value is TableRecord) {
     return value.recordId;
