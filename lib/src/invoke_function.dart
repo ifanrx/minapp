@@ -1,20 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:minapp/src/request.dart';
 
 import 'constants.dart';
+import 'config.dart';
 
-Future invokeCloudFunction({@required String name, Map<String, dynamic> data, bool async: true}) async {
+Future invokeCloudFunction({@required String name, Map<String, dynamic> data, bool sync: true}) async {
   Map<String, dynamic> params = {
     'function_name': name,
-    'async': async,
+    'sync': sync,
   };
 
   if (data != null) {
-    params.addAll(data);
+    params.addAll({'data': data});
   }
 
-  Response res = await request(
+  Response res = await config.request(
     path: Api.cloudFunction,
     method: 'POST',
     data: params,

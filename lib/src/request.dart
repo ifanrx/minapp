@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/adapter.dart';
 import 'util.dart';
 import 'config.dart';
 import 'h_error.dart';
@@ -43,9 +45,8 @@ Future<Response<T>> request<T>({
     path = _join(config.host, path);
   }
 
-  print(path);
-
   try {
+    log.i('request => $path');
     if (method.toUpperCase() == 'GET') {
       return await _dio.request(path, queryParameters: data, options: options);
     }
@@ -68,8 +69,12 @@ String _extractErrorMsg(Response<dynamic> res) {
   if (res.data is String) {
     return res.data.length > 0 ? res.data : res.statusMessage;
   }
-  if (res.data != null && res.data['error_msg'] != null) {
-    return res.data['error_msg'] as String;
+  if (res.data != null &&
+      (res.data['error_msg'] != null || res.data['error_message'] != null) || res.data['error'] != null) {
+    if (res.data['error'] != null) return res.data['error'];
+    return res.data['error_msg'] != null
+        ? res.data['error_msg'] as String
+        : res.data['error_message'] as String;
   }
   if (res.data != null && res.data['message'] != null) {
     return res.data['message'] as String;
@@ -82,12 +87,28 @@ String _toPath(String path, Map<String, dynamic> params) {
     var v = Uri.encodeComponent(value.toString());
 
     var qsPat = RegExp(r'(&?)' + key + r'=:' + key);
-    path = path.replaceAllMapped(qsPat, (m) {
-      return '${m[1]}$key=$v';
-    });
+    if (value != null) {
+      path = path.replaceAllMapped(qsPat, (m) {
+        return '${m[1]}$key=$v';
+      });
+    } else {
+      path = path.replaceAllMapped(qsPat, (m) => '');
+    }
 
     var pPat = RegExp(r':' + key);
     path = path.replaceAll(pPat, v);
   });
   return path;
+}
+
+void debugHttpRequest() {
+  (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = 
+    (HttpClient client) {
+    client.findProxy = (uri) {
+      //proxy all request to localhost:8888
+      return "PROXY localhost:8888";
+    };
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+  };
 }

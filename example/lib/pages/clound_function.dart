@@ -3,7 +3,7 @@ import 'package:minapp/minapp.dart';
 
 import 'common.dart';
 
-class CloundFunctionPage extends StatelessWidget {
+class CloudFunctionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +24,8 @@ class InvokeButtons extends StatelessWidget {
           child: Text('helloWorld'),
           onPressed: () async {
             try {
-              var res = await invokeCloudFunction(name: 'helloWorld');
-              print(res);
-              showSimpleDialog(context, res['data']);
+              var res = await invokeCloudFunction(name: 'helloWorld', data: {'name': 'helloWorld'}, sync: true);
+              showSimpleDialog(context, res['data'] ?? 'null');
             } on HError catch(e) {
               showSnackBar(e.toString(), context);
             }

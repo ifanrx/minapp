@@ -91,12 +91,22 @@ class _LoginUsername extends State<LoginUsername> {
               var password = _passwordController.text;
 
               try {
-                await BaaS.Auth.login({
-                  'username': username.length > 0 ? username : null,
-                  'email': _emailController.text.length > 0 ? _emailController.text : null,
-                  'phone': _phoneController.text.length > 0 ? _phoneController.text : null,
-                  'password': password,
-                });
+                if (username.length > 0) {
+                  await BaaS.Auth.loginWithUsername(
+                    username: username,
+                    password: password,
+                  );
+                } else if (_emailController.text.length > 0) {
+                  await BaaS.Auth.loginWithEmail(
+                    email: _emailController.text,
+                    password: password,
+                  );
+                } else if (_phoneController.text.length > 0) {
+                  await BaaS.Auth.loginWithPhone(
+                    phone: _phoneController.text,
+                    password: password,
+                  );
+                }
                 showSnackBar('登录成功', context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
@@ -184,12 +194,22 @@ class _Register extends State<Register> {
               if (!_formKey.currentState.validate()) return;
 
               try {
-                await BaaS.Auth.register({
-                  'username': username.length > 0 ? username : null,
-                  'email': email.length > 0 ? email : null,
-                  'phone': phone.length > 0 ? phone : null,
-                  'password': password,
-                });
+                if (username.length > 0) {
+                  await BaaS.Auth.registerWithUsername(
+                    username: username,
+                    password: password,
+                  );
+                } else if (email.length > 0) {
+                  await BaaS.Auth.registerWithEmail(
+                    email: email,
+                    password: password,
+                  );
+                } else if (phone.length > 0) {
+                  await BaaS.Auth.registerWithPhone(
+                    phone: phone,
+                    password: password,
+                  );
+                }
                 showSnackBar('登录成功', context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
@@ -326,7 +346,7 @@ class _OtherSettings extends State<OtherSettings> {
             onPressed: () async {
               try{
                 BaaS.CurrentUser currentUser = await BaaS.Auth.anonymousLogin();
-                showSnackBar(prettyJson(currentUser?.toJson()), context);
+                showSnackBar(prettyJson(currentUser?.toJSON()), context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
               }
@@ -337,7 +357,7 @@ class _OtherSettings extends State<OtherSettings> {
             onPressed: () async {
               try {
                 BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
-                showSnackBar(prettyJson(currentUser?.toJson()), context);
+                showSnackBar(prettyJson(currentUser?.toJSON()), context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
               }
@@ -347,10 +367,8 @@ class _OtherSettings extends State<OtherSettings> {
             child: Text('登出'),
             onPressed: () async {
               try {
-                var res = await BaaS.Auth.logout();
-                print('res ==>');
-                print(res);
-                showSnackBar(res.toString(), context);
+                await BaaS.Auth.logout();
+                showSnackBar('已登出', context);
               } on BaaS.HError catch(e) {
                 showSnackBar(e.toString(), context);
               }
@@ -390,7 +408,7 @@ class _OtherSettings extends State<OtherSettings> {
                     try {
                       BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
                       await currentUser.setAccount(data);
-                      showSnackBar(prettyJson(currentUser?.toJson()), context);
+                      showSnackBar(prettyJson(currentUser?.toJSON()), context);
                     } on BaaS.HError catch(e) {
                       showSnackBar(e.toString(), context);
                     }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:clock/clock.dart';
+import 'package:logger/logger.dart';
 
 import 'auth.dart';
 import 'config.dart';
@@ -7,8 +8,16 @@ import 'storage.dart';
 import 'constants.dart';
 import 'h_error.dart';
 import 'dart:core';
+import 'geo_point.dart';
+import 'geo_polygon.dart';
+import 'table_record.dart';
+import 'log.dart';
+import 'file.dart';
 
-Future<Map<String, dynamic>> mergeRequestHeader(Map<String, dynamic> headers) async {
+Logger log = new Logger(filter: CustomLogFilter());
+
+Future<Map<String, dynamic>> mergeRequestHeader(
+    Map<String, dynamic> headers) async {
   if (config.clientID == null) {
     throw HError(602);
   }
@@ -33,15 +42,18 @@ Future<Map<String, dynamic>> mergeRequestHeader(Map<String, dynamic> headers) as
   return headers;
 }
 
-int getExpiredAt (int nowMilliseconds, int expiresIn) {
+int getExpiredAt(int nowMilliseconds, int expiresIn) {
   return (nowMilliseconds ~/ 1000) + expiresIn - 30;
 }
 
-Future<void> handleLoginSuccess(Response res, [bool isAnonymous = false]) async {
+Future<void> handleLoginSuccess(Response res,
+    [bool isAnonymous = false]) async {
   await storageAsync.set(StorageKey.authToken, res.data['token']);
   await storageAsync.set(StorageKey.uid, res.data['user_id'].toString());
   await storageAsync.set(
-      StorageKey.expiresAt, getExpiredAt(Clock().now().millisecondsSinceEpoch, res.data['expires_in']).toString());
+      StorageKey.expiresAt,
+      getExpiredAt(Clock().now().millisecondsSinceEpoch, res.data['expires_in'])
+          .toString());
   if (isAnonymous) {
     await storageAsync.set(StorageKey.isAnonymousUser, '1');
   } else {
@@ -68,4 +80,50 @@ Future clearSession() async {
   await storageAsync.remove(StorageKey.uid);
 
   await storageAsync.remove(StorageKey.expiresAt);
+}
+
+/// 对 RegExp 类型的变量解析出不含左右斜杠和 flag 的正则字符串和 flags
+/// [regExp] 正则表达式
+List parseRegExp(RegExp regExp) {
+  List result = [];
+  String regExpString = regExp.pattern.toString();
+
+  String firstChar = regExpString.substring(0, 1);
+
+  if (firstChar != '/') {
+    regExpString = '/' + regExpString + '/';
+  }
+
+  int lastIndex = regExpString.lastIndexOf('/');
+
+  result.add(regExpString.substring(1, lastIndex));
+
+  if (lastIndex != regExpString.length - 1) {
+    result.add(regExpString.substring(lastIndex + 1));
+  }
+
+  return result;
+}
+
+/// 解析不同类型 value 的内容
+serializeValue(value) {
+  if (value is List) {
+    return value.map((item) {
+      return serializeValue(item);
+    }).toList();
+  } else if (value is Map) {
+    Map map = new Map();
+    value.forEach((k, v) {
+      map[k] = serializeValue(v);
+    });
+    return map;
+  } else if (value is GeoPoint || value is GeoPolygon) {
+    return value.geoJSON;
+  } else if (value is TableRecord) {
+    return value.recordId;
+  } else if (value is CloudFile) {
+    return value.get();
+  } else {
+    return value;
+  }
 }

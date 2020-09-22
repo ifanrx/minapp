@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart';
-import 'package:collection/collection.dart';
 import 'dart:math';
 import 'dart:convert';
 import '../util.dart';
+import '../components/custom_button.dart';
 
 Map<String, dynamic> object = {
   'a': 'b',
@@ -35,7 +35,7 @@ class ValueGenerator {
         [20.654, 30],
         [10.123, 10],
       ]);
-  GeoPoint point() => new GeoPoint(longitude: 10.123, latitude: 8.543);
+  GeoPoint point() => new GeoPoint(10.123, 8.543);
 }
 
 class SchemaChange extends StatefulWidget {
@@ -52,34 +52,9 @@ class _SchemaChangeState extends State<SchemaChange> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  TableObject tableObject = new TableObject(tableName: 'auto_maintable');
+  TableObject tableObject = new TableObject('auto_maintable');
   ValueGenerator valueGenerator = new ValueGenerator();
   Map<String, dynamic> record;
-
-  Widget customButton({
-    Function fn,
-    String title,
-    Color titleColor = Colors.white,
-    Color bgColor = Colors.green,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: 10),
-        ButtonTheme(
-          height: 50.0,
-          child: RaisedButton(
-            onPressed: fn,
-            child: Text(
-              title,
-              style: TextStyle(color: titleColor, fontSize: 18.0),
-            ),
-            color: bgColor,
-          ),
-        ),
-      ],
-    );
-  }
 
   void createRecordA() async {
     TableRecord tableRecord = tableObject.create();
@@ -97,7 +72,7 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
-      'pointer_test_order': new TableObject(tableName: 'test_order')
+      'pointer_test_order': new TableObject('test_order')
           .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
       'array_obj': [object, object],
       'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
@@ -105,8 +80,8 @@ class _SchemaChangeState extends State<SchemaChange> {
 
     tableRecord.set(options);
     try {
-      var _record = await tableRecord.save();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.save();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
@@ -129,7 +104,7 @@ class _SchemaChangeState extends State<SchemaChange> {
       'geo_polygon': valueGenerator.polygon().geoJSON,
       'geo_point': valueGenerator.point().geoJSON,
       'obj': object,
-      'pointer_test_order': new TableObject(tableName: 'test_order')
+      'pointer_test_order': new TableObject('test_order')
           .getWithoutData(recordId: pointerIds['pointer_test_order_id']),
       'array_obj': [object, object],
       'array_geo': [valueGenerator.point(), valueGenerator.polygon()],
@@ -152,8 +127,8 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.set('array_geo', options['array_geo']);
 
     try {
-      var _record = await tableRecord.save();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.save();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('创建成功');
     } on HError catch (e) {
       _showSnackBar('创建失败: ${e.toString()}');
@@ -172,7 +147,7 @@ class _SchemaChangeState extends State<SchemaChange> {
 
   void updatePointer() async {
     // 获取一个 tableRecord 实例
-    TableObject order = new TableObject(tableName: 'test_order');
+    TableObject order = new TableObject('test_order');
     TableRecord orderRecord =
         order.getWithoutData(recordId: pointerIds['pointer_test_order_id2']);
 
@@ -195,8 +170,8 @@ class _SchemaChangeState extends State<SchemaChange> {
         tableObject.getWithoutData(recordId: record['id']);
     tableRecord.set('int', 100);
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -208,8 +183,8 @@ class _SchemaChangeState extends State<SchemaChange> {
         tableObject.getWithoutData(recordId: record['id']);
     tableRecord.incrementBy(key, value);
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -235,8 +210,8 @@ class _SchemaChangeState extends State<SchemaChange> {
       tableRecord.append(key, value);
 
       try {
-        var _record = await tableRecord.update();
-        setState(() => record = _record.data);
+        TableRecord _record = await tableRecord.update();
+        setState(() => record = _record.recordInfo);
         _showSnackBar('成功');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -258,8 +233,8 @@ class _SchemaChangeState extends State<SchemaChange> {
       tableRecord.remove('array_i', numArray);
 
       try {
-        var _record = await tableRecord.update();
-        setState(() => record = _record.data);
+        TableRecord _record = await tableRecord.update();
+        setState(() => record = _record.recordInfo);
         _showSnackBar('成功');
       } catch (e) {
         _showSnackBar('失败 - ${e.toString()}');
@@ -274,8 +249,8 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.patchObject('obj', {'num': valueGenerator.integer()});
 
     try {
-      var _record = await tableRecord.update();
-      setState(() => record = _record.data);
+      TableRecord _record = await tableRecord.update();
+      setState(() => record = _record.recordInfo);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
@@ -331,57 +306,55 @@ class _SchemaChangeState extends State<SchemaChange> {
             children: [
               Text('请先创建一条记录，再进行下一步操作',
                   style: TextStyle(color: Colors.red, fontSize: 16.0)),
-              customButton(
-                fn: createRecordA,
+              CustomButton(
+                createRecordA,
                 title: '添加记录（整体 set）',
               ),
-              customButton(
-                fn: createRecordB,
+              CustomButton(
+                createRecordB,
                 title: '添加记录（单独 set）',
               ),
-              customButton(
-                fn: record == null ? null : deleteRecord,
+              CustomButton(
+                record == null ? null : deleteRecord,
                 title: '删除记录',
               ),
               SizedBox(height: 10),
               Text('更新字段 -- pointer', style: TextStyle(fontSize: 16.0)),
-              customButton(
-                fn: record == null ? null : updatePointer,
+              CustomButton(
+                record == null ? null : updatePointer,
                 title: 'updatePointer',
               ),
               SizedBox(height: 10),
               Text('更新字段 -- int: ${record != null ? record['int'] : ''}',
                   style: TextStyle(fontSize: 16.0)),
-              customButton(
-                fn: record == null ? null : updateRecord,
+              CustomButton(
+                record == null ? null : updateRecord,
                 title: 'int = 100',
               ),
-              customButton(
-                fn: record == null ? null : minusOne,
+              CustomButton(
+                record == null ? null : minusOne,
                 title: 'int -= 1',
               ),
-              customButton(
-                fn: record == null ? null : plusOne,
+              CustomButton(
+                record == null ? null : plusOne,
                 title: 'int += 1',
               ),
               SizedBox(height: 10),
               Text(
                   '更新字段 -- array_int[]: ${record != null ? record['array_i'] : ''}',
                   style: TextStyle(fontSize: 16.0)),
-              customButton(
-                fn: record == null
+              CustomButton(
+                record == null
                     ? null
                     : addNumbersToArray('array_i', [123, 456]),
                 title: 'add[123, 456]',
               ),
-              customButton(
-                fn: record == null
-                    ? null
-                    : addNumbersToArray('array_i', 123456),
+              CustomButton(
+                record == null ? null : addNumbersToArray('array_i', 123456),
                 title: 'add 123456',
               ),
-              customButton(
-                fn: record == null || record['array_i'].length <= 1
+              CustomButton(
+                record == null || record['array_i'].length <= 1
                     ? null
                     : removeNumbersFromArray('array_i',
                         [record['array_i'][0], record['array_i'][1]]),
@@ -389,8 +362,8 @@ class _SchemaChangeState extends State<SchemaChange> {
                     ? 'remove [${record['array_i'][0]}, ${record['array_i'][1]}]'
                     : 'remove []',
               ),
-              customButton(
-                fn: record == null || record['array_i'].length == 0
+              CustomButton(
+                record == null || record['array_i'].length == 0
                     ? null
                     : removeNumbersFromArray('array_i', record['array_i'][0]),
                 title: record != null && record['array_i'].length > 0
@@ -401,18 +374,18 @@ class _SchemaChangeState extends State<SchemaChange> {
               Text(
                   '更新字段 -- obj.num: ${record != null && record['obj']['num'] != null ? record['obj']['num'] : ''}',
                   style: TextStyle(fontSize: 16.0)),
-              customButton(
-                fn: record == null ? null : patchObject,
+              CustomButton(
+                record == null ? null : patchObject,
                 title: 'pathObject',
               ),
               SizedBox(height: 10),
               Text('更新字段 -- unset', style: TextStyle(fontSize: 16.0)),
-              customButton(
-                fn: record == null ? null : unsetObj,
+              CustomButton(
+                record == null ? null : unsetObj,
                 title: 'unset obj',
               ),
-              customButton(
-                fn: record == null ? null : unsetStr,
+              CustomButton(
+                record == null ? null : unsetStr,
                 title: 'unset str',
               ),
             ],

@@ -1,3 +1,8 @@
-## [0.0.1] - TODO: Add release date.
+## [1.0.0-alpha-1]
 
-* TODO: Describe initial release.
+* 修改 totalCount 为 total_count
+
+## [1.0.0-alpha]
+
+* 内测版本发布
+

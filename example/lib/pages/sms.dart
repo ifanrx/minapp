@@ -18,7 +18,7 @@ class SmsPage extends StatelessWidget {
 
 class SmsForm extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SmsState();
+  State createState() => _SmsState();
 }
 
 class _SmsState extends State<SmsForm> {
@@ -70,7 +70,7 @@ class _SmsState extends State<SmsForm> {
             try {
               await verifySmsCode(
                 phone: _phoneController.text,
-                code: int.parse(_codeController.text),
+                code: num.parse(_codeController.text),
               );
               showSnackBar('验证成功', context);
             } on HError catch(e) {

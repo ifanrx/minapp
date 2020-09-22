@@ -1,15 +1,51 @@
 import 'package:dio/dio.dart';
 
 import 'query.dart';
-import 'request.dart';
-import 'current_user.dart';
 import 'constants.dart';
+import 'user_list.dart';
+import 'h_error.dart';
+import 'config.dart';
 
-class User extends CurrentUser {
-  User(Map<String, dynamic> userInfo) : super(userInfo);
+part "current_user.dart";
 
-  static Future<User> user(String userId,
-      {List<String> expand, List<String> select}) async {
+class User {
+  Map<String, dynamic> _attribute;
+  bool _anonymous;
+
+  User(Map<String, dynamic> userInfo) {
+    this._attribute = userInfo;
+    this._anonymous = _attribute['_anonymous'];
+  }
+
+  String get id => _attribute['id'].toString();
+  String get username => _attribute['_username'];
+  String get avatar => _attribute['avatar'];
+  String get email => _attribute['_email'];
+  String get phone => _attribute['_phone'];
+  String get city => _attribute['city'];
+  String get country => _attribute['country'];
+  String get language => _attribute['language'];
+  String get nickname => _attribute['nickname'];
+  String get openid => _attribute['openid'];
+  String get province => _attribute['province'];
+  int get gender => _attribute['gender'];
+  bool get emailVerified => _attribute['_email_verified'];
+  bool get isAnonymous => _anonymous;
+
+  get(String key) {
+    return _attribute[key];
+  }
+
+  /// 以 Map 的形式返回用户信息
+  Map<String, dynamic> toJSON() {
+    return Map<String, dynamic>.from(this._attribute);
+  }
+
+  /// 获取单个用户
+  /// [usrId] 用户 ID
+  /// [expand] 需要展开的字段
+  /// [select] 返回指定的字段
+  static Future<User> getUser(String userId, {List<String> expand, List<String> select}) async {
     Map<String, dynamic> data = {};
 
     if (expand != null && expand.length > 0) {
@@ -20,7 +56,7 @@ class User extends CurrentUser {
       data.addAll({'keys': select.join(',')});
     }
 
-    Response res = await request(
+    Response res = await config.request(
       path: Api.userDetail,
       method: 'GET',
       params: {'userID': userId},
@@ -29,18 +65,32 @@ class User extends CurrentUser {
     return User(res.data);
   }
 
-  static Future<dynamic> find({Query query}) async {
-    Response res = await request(
+  /// 获取用户列表
+  /// [query] 筛选条件 Query 对象
+  static Future<UserList> find({Query query}) async {
+    Map<String, dynamic> data = query?.get();
+
+    Response res = await config.request(
       path: Api.userList,
       method: 'GET',
-      data: query?.get(),
+      data: data,
     );
-    List<dynamic> objects = res.data['objects'];
-    var userList = List<User>();
-    objects.forEach((user) {
-      userList.add(User(user));
-    });
 
-    return userList;
+    return UserList(res.data);
+  }
+
+  /// 获取用户数量
+  static Future<int> count() async {
+    Query query = Query();
+    query.limit(1);
+    query.withTotalCount(true);
+    Response res = await config.request(
+      path: Api.userList,
+      method: 'GET',
+      data: query.get(),
+    );
+
+    return res.data['meta']['total_count'];
   }
 }
+

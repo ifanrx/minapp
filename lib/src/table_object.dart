@@ -1,32 +1,29 @@
-import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 import 'table_record.dart';
-import 'request.dart';
 import 'constants.dart';
 import 'h_error.dart';
 import 'query.dart';
-import 'base_record.dart';
+import 'util.dart';
+import 'config.dart';
+import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 
 class TableObject {
-  String tableName;
-  int tableId;
-  Function serializeValue = new BaseRecord().serializeValue;
+  String _tableId;
 
-  TableObject({this.tableName, this.tableId}) {
-    if (tableName == null && tableId == null) {
-      throw HError(605);
-    }
+  /// 构造函数，传入数据表名或数据表 id（[String] 类型）
+  TableObject(String tableId) {
+    _tableId = tableId;
   }
 
   TableRecord create() {
-    return new TableRecord(tableName: tableName ?? tableId);
+    return new TableRecord(_tableId);
   }
 
   /// 创建多条数据
   /// [records] 多条数据项
   /// [enableTrigger] 是否触发触发器
-  Future<dynamic> createMany({
-    @required List records,
+  Future<TableRecordOperationList> createMany(
+    List records, {
     bool enableTrigger = true,
   }) async {
     records = records.map((record) {
@@ -34,14 +31,17 @@ class TableObject {
       return record;
     }).toList();
 
-    Response response = await request(
+    Response response = await config.request(
       path: Api.createRecordList,
       method: 'POST',
-      params: {'tableID': tableName, 'enable_trigger': enableTrigger ? 1 : 0},
+      params: {
+        'tableID': _tableId,
+        'enable_trigger': enableTrigger ? 1 : 0,
+      },
       data: records,
     );
 
-    return response;
+    return new TableRecordOperationList(response.data);
   }
 
   /// 更新数据记录
@@ -49,11 +49,10 @@ class TableObject {
   /// [query] 查询数据项
   TableRecord getWithoutData({String recordId, Query query}) {
     if (recordId != null) {
-      return new TableRecord(tableName: tableName, recordId: recordId);
+      return new TableRecord(_tableId, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
-        tableName: tableName,
-        recordId: recordId,
+        _tableId,
         query: query,
       );
     } else {
@@ -61,6 +60,12 @@ class TableObject {
     }
   }
 
+  /// 删除数据记录
+  /// [recordId] 数据项 id
+  /// 批量删除数据记录
+  /// [query] 数据记录查询条件
+  /// [enableTrigger] 是否触发触发器
+  /// [withCount] 是否返回 total_count
   Future<dynamic> delete({
     String recordId,
     Query query,
@@ -68,30 +73,98 @@ class TableObject {
     bool withCount = false,
   }) async {
     if (recordId != null) {
-      Response response = await request(
+      await config.request(
         path: Api.deleteRecord,
         method: 'DELETE',
-        params: {'tableID': tableName, 'recordID': recordId},
+        params: {'tableID': _tableId, 'recordID': recordId},
       );
-      return response;
     } else if (query != null) {
       Map<String, dynamic> queryData = query.get();
 
-      Response response = await request(
+      Response response = await config.request(
         path: Api.deleteRecordList,
         method: 'DELETE',
         params: {
-          'tableID': tableName,
-          'limit': queryData['limit'] ?? '',
+          'tableID': _tableId,
+          'limit': constants.getLimitationWithEnableTrigger(
+              queryData['limit'], enableTrigger),
           'offset': queryData['offset'] ?? 0,
           'where': queryData['where'] ?? '',
           'enable_trigger': enableTrigger ? 1 : 0,
           'return_total_count': withCount ? 1 : 0,
         },
       );
-      return response;
+
+      return response.data;
     } else {
       throw HError(605);
     }
+  }
+
+  /// 获取单条数据
+  /// [recordId] 数据项 id
+  Future<TableRecord> get(String recordId,
+      {dynamic select, dynamic expand}) async {
+    Map<String, dynamic> data = {};
+
+    if (select != null) {
+      if (select is String) {
+        data['keys'] = select;
+      } else if (select is List<String>) {
+        data['keys'] = select.join(',');
+      } else {
+        throw HError(605);
+      }
+    }
+
+    if (expand != null) {
+      if (expand is String) {
+        data['expand'] = expand;
+      } else if (expand is List<String>) {
+        data['expand'] = expand.join(',');
+      } else {
+        throw HError(605);
+      }
+    }
+
+    Response response = await config.request(
+      path: Api.getRecord,
+      method: 'GET',
+      params: {'tableID': _tableId, 'recordID': recordId},
+      data: data,
+    );
+
+    return new TableRecord.withInfo(response.data);
+  }
+
+  /// 获取数据记录列表
+  /// [query] 查询条件
+  /// [withCount] 是否返回 total_count
+  Future<TableRecordList> find({
+    Query query,
+    bool withCount = false,
+  }) async {
+    Map<String, dynamic> data = query == null ? {} : query.get();
+    data['return_total_count'] = withCount ? 1 : 0;
+
+    Response response = await config.request(
+      path: Api.queryRecordList,
+      method: 'GET',
+      params: {'tableID': _tableId},
+      data: data,
+    );
+
+    return new TableRecordList(response.data);
+  }
+
+  /// 获取数据记录数量
+  /// [query] 查询条件
+  Future<int> count({Query query}) async {
+    query = query != null ? query : new Query();
+    query.limit(1);
+    TableRecordList response = await find(query: query, withCount: true);
+
+    int count = response.total_count;
+    return count;
   }
 }
