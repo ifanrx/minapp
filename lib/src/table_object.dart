@@ -48,7 +48,7 @@ class TableObject {
   /// [recordId] 数据项 id
   /// [query] 查询数据项
   TableRecord getWithoutData({String recordId, Query query}) {
-    if (recordId != null) {
+    if (recordId != null && recordId != '') {
       return new TableRecord(_tableId, recordId: recordId);
     } else if (query != null) {
       return new TableRecord(
