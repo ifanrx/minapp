@@ -3,6 +3,7 @@ import 'package:connectanum/json.dart';
 import 'package:minapp/minapp.dart';
 import '../config.dart';
 
+//TODO: use Uri.http to consctruct URL
 Future<String> getWsAuthToken() async {
   List qs = [];
   qs.add('x-hydrogen-client-id=${config.clientID}');
@@ -26,37 +27,61 @@ String resolveTopic(String schemaName, String eventType) {
 
 class Wamp {
   Client client;
+  Session session;
 
-  void subscribe() async {
+  Future<int> subscribe() async {
     String url =
         config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
     String token = await getWsAuthToken();
 
-    client = Client(
-      realm: config.wsRealm,
-      transport: WebSocketTransport(
-        '$url?$token',
-        new Serializer(),
-        WebSocketSerialization.SERIALIZATION_JSON,
-      ),
-    );
+    print('$url?$token');
 
-    Session session;
+    if (client == null) {
+      client = Client(
+        realm: config.wsRealm,
+        transport: WebSocketTransport(
+          '$url?$token',
+          Serializer(),
+          WebSocketSerialization.SERIALIZATION_JSON,
+        ),
+      );
 
-    try {
-      session = await client.connect().first;
+      try {
+        session = await client.connect().first;
 
-      String topic = resolveTopic('danmu_jiajun', 'create');
+        String topic = resolveTopic('danmu_jiajun', 'create');
+        print(topic);
 
-      SubscribeOptions options = new SubscribeOptions();
-      options.addCustomValue('where', (serializerType) => '{}');
+        SubscribeOptions options = new SubscribeOptions();
+        options.addCustomValue('where', (serializerType) => '{}');
 
-      final subscription = await session.subscribe(topic, options: options);
-      subscription.eventStream.listen((event) => print(event.arguments));
+        final subscription = await session.subscribe(topic, options: options);
+        print(subscription);
+        subscription.eventStream.listen((event) {
+          print('event: $event');
+          print('subscription ID: ${event.subscriptionId}');
+          print('publication ID: ${event.publicationId}');
+          print('event details: ${event.details}');
+          print('event arguments keywords: ${event.argumentsKeywords}');
+          });
 
-      // subscription.eventStream.listen((event) => print(event.arguments[0]));
-    } catch (e) {
-      print(e);
+        // subscription.eventStream.listen((event) => print(event.arguments[0]));
+        return subscription.subscriptionId;
+      } on Abort catch (abort) {
+        print(abort.message.message);
+      }
+    }
+    return null;
+  }
+
+  void unsubscribe(subscriptionId) async {
+    if (session != null && subscriptionId != null) {
+      try {
+        await session.unsubscribe(subscriptionId);
+        print('subscription $subscriptionId unsubscribed');
+      } catch (e) {
+        print(e);
+      }
     }
   }
 }

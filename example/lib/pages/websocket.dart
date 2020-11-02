@@ -8,14 +8,26 @@ class WebSocketPage extends StatefulWidget {
 }
 
 class _WebSocketPageState extends State<WebSocketPage> {
+  int subscriptionId;
+  Wamp wamp;
+
   @override
   void initState() {
     super.initState();
   }
 
-  void subscribeCreate() {
-    Wamp wamp = new Wamp();
-    wamp.subscribe();
+  void subscribeCreate() async {
+    wamp = new Wamp();
+    int _subscriptionId = await wamp.subscribe();
+    print('subscriptionId: $_subscriptionId');
+    if (_subscriptionId != null) {
+      setState(() => subscriptionId = _subscriptionId);
+    }
+  }
+
+  void unsubscribeCreate() {
+    print('gonna unscribe $subscriptionId');
+    wamp.unsubscribe(subscriptionId);
   }
 
   @override
@@ -30,6 +42,10 @@ class _WebSocketPageState extends State<WebSocketPage> {
               CustomButton(
                 subscribeCreate,
                 title: '订阅 create',
+              ),
+              CustomButton(
+                unsubscribeCreate,
+                title: '取消订阅 create',
               )
             ],
           ),
