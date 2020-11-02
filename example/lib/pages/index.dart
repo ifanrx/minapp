@@ -9,6 +9,7 @@ import 'content.dart';
 import 'file.dart';
 import 'clound_function.dart';
 import 'sms.dart';
+import 'websocket.dart';
 
 class _Feature {
   final String name;
@@ -26,6 +27,7 @@ final _features = [
   _Feature(name: '文件', page: FilePage()),
   _Feature(name: '调用云函数', page: CloudFunctionPage()),
   _Feature(name: '短信验证码', page: SmsPage()),
+  _Feature(name: 'WS 实时数据库', page: WebSocketPage()),
 ];
 
 class IndexPage extends StatelessWidget {
