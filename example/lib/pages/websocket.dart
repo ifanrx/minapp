@@ -17,17 +17,34 @@ class _WebSocketPageState extends State<WebSocketPage> {
   }
 
   void subscribeCreate() async {
-    wamp = new Wamp();
-    int _subscriptionId = await wamp.subscribe();
-    print('subscriptionId: $_subscriptionId');
-    if (_subscriptionId != null) {
-      setState(() => subscriptionId = _subscriptionId);
+    TableObject tableObject = new TableObject('danmu_jiajun');
+
+    try {
+      wamp = await tableObject.subscribe(
+        'create',
+        oninit: () {
+          print('订阅成功');
+        },
+        onevent: (result) {
+          print(result.after.text);
+          print(result.after.created_at);
+          print(result.after.updated_at);
+          print(result.after.created_by);
+          print(result.after.id);
+        },
+        onerror: (error) {
+          print('失败！！！');
+          print(error.reason);
+        },
+      );
+    } catch (e) {
+      print(e.toString());
     }
   }
 
   void unsubscribeCreate() {
-    print('gonna unscribe $subscriptionId');
-    wamp.unsubscribe(subscriptionId);
+    wamp.unsubscribe();
+    print('取消订阅成功');
   }
 
   @override
