@@ -22,28 +22,30 @@ class _WebSocketPageState extends State<WebSocketPage> {
     try {
       wamp = await tableObject.subscribe(
         'create',
-        oninit: () {
+        onInit: () {
           print('订阅成功');
         },
-        onevent: (result) {
+        onEvent: (result) {
+          print(result.event);
           print(result.after.text);
           print(result.after.created_at);
           print(result.after.updated_at);
           print(result.after.created_by);
           print(result.after.id);
         },
-        onerror: (error) {
+        onError: (error) {
           print('失败！！！');
-          print(error.reason);
+          print(error.message);
         },
+        where: Where.compare('text', '=', 'hello'),
       );
     } catch (e) {
       print(e.toString());
     }
   }
 
-  void unsubscribeCreate() {
-    wamp.unsubscribe();
+  void unsubscribeCreate() async {
+    await wamp.unsubscribe();
     print('取消订阅成功');
   }
 

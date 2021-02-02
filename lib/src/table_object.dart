@@ -7,6 +7,7 @@ import 'util.dart';
 import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 import 'wamp/index.dart';
+import 'where.dart';
 
 class TableObject {
   String _tableId;
@@ -171,14 +172,15 @@ class TableObject {
 
   /// 实时数据库订阅
   /// 接收 [eventType] 必填参数，必须为 create、update 或 delete。
-  /// [oninit] 订阅动作初始化成功时的回调函数。
-  /// [onevent] 数据表变化时的回调函数。
-  /// [onerror] 订阅动作出错时的回调函数。
+  /// [onInit] 订阅动作初始化成功时的回调函数。
+  /// [onEvent] 数据表变化时的回调函数。
+  /// [onError] 订阅动作出错时的回调函数。
   Future<dynamic> subscribe(
     String eventType, {
-    Function oninit,
-    Function onevent,
-    Function onerror,
+    Where where,
+    Function onInit,
+    Function onEvent,
+    Function onError,
   }) async {
     if (eventType != 'create' &&
         eventType != 'update' &&
@@ -190,9 +192,10 @@ class TableObject {
     wamp.subscribe(
       _tableId,
       eventType,
-      oninit ?? () => {},
-      onevent ?? (result) => {},
-      onerror ?? (erorr) => {},
+      where != null ? where.get() : '{}',
+      onInit ?? () => {},
+      onEvent ?? (result) => {},
+      onError ?? (erorr) => {},
     );
 
     return wamp;
