@@ -181,6 +181,8 @@ class TableObject {
     Function onInit,
     Function onEvent,
     Function onError,
+    int retryCount = 15, // 最大重连次数
+    int delayTime, // 重连时间间隔
   }) async {
     if (eventType != 'create' &&
         eventType != 'update' &&
@@ -196,6 +198,8 @@ class TableObject {
       onInit ?? () => {},
       onEvent ?? (result) => {},
       onError ?? (erorr) => {},
+      retryCount: retryCount,
+      delayTime: delayTime,
     );
 
     return wamp;

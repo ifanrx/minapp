@@ -9,21 +9,24 @@ class WebSocketPage extends StatefulWidget {
 
 class _WebSocketPageState extends State<WebSocketPage> {
   int subscriptionId;
-  Wamp wamp;
+  Wamp wampCreate;
+  Wamp wampUpdate;
+  Wamp wampDelete;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void subscribeCreate() async {
+  Future<Wamp> subscribeEvent(eventType) async {
     TableObject tableObject = new TableObject('danmu_jiajun');
 
+    Wamp wamp;
     try {
       wamp = await tableObject.subscribe(
-        'create',
+        eventType,
         onInit: () {
-          print('订阅成功');
+          print('订阅 $eventType 成功');
         },
         onEvent: (result) {
           print(result.event);
@@ -36,17 +39,53 @@ class _WebSocketPageState extends State<WebSocketPage> {
         onError: (error) {
           print('失败！！！');
           print(error.message);
+          print(error.details);
         },
         where: Where.compare('text', '=', 'hello'),
       );
     } catch (e) {
       print(e.toString());
     }
+    return wamp;
+  }
+
+  void subscribeCreate() async {
+    wampCreate = await this.subscribeEvent('create');
   }
 
   void unsubscribeCreate() async {
-    await wamp.unsubscribe();
-    print('取消订阅成功');
+    if (wampCreate != null) {
+      await wampCreate.unsubscribe(
+        onSuccess: () {
+          print('取消订阅 create 成功');
+        },
+        onError: (err) {
+          print('error: $err');
+        },
+      );
+    }
+  }
+
+  void subscribeUpdate() async {
+    wampUpdate = await this.subscribeEvent('update');
+  }
+
+  void unsubscribeUpdate() async {
+    if (wampUpdate != null) {
+      await wampUpdate.unsubscribe();
+      print('取消订阅 update 成功');
+    }
+  }
+
+  void subscribeDelete() async {
+    wampDelete = await this.subscribeEvent('delete');
+  }
+
+  void unsubscribeDelete() async {
+    if (wampDelete != null) {
+      await wampDelete.unsubscribe();
+      print('取消订阅 delete 成功');
+    }
   }
 
   @override
@@ -63,8 +102,24 @@ class _WebSocketPageState extends State<WebSocketPage> {
                 title: '订阅 create',
               ),
               CustomButton(
+                subscribeUpdate,
+                title: '订阅 update',
+              ),
+              CustomButton(
+                subscribeDelete,
+                title: '订阅 delete',
+              ),
+              CustomButton(
                 unsubscribeCreate,
                 title: '取消订阅 create',
+              ),
+              CustomButton(
+                unsubscribeUpdate,
+                title: '取消订阅 update',
+              ),
+              CustomButton(
+                unsubscribeDelete,
+                title: '取消订阅 delete',
               )
             ],
           ),
