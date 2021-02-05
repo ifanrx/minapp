@@ -174,3 +174,20 @@ HError errorify(Abort abort) {
 
   return HError(errorCode, abort.reason, abort.message.message);
 }
+
+Future<void> subscribe(
+  String tableId,
+  String eventType,
+  String where,
+  Function onInit,
+  Function onEvent,
+  Function onError, {
+  int retryCount,
+  int delayTime,
+}) async {
+  String url =
+      config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
+  String token = await getWsAuthToken();
+
+  
+}
