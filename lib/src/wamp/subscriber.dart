@@ -1,14 +1,11 @@
 import 'dart:math';
 
-import 'package:connectanum/connectanum.dart';
-import 'package:connectanum/json.dart';
+import './connectanum/connectanum.dart';
+import './connectanum/json.dart';
 import 'package:minapp/minapp.dart';
 import '../config.dart';
 
-
-Future subscriber() async {
-  
-}
+Future subscriber() async {}
 
 class Wamp {
   Client _client;
@@ -55,12 +52,7 @@ class Wamp {
           seconds: delayTime ?? getDefaultDelaytime(retryCount),
         );
 
-        _session = await _client
-            .connect(
-              reconnectTime: reconnectTime,
-              reconnectCount: retryCount,
-            )
-            .first;
+        _session = await _client.connect().first;
       } on Abort catch (abort) {
         HError error = errorify(abort);
         onError(error); // 订阅失败回调

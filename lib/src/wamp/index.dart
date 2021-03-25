@@ -1,10 +1,13 @@
 import 'dart:math';
 
-import 'package:connectanum/connectanum.dart';
-import 'package:connectanum/json.dart';
+import './connectanum/connectanum.dart';
+import './connectanum/json.dart';
 import 'package:minapp/minapp.dart';
 import '../config.dart';
 
+/// 这里目前还差：
+/// 一个 session 处理所有链接
+/// 错误处理，例如每次重连，还有其他错误处理需要开发
 class Wamp {
   Client _client;
   Session _session;
@@ -17,7 +20,6 @@ class Wamp {
   /// [onEvent] 数据表变化时的回调函数。
   /// [onError] 订阅动作出错时的回调函数。
   /// [retryCount] 最大重连次数。
-  /// [delayTime] 重连时间间隔。
   Future<void> subscribe(
     String tableId,
     String eventType,
@@ -26,7 +28,6 @@ class Wamp {
     Function onEvent,
     Function onError, {
     int retryCount,
-    int delayTime,
   }) async {
     String url =
         config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
@@ -45,17 +46,28 @@ class Wamp {
     }
 
     if (_session == null) {
+      int defaultRetryCount = retryCount ?? 15;
       try {
-        Duration reconnectTime = new Duration(
-          seconds: delayTime ?? getDefaultDelaytime(retryCount),
-        );
-
         _session = await _client
             .connect(
-              reconnectTime: reconnectTime,
-              reconnectCount: retryCount,
+              options: ClientConnectOptions(
+                reconnectCount: defaultRetryCount, // Default is 3
+                reconnectTime: Duration(
+                  milliseconds: 200,
+                ),
+              ),
             )
             .first;
+
+        _client.onNextTryToReconnect.listen((passedOptions) {
+          // 断线后每隔一段时间重连。当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
+          int reconnectCount = passedOptions.reconnectCount;
+          var _delayTime = pow(2, defaultRetryCount - reconnectCount + 1) * 0.5;
+          int delayTime = (min(_delayTime, 300) * 1000).round();
+          passedOptions.reconnectTime = Duration(
+            milliseconds: delayTime,
+          );
+        });
       } on Abort catch (abort) {
         HError error = errorify(abort);
         onError(error); // 订阅失败回调
@@ -75,6 +87,8 @@ class Wamp {
       // 监听数据变化
       subscription.eventStream.listen(
         (event) {
+          print('event - ');
+          print(event);
           WampCallback result = new WampCallback(
               Map<String, dynamic>.from(event.argumentsKeywords));
           onEvent(result);
@@ -158,12 +172,6 @@ String resolveTopic(String schemaName, String eventType) {
   return '${config.wsBasicTopic}.$schemaName.on_$eventType';
 }
 
-int getDefaultDelaytime(int retryCount) {
-  double delayTime = pow(2, retryCount) * 0.5;
-  print(min(delayTime.round(), 300));
-  return min(delayTime.round(), 300);
-}
-
 HError errorify(Abort abort) {
   Map<String, dynamic> lookup = {
     'unreachable': 601,
@@ -183,11 +191,8 @@ Future<void> subscribe(
   Function onEvent,
   Function onError, {
   int retryCount,
-  int delayTime,
 }) async {
   String url =
       config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
   String token = await getWsAuthToken();
-
-  
 }

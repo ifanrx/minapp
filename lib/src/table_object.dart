@@ -199,7 +199,6 @@ class TableObject {
       onEvent ?? (result) => {},
       onError ?? (erorr) => {},
       retryCount: retryCount,
-      delayTime: delayTime,
     );
 
     return wamp;

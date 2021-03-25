@@ -29,19 +29,20 @@ class _WebSocketPageState extends State<WebSocketPage> {
           print('订阅 $eventType 成功');
         },
         onEvent: (result) {
-          print(result.event);
-          print(result.after.text);
-          print(result.after.created_at);
-          print(result.after.updated_at);
-          print(result.after.created_by);
-          print(result.after.id);
+          print('有返回结果');
+          // print(result.event);
+          // print(result.after.text);
+          // print(result.after.created_at);
+          // print(result.after.updated_at);
+          // print(result.after.created_by);
+          // print(result.after.id);
         },
         onError: (error) {
           print('失败！！！');
           print(error.message);
           print(error.details);
         },
-        where: Where.compare('text', '=', 'hello'),
+        // where: Where.compare('text', '=', 'hello'),
       );
     } catch (e) {
       print(e.toString());
