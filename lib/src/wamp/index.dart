@@ -1,16 +1,17 @@
 import 'dart:math';
-
 import './connectanum/connectanum.dart';
 import './connectanum/json.dart';
 import 'package:minapp/minapp.dart';
 import '../config.dart';
+import './callback.dart';
+import './error.dart';
+
+Session _session;
 
 /// 这里目前还差：
 /// 一个 session 处理所有链接
-/// 错误处理，例如每次重连，还有其他错误处理需要开发
 class Wamp {
   Client _client;
-  Session _session;
   int _subscriptionId;
 
   /// 订阅实时数据库。
@@ -27,7 +28,7 @@ class Wamp {
     Function onInit,
     Function onEvent,
     Function onError, {
-    int retryCount,
+    int retryCount = 15,
   }) async {
     String url =
         config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
@@ -46,12 +47,12 @@ class Wamp {
     }
 
     if (_session == null) {
-      int defaultRetryCount = retryCount ?? 15;
+      int defaultRetryCount = retryCount;
       try {
         _session = await _client
             .connect(
               options: ClientConnectOptions(
-                reconnectCount: defaultRetryCount, // Default is 3
+                reconnectCount: defaultRetryCount,
                 reconnectTime: Duration(
                   milliseconds: 200,
                 ),
@@ -62,22 +63,23 @@ class Wamp {
         _client.onNextTryToReconnect.listen((passedOptions) {
           // 断线后每隔一段时间重连。当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
           int reconnectCount = passedOptions.reconnectCount;
-          var _delayTime = pow(2, defaultRetryCount - reconnectCount + 1) * 0.5;
-          int delayTime = (min(_delayTime, 300) * 1000).round();
+          double delayInSec =
+              pow(2, defaultRetryCount - reconnectCount + 1) * 0.5;
+          int delayTime = (min(delayInSec, 300) * 1000).round();
           passedOptions.reconnectTime = Duration(
             milliseconds: delayTime,
           );
         });
       } on Abort catch (abort) {
-        HError error = errorify(abort);
-        onError(error); // 订阅失败回调
+        onError(errorify(abort: abort)); // 订阅失败回调
       }
     }
 
+    if (_session == null) return;
+
     try {
       String topic = resolveTopic(tableId, eventType);
-      SubscribeOptions options = new SubscribeOptions();
-      options.addCustomValue('where', (serializerType) => where);
+      SubscribeOptions options = resolveOptions(where);
 
       Subscribed subscription =
           await _session.subscribe(topic, options: options);
@@ -87,16 +89,16 @@ class Wamp {
       // 监听数据变化
       subscription.eventStream.listen(
         (event) {
-          print('event - ');
-          print(event);
           WampCallback result = new WampCallback(
               Map<String, dynamic>.from(event.argumentsKeywords));
           onEvent(result);
         },
       );
     } on Abort catch (abort) {
-      HError error = errorify(abort);
-      onError(error); // 订阅失败回调
+      onError(errorify(abort: abort));
+    } on Error catch (err) {
+      Abort abort = new Abort(err.error);
+      onError(errorify(abort: abort));
     }
   }
 
@@ -108,8 +110,7 @@ class Wamp {
     Function onError,
   }) async {
     if (_session == null || _subscriptionId == null) {
-      HError error = new HError(602);
-      if (onError != null) onError(error);
+      if (onError != null) onError(new HError(602));
       return;
     }
 
@@ -117,38 +118,10 @@ class Wamp {
       await _session.unsubscribe(_subscriptionId);
       if (onSuccess != null) onSuccess();
     } catch (e) {
-      HError error = new HError(0);
-      error.message = e.details ?? 'Unsubscribe failed.';
-      if (onError != null) onError(error);
+      Abort abort = new Abort('Unsubscribe failed.');
+      if (onError != null) onError(errorify(abort: abort));
     }
   }
-}
-
-/// 包装接口回调数据中的 before 和 after
-class WampSchemaHistory {
-  final Map<String, dynamic> beforeAfter;
-  String get text => beforeAfter['text'];
-  int get created_at => beforeAfter['created_at'];
-  int get updated_at => beforeAfter['updated_at'];
-  int get created_by => beforeAfter['created_by'];
-  String get id => beforeAfter['id'];
-
-  WampSchemaHistory(this.beforeAfter);
-}
-
-/// 对接口返回数据进行包装
-class WampCallback {
-  final Map<String, dynamic> callback;
-  WampSchemaHistory get before =>
-      new WampSchemaHistory(Map<String, dynamic>.from(callback['before']));
-  WampSchemaHistory get after =>
-      new WampSchemaHistory(Map<String, dynamic>.from(callback['after']));
-  String get event => callback['event'];
-  int get schema_id => callback['schema_id'];
-  String get schema_name => callback['schema_name'];
-  String get id => callback['id'];
-
-  WampCallback(this.callback);
 }
 
 Future<String> getWsAuthToken() async {
@@ -172,27 +145,9 @@ String resolveTopic(String schemaName, String eventType) {
   return '${config.wsBasicTopic}.$schemaName.on_$eventType';
 }
 
-HError errorify(Abort abort) {
-  Map<String, dynamic> lookup = {
-    'unreachable': 601,
-    'wamp.error.not_authorized': 603,
-  };
+SubscribeOptions resolveOptions(where) {
+  SubscribeOptions options = new SubscribeOptions();
+  options.addCustomValue('where', (serializerType) => where);
 
-  int errorCode = lookup[abort.reason] ?? 0;
-
-  return HError(errorCode, abort.reason, abort.message.message);
-}
-
-Future<void> subscribe(
-  String tableId,
-  String eventType,
-  String where,
-  Function onInit,
-  Function onEvent,
-  Function onError, {
-  int retryCount,
-}) async {
-  String url =
-      config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
-  String token = await getWsAuthToken();
+  return options;
 }
