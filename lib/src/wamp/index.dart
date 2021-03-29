@@ -1,15 +1,13 @@
 import 'dart:math';
+import 'package:minapp/minapp.dart';
 import './connectanum/connectanum.dart';
 import './connectanum/json.dart';
-import 'package:minapp/minapp.dart';
 import '../config.dart';
 import './callback.dart';
 import './error.dart';
 
 Session _session;
 
-/// 这里目前还差：
-/// 一个 session 处理所有链接
 class Wamp {
   Client _client;
   int _subscriptionId;
@@ -24,21 +22,19 @@ class Wamp {
   Future<void> subscribe(
     String tableId,
     String eventType,
-    String where,
+    Where where,
     Function onInit,
     Function onEvent,
     Function onError, {
-    int retryCount = 15,
+    int retryCount,
   }) async {
-    String url =
-        config.wsHost.replaceFirst(RegExp(r'/\/$/'), '') + '/' + config.wsPath;
-    String token = await getWsAuthToken();
+    String uri = await getWsAuthUri();
 
     if (_client == null) {
       _client = Client(
         realm: config.wsRealm,
         transport: WebSocketTransport(
-          '$url?$token',
+          uri,
           // 'wss://a4d2d62965ddb57fa4d6.ws.myminapp.com/ws/hydrogen/?x-hydrogen-client-id=a4d2d62965ddb57fa4d6&x-hydrogen-env-id=f1eeb28c9552d4c83df1&authorization=Hydrogen-r1%20580co4jlkysw7rprsgz4edxx9pubot3s',
           Serializer(),
           WebSocketSerialization.SERIALIZATION_JSON,
@@ -47,12 +43,11 @@ class Wamp {
     }
 
     if (_session == null) {
-      int defaultRetryCount = retryCount;
       try {
         _session = await _client
             .connect(
               options: ClientConnectOptions(
-                reconnectCount: defaultRetryCount,
+                reconnectCount: retryCount,
                 reconnectTime: Duration(
                   milliseconds: 200,
                 ),
@@ -61,14 +56,12 @@ class Wamp {
             .first;
 
         _client.onNextTryToReconnect.listen((passedOptions) {
-          // 断线后每隔一段时间重连。当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
-          int reconnectCount = passedOptions.reconnectCount;
+          // 断线后每隔一段时间重连
+          // 当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
           double delayInSec =
-              pow(2, defaultRetryCount - reconnectCount + 1) * 0.5;
+              pow(2, retryCount - passedOptions.reconnectCount + 1) * 0.5;
           int delayTime = (min(delayInSec, 300) * 1000).round();
-          passedOptions.reconnectTime = Duration(
-            milliseconds: delayTime,
-          );
+          passedOptions.reconnectTime = Duration(milliseconds: delayTime);
         });
       } on Abort catch (abort) {
         onError(errorify(abort: abort)); // 订阅失败回调
@@ -124,30 +117,42 @@ class Wamp {
   }
 }
 
-Future<String> getWsAuthToken() async {
-  List qs = [];
-  qs.add('x-hydrogen-client-id=${config.clientID}');
+Future<String> getWsAuthUri() async {
+  String host = config.wsHost
+      .replaceFirst(RegExp(r'/\/$/'), '')
+      .replaceFirst('wss://', '');
+
+  Map<String, dynamic> queryParameters = {
+    'x-hydrogen-client-id': config.clientID,
+  };
 
   if (config.env != null) {
-    qs.add('x-hydrogen-env-id=${config.env}');
+    queryParameters['x-hydrogen-env-id'] = config.env;
   }
 
   String token = await Auth.getAuthToken();
 
   if (token != null) {
-    qs.add('authorization=${config.authPrefix} $token');
+    queryParameters['authorization'] = '${config.authPrefix} $token';
   }
 
-  return qs.join('&');
+  Uri wsAuthUri = new Uri(
+    scheme: 'wss',
+    host: host,
+    path: config.wsPath,
+    queryParameters: queryParameters,
+  );
+
+  return wsAuthUri.toString();
 }
 
 String resolveTopic(String schemaName, String eventType) {
   return '${config.wsBasicTopic}.$schemaName.on_$eventType';
 }
 
-SubscribeOptions resolveOptions(where) {
+SubscribeOptions resolveOptions(Where where) {
   SubscribeOptions options = new SubscribeOptions();
-  options.addCustomValue('where', (serializerType) => where);
+  options.addCustomValue('where', (serializerType) => where.get());
 
   return options;
 }

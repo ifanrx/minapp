@@ -194,7 +194,7 @@ class TableObject {
     wamp.subscribe(
       _tableId,
       eventType,
-      where != null ? where.get() : '{}',
+      where ?? new Where(),
       onInit ?? () => {},
       onEvent ?? (result) => {},
       onError ?? (erorr) => {},
