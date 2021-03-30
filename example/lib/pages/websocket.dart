@@ -30,12 +30,12 @@ class _WebSocketPageState extends State<WebSocketPage> {
         },
         onEvent: (result) {
           print('有返回结果');
-          // print(result.event);
-          // print(result.after.text);
-          // print(result.after.created_at);
-          // print(result.after.updated_at);
-          // print(result.after.created_by);
-          // print(result.after.id);
+          print(result.event);
+          print(result.after.text);
+          print(result.after.created_at);
+          print(result.after.updated_at);
+          print(result.after.created_by);
+          print(result.after.id);
         },
         onError: (error) {
           print('失败！！！');
@@ -55,16 +55,15 @@ class _WebSocketPageState extends State<WebSocketPage> {
   }
 
   void unsubscribeCreate() async {
-    if (wampCreate != null) {
-      await wampCreate.unsubscribe(
-        onSuccess: () {
-          print('取消订阅 create 成功');
-        },
-        onError: (err) {
-          print('error: $err');
-        },
-      );
-    }
+    if (wampCreate == null) return;
+    await wampCreate.unsubscribe(
+      onSuccess: () {
+        print('取消订阅 create 成功');
+      },
+      onError: (err) {
+        print('error: $err');
+      },
+    );
   }
 
   void subscribeUpdate() async {
@@ -72,10 +71,15 @@ class _WebSocketPageState extends State<WebSocketPage> {
   }
 
   void unsubscribeUpdate() async {
-    if (wampUpdate != null) {
-      await wampUpdate.unsubscribe();
-      print('取消订阅 update 成功');
-    }
+    if (wampUpdate == null) return;
+    await wampUpdate.unsubscribe(
+      onSuccess: () {
+        print('取消订阅 update 成功');
+      },
+      onError: (err) {
+        print('error: $err');
+      },
+    );
   }
 
   void subscribeDelete() async {
@@ -83,10 +87,15 @@ class _WebSocketPageState extends State<WebSocketPage> {
   }
 
   void unsubscribeDelete() async {
-    if (wampDelete != null) {
-      await wampDelete.unsubscribe();
-      print('取消订阅 delete 成功');
-    }
+    if (wampDelete == null) return;
+    await wampDelete.unsubscribe(
+      onSuccess: () {
+        print('取消订阅 delete 成功');
+      },
+      onError: (err) {
+        print('error: $err');
+      },
+    );
   }
 
   @override

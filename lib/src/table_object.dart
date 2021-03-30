@@ -175,14 +175,14 @@ class TableObject {
   /// [onInit] 订阅动作初始化成功时的回调函数。
   /// [onEvent] 数据表变化时的回调函数。
   /// [onError] 订阅动作出错时的回调函数。
-  Future<dynamic> subscribe(
+  /// [retryCount] 最大重连次数。
+  Future<Wamp> subscribe(
     String eventType, {
     Where where,
     Function onInit,
     Function onEvent,
     Function onError,
     int retryCount = 15, // 最大重连次数
-    int delayTime, // 重连时间间隔
   }) async {
     if (eventType != 'create' &&
         eventType != 'update' &&
@@ -190,17 +190,17 @@ class TableObject {
       throw HError(605);
     }
 
-    Wamp wamp = new Wamp();
-    wamp.subscribe(
+    Wamp wamp = await Wamp.getInstance(
       _tableId,
       eventType,
       where ?? new Where(),
       onInit ?? () => {},
       onEvent ?? (result) => {},
       onError ?? (erorr) => {},
-      retryCount: retryCount,
+      retryCount,
     );
 
+    await wamp.subscribe();
     return wamp;
   }
 }
