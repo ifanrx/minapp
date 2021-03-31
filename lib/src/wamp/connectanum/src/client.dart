@@ -93,6 +93,7 @@ class Client {
         _connect(options);
       }));
       try {
+        print('connecting...');
         var session = await Session.start(realm, transport,
             authId: authId,
             authMethods: authenticationMethods,
@@ -113,9 +114,6 @@ class Client {
         unawaited(_controller.close());
       }
     } else {
-      print('else not open');
-      print('options.reconnectCount: ');
-      print(options.reconnectCount);
       if (options.reconnectTime != null &&
           transport.onConnectionLost.isCompleted) {
         _reconnectStreamController.add(options);

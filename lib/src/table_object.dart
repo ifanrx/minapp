@@ -8,6 +8,7 @@ import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
 import 'wamp/index.dart';
 import 'where.dart';
+import 'wamp/callback.dart';
 
 class TableObject {
   String _tableId;
@@ -176,13 +177,12 @@ class TableObject {
   /// [onEvent] 数据表变化时的回调函数。
   /// [onError] 订阅动作出错时的回调函数。
   /// [retryCount] 最大重连次数。
-  Future<Wamp> subscribe(
+  Future subscribe(
     String eventType, {
     Where where,
     Function onInit,
     Function onEvent,
     Function onError,
-    int retryCount = 15, // 最大重连次数
   }) async {
     if (eventType != 'create' &&
         eventType != 'update' &&
@@ -190,17 +190,15 @@ class TableObject {
       throw HError(605);
     }
 
-    Wamp wamp = await Wamp.getInstance(
+    var subscribe = await wampSubscribe(
       _tableId,
       eventType,
       where ?? new Where(),
       onInit ?? () => {},
       onEvent ?? (result) => {},
       onError ?? (erorr) => {},
-      retryCount,
     );
 
-    await wamp.subscribe();
-    return wamp;
+    return await subscribe();
   }
 }

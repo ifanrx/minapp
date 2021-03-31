@@ -287,6 +287,7 @@ class Session {
       }).cast();
       return subscribed;
     } else {
+      print('has error');
       throw subscribed as Error;
     }
   }
