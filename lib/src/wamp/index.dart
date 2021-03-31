@@ -62,8 +62,14 @@ SubscribeOptions _resolveOptions(Where where) {
 /// [onInit] 订阅动作初始化成功时的回调函数。
 /// [onEvent] 数据表变化时的回调函数。
 /// [onError] 订阅动作出错时的回调函数。
-Future wampSubscribe(String tableId, String eventType, Where where,
-    Function onInit, Function onEvent, Function onError) async {
+Future wampSubscribe(
+  String tableId,
+  String eventType,
+  Where where,
+  Function onInit,
+  Function onEvent,
+  Function onError,
+) async {
   int retryCount = 15; // 重试次数
 
   // 初始化 Client
