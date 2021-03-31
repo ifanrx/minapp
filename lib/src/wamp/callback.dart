@@ -25,11 +25,6 @@ class WampCallback {
   WampCallback(this.callback);
 }
 
-class WampSubscription {
-  WampSubscriber subscribe;
-  WampSubscription(this.subscribe);
-}
-
 class WampSubscriber {
   Function unsubscribe;
   WampSubscriber(this.unsubscribe);

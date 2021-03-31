@@ -8,28 +8,24 @@ class WebSocketPage extends StatefulWidget {
 }
 
 class _WebSocketPageState extends State<WebSocketPage> {
-  int subscriptionId;
-  Wamp wampCreate;
-  Wamp wampUpdate;
-  Wamp wampDelete;
+  Map<String, dynamic> subscriptions = {};
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<Wamp> subscribeEvent(eventType) async {
+  Future subscribeEvent(eventType) async {
     TableObject tableObject = new TableObject('danmu_jiajun');
 
-    Wamp wamp;
     try {
-      wamp = await tableObject.subscribe(
+      subscriptions[eventType] = await tableObject.subscribe(
         eventType,
         onInit: () {
           print('订阅 $eventType 成功');
         },
         onEvent: (result) {
-          print('有返回结果');
+          print('有返回结果 $eventType');
           print(result.event);
           print(result.after.text);
           print(result.after.created_at);
@@ -47,55 +43,22 @@ class _WebSocketPageState extends State<WebSocketPage> {
     } catch (e) {
       print(e.toString());
     }
-    return wamp;
   }
 
-  void subscribeCreate() async {
-    wampCreate = await this.subscribeEvent('create');
+  void subscribe(eventType) async {
+    subscribeEvent(eventType);
   }
 
-  void unsubscribeCreate() async {
-    if (wampCreate == null) return;
-    await wampCreate.unsubscribe(
-      onSuccess: () {
-        print('取消订阅 create 成功');
-      },
-      onError: (err) {
-        print('error: $err');
-      },
-    );
-  }
+  void unsubscribe(eventType) async {
+    WampSubscriber subscriber = subscriptions[eventType];
+    if (subscriber == null) return;
 
-  void subscribeUpdate() async {
-    wampUpdate = await this.subscribeEvent('update');
-  }
-
-  void unsubscribeUpdate() async {
-    if (wampUpdate == null) return;
-    await wampUpdate.unsubscribe(
-      onSuccess: () {
-        print('取消订阅 update 成功');
-      },
-      onError: (err) {
-        print('error: $err');
-      },
-    );
-  }
-
-  void subscribeDelete() async {
-    wampDelete = await this.subscribeEvent('delete');
-  }
-
-  void unsubscribeDelete() async {
-    if (wampDelete == null) return;
-    await wampDelete.unsubscribe(
-      onSuccess: () {
-        print('取消订阅 delete 成功');
-      },
-      onError: (err) {
-        print('error: $err');
-      },
-    );
+    subscriber.unsubscribe(onSuccess: () {
+      print('取消订阅成功');
+    }, onError: (error) {
+      print('取消订阅失败');
+      print(error.toString());
+    });
   }
 
   @override
@@ -108,29 +71,29 @@ class _WebSocketPageState extends State<WebSocketPage> {
           child: Column(
             children: [
               CustomButton(
-                subscribeCreate,
+                () => subscribe('create'),
                 title: '订阅 create',
               ),
               CustomButton(
-                subscribeUpdate,
+                () => subscribe('update'),
                 title: '订阅 update',
               ),
               CustomButton(
-                subscribeDelete,
+                () => subscribe('delete'),
                 title: '订阅 delete',
               ),
               CustomButton(
-                unsubscribeCreate,
+                () => unsubscribe('create'),
                 title: '取消订阅 create',
               ),
               CustomButton(
-                unsubscribeUpdate,
+                () => unsubscribe('update'),
                 title: '取消订阅 update',
               ),
               CustomButton(
-                unsubscribeDelete,
+                () => unsubscribe('delete'),
                 title: '取消订阅 delete',
-              )
+              ),
             ],
           ),
         ),
