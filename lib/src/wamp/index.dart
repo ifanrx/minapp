@@ -112,10 +112,10 @@ Future wampSubscribe(
   }
 
   /// 订阅实时数据库。
-  Future<WampSubscriber> subscribe() async {
+  Future<WampEvent> subscribe() async {
     /// 如果无法成功创建 session，则不再往下执行，直接返回一个空函数
     // if (_session == null) {
-    //   return new WampSubscriber(() {});
+    //   return new WampEvent(() {});
     // }
 
     try {
@@ -197,7 +197,7 @@ Future wampSubscribe(
       }
     }
 
-    return new WampSubscriber(unsubscribe);
+    return new WampEvent(unsubscribe);
   }
 
   return subscribe;

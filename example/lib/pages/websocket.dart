@@ -50,7 +50,7 @@ class _WebSocketPageState extends State<WebSocketPage> {
   }
 
   void unsubscribe(eventType) async {
-    WampSubscriber subscriber = subscriptions[eventType];
+    WampEvent subscriber = subscriptions[eventType];
     if (subscriber == null) return;
 
     subscriber.unsubscribe(onSuccess: () {
