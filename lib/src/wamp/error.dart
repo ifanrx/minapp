@@ -8,6 +8,7 @@ HError errorify({Abort abort}) {
     'wamp.close.disable_connection': 600,
     'wamp.close.session_destory': 604,
     'wamp.close.invalid_message': 615,
+    'wamp.error.invalid_options': 616,
   };
 
   int errorCode = lookup[abort.reason] ?? 0;

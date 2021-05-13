@@ -25,6 +25,7 @@ const Map<int, String> _errors = {
   613: 'third party auth denied',
   614: 'third party auth failed',
   615: 'invalid message',
+  616: 'invalid where options',
 };
 
 String _mapErrorMessage(int code) {

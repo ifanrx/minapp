@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:convert';
 import 'package:minapp/minapp.dart';
 import './connectanum/connectanum.dart';
 import './callback.dart';
@@ -13,6 +14,34 @@ Map<String, Map> _subscriptionMap = {};
 /// 为了避免 retry 时遍历方法把 session 重复新建，
 /// 这里用一个 _isRetry 变量，判断是否应该新建。
 bool _isRetry = false;
+
+/// 当所有订阅都被取消后，断开连接
+void _disconnect() {
+  _session = null;
+  _client = null;
+  print('disconnected');
+}
+
+/// 校验 where 条件查询是否合法
+bool _validateWhereOptions(Where where) {
+  if (where == null) {
+    return true;
+  }
+
+  Map _where = jsonDecode(where.get());
+  List optionList = _where['\$and'];
+  if (optionList.length != 1) {
+    return false;
+  }
+
+  List entryList = optionList[0].entries.toList();
+  String key = entryList[0].key;
+  if (optionList[0][key] == null) {
+    return false;
+  }
+
+  return true;
+}
 
 /// 重新订阅。
 /// 由于 connectanum 库没有断线重连后重新订阅的功能，
@@ -72,51 +101,12 @@ Future wampSubscribe(
 ) async {
   int retryCount = 15; // 重试次数
 
-  // 初始化 Client
-  if (_client == null || _isRetry == true) {
-    _client = await createWampClient();
-  }
-
-  /// 初始化 Session
-  if (_session == null || _isRetry == true) {
-    try {
-      _session = await _client
-          .connect(
-            options: ClientConnectOptions(
-              reconnectCount: retryCount,
-              reconnectTime: Duration(
-                milliseconds: 200,
-              ),
-            ),
-          )
-          .first;
-
-      // 断线后每隔一段时间重连
-      // 当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
-      _client.onNextTryToReconnect.listen((passedOptions) {
-        print('retrying....');
-        double delayInSec =
-            pow(2, retryCount - passedOptions.reconnectCount + 1) * 0.5;
-        int delayTime = (min(delayInSec, 300) * 1000).round();
-        passedOptions.reconnectTime = Duration(milliseconds: delayTime);
-
-        // connectanum 库没有实现断线重连后重新 subscribe 的功能，这里只能手动实现
-        _resubscribe();
-
-        /// 这里往下还可以判断，如果 retry 次数用完，直接抛错给开发者。
-        /// 由于目前还不能测试到一直断线重连的情况，这里先暂时搁置。
-      });
-    } on Abort catch (abort) {
-      onError(errorify(abort: abort)); // 订阅失败回调
-    }
-  }
-
   /// 订阅实时数据库。
   Future<WampEvent> subscribe() async {
     /// 如果无法成功创建 session，则不再往下执行，直接返回一个空函数
-    // if (_session == null) {
-    //   return new WampEvent(() {});
-    // }
+    if (_session == null) {
+      return new WampEvent(() {});
+    }
 
     try {
       String topic = _resolveTopic(tableId, eventType);
@@ -192,11 +182,9 @@ Future wampSubscribe(
         await _session.unsubscribe(found['subscriptionId']);
         onSuccess();
         _subscriptionMap.remove(key); // 取消订阅后，将订阅内容从 map 中销毁
-        // 如果 map 为空，在销毁 session 和 client
+        // 如果 map 为空，再销毁 session 和 client
         if (_subscriptionMap.isEmpty) {
-          _session = null;
-          _client = null;
-          print('disconnected');
+          _disconnect();
         }
       } catch (e) {
         onError(errorify(abort: new Abort('Unsubscribe failed.')));
@@ -204,6 +192,50 @@ Future wampSubscribe(
     }
 
     return new WampEvent(unsubscribe);
+  }
+
+  if (!_validateWhereOptions(where)) {
+    onError(new HError(616));
+    return subscribe;
+  }
+
+  // 初始化 Client
+  if (_client == null || _isRetry == true) {
+    _client = await createWampClient();
+  }
+
+  /// 初始化 Session
+  if (_session == null || _isRetry == true) {
+    try {
+      _session = await _client
+          .connect(
+            options: ClientConnectOptions(
+              reconnectCount: retryCount,
+              reconnectTime: Duration(
+                milliseconds: 200,
+              ),
+            ),
+          )
+          .first;
+
+      // 断线后每隔一段时间重连
+      // 当 delayTime 大于 300，则直接按 300 秒重连。这里与 iOS SDK 保持一致。
+      _client.onNextTryToReconnect.listen((passedOptions) {
+        print('retrying....');
+        double delayInSec =
+            pow(2, retryCount - passedOptions.reconnectCount + 1) * 0.5;
+        int delayTime = (min(delayInSec, 300) * 1000).round();
+        passedOptions.reconnectTime = Duration(milliseconds: delayTime);
+
+        // connectanum 库没有实现断线重连后重新 subscribe 的功能，这里只能手动实现
+        _resubscribe();
+
+        /// 这里往下还可以判断，如果 retry 次数用完，直接抛错给开发者。
+        /// 由于目前还不能测试到一直断线重连的情况，这里先暂时搁置。
+      });
+    } on Abort catch (abort) {
+      onError(errorify(abort: abort)); // 订阅失败回调
+    }
   }
 
   return subscribe;
