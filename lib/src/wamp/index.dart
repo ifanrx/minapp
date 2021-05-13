@@ -24,11 +24,12 @@ void _disconnect() {
 
 /// 校验 where 条件查询是否合法
 bool _validateWhereOptions(Where where) {
-  if (where == null) {
+  Map _where = jsonDecode(where.get());
+
+  if (_where.isEmpty) {
     return true;
   }
 
-  Map _where = jsonDecode(where.get());
   List optionList = _where['\$and'];
   if (optionList.length != 1) {
     return false;
