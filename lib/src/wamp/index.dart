@@ -192,6 +192,12 @@ Future wampSubscribe(
         await _session.unsubscribe(found['subscriptionId']);
         onSuccess();
         _subscriptionMap.remove(key); // 取消订阅后，将订阅内容从 map 中销毁
+        // 如果 map 为空，在销毁 session 和 client
+        if (_subscriptionMap.isEmpty) {
+          _session = null;
+          _client = null;
+          print('disconnected');
+        }
       } catch (e) {
         onError(errorify(abort: new Abort('Unsubscribe failed.')));
       }

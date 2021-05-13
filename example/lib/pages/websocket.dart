@@ -27,11 +27,11 @@ class _WebSocketPageState extends State<WebSocketPage> {
         onEvent: (result) {
           print('有返回结果 $eventType');
           print(result.event);
-          print(result.after.text);
-          print(result.after.created_at);
-          print(result.after.updated_at);
-          print(result.after.created_by);
-          print(result.after.id);
+          print(result.after['text']);
+          print(result.after['created_at']);
+          print(result.after['updated_at']);
+          print(result.after['created_by']);
+          print(result.after['id']);
         },
         onError: (error) {
           print('失败！！！');
