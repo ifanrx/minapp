@@ -17,6 +17,7 @@ bool _isRetry = false;
 
 /// 当所有订阅都被取消后，断开连接
 void _disconnect() {
+  _session.close();
   _session = null;
   _client = null;
   print('disconnected');
