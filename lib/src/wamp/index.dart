@@ -17,7 +17,9 @@ bool _isRetry = false;
 
 /// 当所有订阅都被取消后，断开连接
 void _disconnect() {
-  _session.close();
+  if (_session != null) {
+    _session.close();
+  }
   _session = null;
   _client = null;
   print('disconnected');
@@ -236,6 +238,9 @@ Future wampSubscribe(
         /// 由于目前还不能测试到一直断线重连的情况，这里先暂时搁置。
       });
     } on Abort catch (abort) {
+      if (abort.reason == 'wamp.error.not_authorized') {
+        _disconnect();
+      }
       onError(errorify(abort: abort)); // 订阅失败回调
     }
   }
