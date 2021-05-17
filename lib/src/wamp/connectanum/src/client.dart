@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import '../src/message/goodbye.dart';
 import 'package:logging/logging.dart';
@@ -74,8 +75,7 @@ class Client {
   /// ping messages. If [reconnectCount] and the [reconnectTime] is set
   /// the client will try to reestablish the session. Setting [reconnectCount] to -1 will infinite
   /// times reconnect the client or until the stack overflows
-  Stream<Session> connect(
-      {ClientConnectOptions options}) {
+  Stream<Session> connect({ClientConnectOptions options}) {
     options ??= ClientConnectOptions();
     _reconnectCount = options.reconnectCount;
     _connect(options);
@@ -83,56 +83,72 @@ class Client {
   }
 
   void _connect(ClientConnectOptions options) async {
-    await transport.open(pingInterval: options.pingInterval);
-    if (transport.isOpen) {
-      unawaited(transport.onConnectionLost.future.then((_) async {
-        print('connection lost');
-        await Future.delayed(options.reconnectTime);
-        options.reconnectCount = _reconnectCount;
-        _reconnectStreamController.add(options);
-        _connect(options);
-      }));
-      try {
-        print('connecting...');
-        var session = await Session.start(realm, transport,
-            authId: authId,
-            authMethods: authenticationMethods,
-            reconnect: options.reconnectTime);
-        _controller.add(session);
-      } on Abort catch (abort) {
-        if (abort.reason != Error.NOT_AUTHORIZED &&
-            options.reconnectTime != null) {
-          // if the router restarts we should wait until it has been initialized
-          await Future.delayed(Duration(seconds: 2));
-          options.reconnectCount = 0;
+    try {
+      await transport.open(pingInterval: options.pingInterval);
+
+      if (transport.isOpen) {
+        unawaited(transport.onConnectionLost.future.then((_) async {
+          print('connection lost');
+          await Future.delayed(options.reconnectTime);
+          options.reconnectCount = _reconnectCount;
+          _reconnectStreamController.add(options);
           _connect(options);
-        } else {
-          _controller.addError(abort);
+        }));
+        try {
+          print('connecting...');
+          var session = await Session.start(realm, transport,
+              authId: authId,
+              authMethods: authenticationMethods,
+              reconnect: options.reconnectTime);
+          _controller.add(session);
+        } on Abort catch (abort) {
+          if (abort.reason != Error.NOT_AUTHORIZED &&
+              options.reconnectTime != null) {
+            // if the router restarts we should wait until it has been initialized
+            await Future.delayed(Duration(seconds: 2));
+            options.reconnectCount = 0;
+            _connect(options);
+          } else {
+            _controller.addError(abort);
+          }
+        } on Goodbye catch (goodbye) {
+          _logger.shout(goodbye.reason);
+          unawaited(_controller.close());
         }
-      } on Goodbye catch (goodbye) {
-        _logger.shout(goodbye.reason);
-        unawaited(_controller.close());
-      }
-    } else {
-      if (options.reconnectTime != null &&
-          transport.onConnectionLost.isCompleted) {
-        _reconnectStreamController.add(options);
-        if (options.reconnectCount == 0) {
+      } else {
+        if (options.reconnectTime != null &&
+            transport.onConnectionLost.isCompleted) {
+          _reconnectStreamController.add(options);
+          if (options.reconnectCount == 0) {
+            _controller.addError(Abort(Error.AUTHORIZATION_FAILED,
+                message:
+                    'Could not connect to server. Please configure reconnectTime to retry automatically.'));
+          } else {
+            await Future.delayed(options.reconnectTime);
+            options.reconnectCount =
+                options.reconnectCount == -1 ? -1 : options.reconnectCount - 1;
+            _connect(options);
+          }
+        } else {
+          print('reconenctTime is null');
           _controller.addError(Abort(Error.AUTHORIZATION_FAILED,
               message:
                   'Could not connect to server. Please configure reconnectTime to retry automatically.'));
-        } else {
-          await Future.delayed(options.reconnectTime);
-          options.reconnectCount =
-              options.reconnectCount == -1 ? -1 : options.reconnectCount - 1;
-          _connect(options);
         }
-      } else {
-        print('reconenctTime is null');
-        _controller.addError(Abort(Error.AUTHORIZATION_FAILED,
-            message:
-                'Could not connect to server. Please configure reconnectTime to retry automatically.'));
       }
+    } catch (e) {
+      print(e.toString());
+      print('auto reconnecting...');
+      // 如果停用应用，则自动递增重连，直到能连上为止
+      await Future.delayed(options.reconnectTime);
+      options.reconnectCount =
+          options.reconnectCount == -1 ? -1 : options.reconnectCount - 1;
+
+      int retryCount = 15; // 重试次数
+      double delayInSec = pow(2, retryCount - options.reconnectCount + 1) * 0.5;
+      int delayTime = (min(delayInSec, 300) * 1000).round();
+      options.reconnectTime = Duration(milliseconds: delayTime);
+      _connect(options);
     }
   }
 }

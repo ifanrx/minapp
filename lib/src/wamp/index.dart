@@ -241,7 +241,11 @@ Future wampSubscribe(
       if (abort.reason == 'wamp.error.not_authorized') {
         _disconnect();
       }
+
       onError(errorify(abort: abort)); // 订阅失败回调
+    } catch (err) {
+      Abort abort = new Abort(err.error);
+      onError(errorify(abort: abort));
     }
   }
 
