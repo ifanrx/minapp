@@ -62,7 +62,7 @@ Future<void> handleLoginSuccess(Response res,
 }
 
 Future<bool> isSessionExpired() async {
-  int expiresAt = int.parse(await storageAsync.get(StorageKey.expiresAt));
+  int expiresAt = int.parse(await storageAsync.get(StorageKey.expiresAt) ?? '0');
   int now = Clock().now().millisecondsSinceEpoch ~/ 1000;
 
   if (expiresAt != null) {
