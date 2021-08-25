@@ -6,6 +6,9 @@ import 'query.dart';
 import 'util.dart';
 import 'config.dart';
 import 'utils/getLimitationWithEnableTrigger.dart' as constants;
+import 'wamp/index.dart';
+import 'where.dart';
+import 'wamp/callback.dart';
 
 class TableObject {
   String _tableId;
@@ -166,5 +169,36 @@ class TableObject {
 
     int count = response.total_count;
     return count;
+  }
+
+  /// 实时数据库订阅
+  /// 接收 [eventType] 必填参数，必须为 create、update 或 delete。
+  /// [onInit] 订阅动作初始化成功时的回调函数。
+  /// [onEvent] 数据表变化时的回调函数。
+  /// [onError] 订阅动作出错时的回调函数。
+  /// [retryCount] 最大重连次数。
+  Future subscribe(
+    String eventType, {
+    Where where,
+    Function onInit,
+    Function onEvent,
+    Function onError,
+  }) async {
+    if (eventType != 'create' &&
+        eventType != 'update' &&
+        eventType != 'delete') {
+      throw HError(605);
+    }
+
+    var subscribe = await wampSubscribe(
+      _tableId,
+      eventType,
+      where ?? new Where(),
+      onInit ?? () => {},
+      onEvent ?? (result) => {},
+      onError ?? (erorr) => {},
+    );
+
+    return await subscribe();
   }
 }

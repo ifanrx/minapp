@@ -20,3 +20,5 @@ export 'src/file_manager.dart';
 export 'src/file.dart';
 export 'src/content_group.dart';
 export 'src/log.dart';
+export 'src/wamp/index.dart';
+export 'src/wamp/callback.dart';

@@ -1,9 +1,12 @@
-class HError extends Error{
+class HError extends Error {
   final int code;
   String message;
+  String details;
 
-  HError(this.code, [String message]) {
-    this.message = message == null ? '$code: ${_mapErrorMessage(code)}' : '$code: $message';
+  HError(this.code, [String message, this.details]) {
+    this.message = message == null
+        ? '$code: ${_mapErrorMessage(code)}'
+        : '$code: $message';
   }
 
   String toString() {
@@ -21,8 +24,10 @@ const Map<int, String> _errors = {
   611: 'unsupported function',
   613: 'third party auth denied',
   614: 'third party auth failed',
+  615: 'invalid message',
+  616: 'invalid where options',
 };
 
 String _mapErrorMessage(int code) {
-  return _errors[code]??'unknown error';
+  return _errors[code] ?? 'unknown error';
 }
