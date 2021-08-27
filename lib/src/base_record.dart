@@ -137,6 +137,9 @@ class BaseRecord {
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
       _record['\$set'][key] = {'\$append': geoList};
+    } else if (!value.isEmpty && value[0] is CloudFile) {
+      List fileList = value.map((elem) => serializeValue(elem)).toList();
+      _record['\$set'][key] = {'\$append': fileList};
     } else {
       _record['\$set'][key] = {'\$append': value};
     }
@@ -153,6 +156,9 @@ class BaseRecord {
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
       _record['\$set'][key] = {'\$append_unique': geoList};
+    } else if (!value.isEmpty && value[0] is CloudFile) {
+      List fileList = value.map((elem) => serializeValue(elem)).toList();
+      _record['\$set'][key] = {'\$append_unique': fileList};
     } else {
       _record['\$set'][key] = {'\$append_unique': value};
     }
@@ -169,6 +175,9 @@ class BaseRecord {
     if (!value.isEmpty && (value[0] is GeoPoint || value[0] is GeoPolygon)) {
       List geoList = value.map((geo) => geo.geoJSON).toList();
       _record['\$set'][key] = {'\$remove': geoList};
+    } else if (!value.isEmpty && value[0] is CloudFile) {
+      List fileList = value.map((elem) => serializeValue(elem)).toList();
+      _record['\$set'][key] = {'\$remove': fileList};
     } else {
       _record['\$set'][key] = {'\$remove': value};
     }
