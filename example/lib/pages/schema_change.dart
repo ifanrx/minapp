@@ -260,14 +260,13 @@ class _SchemaChangeState extends State<SchemaChange> {
   void unsetField(TableRecord tableRecord) async {
     try {
       await tableRecord.update();
-      setState(() => record = null);
       _showSnackBar('成功');
     } catch (e) {
       _showSnackBar('失败 - ${e.toString()}');
     }
   }
 
-  void unsetObj() {
+  void unsetObj() async {
     TableRecord tableRecord =
         tableObject.getWithoutData(recordId: record['id']);
 
@@ -277,19 +276,14 @@ class _SchemaChangeState extends State<SchemaChange> {
     tableRecord.unset('array_file');
     tableRecord.unset('array_geo');
     unsetField(tableRecord);
+    setState(() => record = null);
   }
 
   void unsetStr() {
     TableRecord tableRecord =
         tableObject.getWithoutData(recordId: record['id']);
 
-    num randomNum = valueGenerator.number();
-    tableRecord.set('num', randomNum);
-    tableRecord.unset({
-      'array_obj': 'abc',
-      'array_file': {'a': 10},
-      'array_geo': true,
-    });
+    tableRecord.unset('str');
     unsetField(tableRecord);
   }
 
