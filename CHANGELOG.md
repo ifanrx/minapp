@@ -1,3 +1,7 @@
+## [1.0.0-alpha-4]
+
+* 修复 file 类型数组 append 和 remove 不生效的问题
+
 ## [1.0.0-alpha-3]
 
 * 修复未登录时调用 getCurrentUser 报错问题
