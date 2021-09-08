@@ -20,27 +20,21 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     }
-    await config.request(
-      path: Api.accountInfo,
-      method: 'PUT',
-      data: {
-        'password': password,
-        'new_password': newPassword,
-      }
-    );
+    await config.request(path: Api.accountInfo, method: 'PUT', data: {
+      'password': password,
+      'new_password': newPassword,
+    });
   }
 
   /// 更新邮箱
   /// [email] email 地址
   /// [sendVerificationEmail] 是否发送验证邮件，默认 false
-  Future<void> setEmail(String email, {bool sendVerificationEmail = false}) async {
-    Response res = await config.request(
-      path: Api.accountInfo,
-      method: 'PUT',
-      data: {
-        'email': email,
-      }
-    );
+  Future<void> setEmail(String email,
+      {bool sendVerificationEmail = false}) async {
+    Response res =
+        await config.request(path: Api.accountInfo, method: 'PUT', data: {
+      'email': email,
+    });
 
     this._attribute = res.data;
 
@@ -55,13 +49,25 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     } else {
-      Response res = await config.request(
-        path: Api.accountInfo,
-        method: 'PUT',
-        data: {
-          'username': username,
-        }
-      );
+      Response res =
+          await config.request(path: Api.accountInfo, method: 'PUT', data: {
+        'username': username,
+      });
+
+      this._attribute = res.data;
+    }
+  }
+
+  /// 设置用户头像
+  /// [avatar] 新用户头像
+  Future<void> setAvatar(String avatar) async {
+    if (this.isAnonymous) {
+      throw HError(612);
+    } else {
+      Response res =
+          await config.request(path: Api.accountInfo, method: 'PUT', data: {
+        'avatar': avatar,
+      });
 
       this._attribute = res.data;
     }
@@ -96,7 +102,6 @@ class CurrentUser extends User {
         data: accountInfo,
       );
 
-
       this._attribute = res.data;
     }
   }
@@ -104,13 +109,10 @@ class CurrentUser extends User {
   /// 更改手机号码
   /// [phone] 新的手机号码
   Future<void> setMobilePhone(String phone) async {
-    Response res = await config.request(
-      path: Api.accountInfo,
-      method: 'PUT',
-      data: {
-        'phone': phone,
-      }
-    );
+    Response res =
+        await config.request(path: Api.accountInfo, method: 'PUT', data: {
+      'phone': phone,
+    });
 
     this._attribute = res.data;
   }
@@ -121,12 +123,8 @@ class CurrentUser extends User {
     if (this.isAnonymous) {
       throw HError(612);
     }
-    await config.request(
-      path: Api.phoneVerify,
-      method: 'POST',
-      data: {
-        'code': code,
-      }
-    );
+    await config.request(path: Api.phoneVerify, method: 'POST', data: {
+      'code': code,
+    });
   }
 }

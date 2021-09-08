@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:minapp/minapp.dart' as BaaS;
 
@@ -259,6 +261,23 @@ class _GetUser extends State<GetUser> {
           },
         ),
         RaisedButton(
+          child: Text('更新用户头像'),
+          onPressed: () async {
+            try {
+              BaaS.CurrentUser user = await BaaS.Auth.getCurrentUser();
+
+              File file = await FilePicker.getFile();
+              BaaS.CloudFile avatar = await BaaS.FileManager.upload(file);
+
+              await user.setAvatar(avatar.path);
+              showSnackBar('用户头像更新成功', context);
+            } catch (e) {
+              print(e.toString());
+              showSnackBar('获取文件失败', context);
+            }
+          },
+        ),
+        RaisedButton(
           child: Text('查找指定用户 by user_id'),
           onPressed: () async {
             BaaS.Where where = BaaS.Where.compare('id', '=', userId);
@@ -309,7 +328,8 @@ class _GetUser extends State<GetUser> {
           child: Text('用户信息 select（只返回 nickname）'),
           onPressed: () async {
             try {
-              BaaS.User user = await BaaS.User.getUser(userId, select: ['nickname']);
+              BaaS.User user =
+                  await BaaS.User.getUser(userId, select: ['nickname']);
               alert(context, prettyJson(user.toJSON()));
             } on BaaS.HError catch (e) {
               showSnackBar(e.toString(), context);
