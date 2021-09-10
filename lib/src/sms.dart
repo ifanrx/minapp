@@ -23,7 +23,7 @@ Future<void> sendSmsCode({@required String phone, String signatureID}) async {
 /// 验证码验证
 /// [phone] 手机号码
 /// [code] 验证码
-Future<void> verifySmsCode({@required String phone, @required num code}) async {
+Future<void> verifySmsCode({@required String phone, @required String code}) async {
   await config.request(
     path: Api.verifySmsCode,
     method: 'POST',

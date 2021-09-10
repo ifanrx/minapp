@@ -65,12 +65,12 @@ class _SmsState extends State<SmsForm> {
           keyboardType: TextInputType.number,
         ),
         RaisedButton(
-          child: Text('发送短信验证码'),
+          child: Text('验证短信验证码'),
           onPressed: () async {
             try {
               await verifySmsCode(
                 phone: _phoneController.text,
-                code: num.parse(_codeController.text),
+                code: _codeController.text,
               );
               showSnackBar('验证成功', context);
             } on HError catch(e) {
