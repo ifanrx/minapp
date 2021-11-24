@@ -19,7 +19,7 @@ class BaseRecord {
   }
 
   BaseRecord.withInfo(Map<String, dynamic> recordInfo) {
-    _id = recordInfo['id'];
+    _id = recordInfo['id'].toString();
     if (recordInfo['created_by'] != null) {
       _created_by = recordInfo['created_by'] is int
           ? recordInfo['created_by']
