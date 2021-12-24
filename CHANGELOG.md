@@ -1,3 +1,7 @@
+## [1.0.0-alpha-7]
+
+* 优化 getCurrentUser 后，setUsername、setEmail、setMobileNumber 等方法无法获取完整用户信息的问题
+
 ## [1.0.0-alpha-6]
 
 * 兼容更新 _userprofile 表后，返回 id 为 int 类型的问题
