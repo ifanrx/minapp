@@ -225,7 +225,7 @@ class _GetUser extends State<GetUser> {
     return Column(
       children: <Widget>[
         SectionTitle('user = "$userId"'),
-        RaisedButton(
+        ElevatedButton(
           child: Text('获取用户信息'),
           onPressed: widget.userList != null && widget.userList.users.length > 0
               ? () async {
@@ -241,7 +241,7 @@ class _GetUser extends State<GetUser> {
                 }
               : null,
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('获取用户信息 select & expand'),
           onPressed: () async {
             try {
@@ -260,24 +260,26 @@ class _GetUser extends State<GetUser> {
             }
           },
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('更新用户头像'),
           onPressed: () async {
             try {
               BaaS.CurrentUser user = await BaaS.Auth.getCurrentUser();
+              FilePickerResult result = await FilePicker.platform.pickFiles();
 
-              File file = await FilePicker.getFile();
-              BaaS.CloudFile avatar = await BaaS.FileManager.upload(file);
-
-              await user.setAvatar(avatar.path);
-              showSnackBar('用户头像更新成功', context);
+              if (result != null) {
+                File file = File(result.files.single.path);
+                BaaS.CloudFile avatar = await BaaS.FileManager.upload(file);
+                await user.setAvatar(avatar.path);
+                showSnackBar('用户头像更新成功', context);
+              }
             } catch (e) {
               print(e.toString());
               showSnackBar('获取文件失败', context);
             }
           },
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('查找指定用户 by user_id'),
           onPressed: () async {
             BaaS.Where where = BaaS.Where.compare('id', '=', userId);
@@ -297,7 +299,7 @@ class _GetUser extends State<GetUser> {
             }
           },
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('更新当前用户信息 自定义字段'),
           onPressed: () async {
             try {
@@ -312,7 +314,7 @@ class _GetUser extends State<GetUser> {
           },
         ),
         SectionTitle('count'),
-        RaisedButton(
+        ElevatedButton(
           child: Text('count 查询'),
           onPressed: () async {
             try {
@@ -324,7 +326,7 @@ class _GetUser extends State<GetUser> {
           },
         ),
         SectionTitle('其他'),
-        RaisedButton(
+        ElevatedButton(
           child: Text('用户信息 select（只返回 nickname）'),
           onPressed: () async {
             try {

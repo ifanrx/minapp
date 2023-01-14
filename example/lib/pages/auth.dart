@@ -24,8 +24,7 @@ class AuthPage extends StatelessWidget {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
 
@@ -82,7 +81,7 @@ class _LoginUsername extends State<LoginUsername> {
               return null;
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('登录'),
             onPressed: () async {
               if (!_formKey.currentState.validate()) return;
@@ -108,7 +107,7 @@ class _LoginUsername extends State<LoginUsername> {
                   );
                 }
                 showSnackBar('登录成功', context);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
@@ -188,33 +187,37 @@ class _Register extends State<Register> {
               });
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('注册'),
-            onPressed: (email.length > 0 || phone.length > 0 || username.length > 0) && password.length > 0 ? () async {
-              if (!_formKey.currentState.validate()) return;
+            onPressed:
+                (email.length > 0 || phone.length > 0 || username.length > 0) &&
+                        password.length > 0
+                    ? () async {
+                        if (!_formKey.currentState.validate()) return;
 
-              try {
-                if (username.length > 0) {
-                  await BaaS.Auth.registerWithUsername(
-                    username: username,
-                    password: password,
-                  );
-                } else if (email.length > 0) {
-                  await BaaS.Auth.registerWithEmail(
-                    email: email,
-                    password: password,
-                  );
-                } else if (phone.length > 0) {
-                  await BaaS.Auth.registerWithPhone(
-                    phone: phone,
-                    password: password,
-                  );
-                }
-                showSnackBar('登录成功', context);
-              } on BaaS.HError catch(e) {
-                showSnackBar(e.toString(), context);
-              }
-            } : null,
+                        try {
+                          if (username.length > 0) {
+                            await BaaS.Auth.registerWithUsername(
+                              username: username,
+                              password: password,
+                            );
+                          } else if (email.length > 0) {
+                            await BaaS.Auth.registerWithEmail(
+                              email: email,
+                              password: password,
+                            );
+                          } else if (phone.length > 0) {
+                            await BaaS.Auth.registerWithPhone(
+                              phone: phone,
+                              password: password,
+                            );
+                          }
+                          showSnackBar('登录成功', context);
+                        } on BaaS.HError catch (e) {
+                          showSnackBar(e.toString(), context);
+                        }
+                      }
+                    : null,
           ),
         ],
       ),
@@ -256,13 +259,13 @@ class _LoginWithPhone extends State<LoginWithPhone> {
               });
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('获取短信验证码'),
             onPressed: () async {
               try {
                 print(phone);
                 await BaaS.sendSmsCode(phone: phone);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
@@ -278,13 +281,13 @@ class _LoginWithPhone extends State<LoginWithPhone> {
               });
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('手机号登录'),
             onPressed: () async {
               try {
                 await BaaS.Auth.loginWithSmsVerificationCode(phone, code);
                 showSnackBar('登录成功', context);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
@@ -328,12 +331,13 @@ class _OtherSettings extends State<OtherSettings> {
                     return v.trim().length > 0 ? null : '邮箱不能为空';
                   },
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text('忘记密码'),
                   onPressed: () async {
                     try {
-                      await BaaS.Auth.requestPasswordReset(_emailController.text);
-                    } on BaaS.HError catch(e) {
+                      await BaaS.Auth.requestPasswordReset(
+                          _emailController.text);
+                    } on BaaS.HError catch (e) {
                       showSnackBar(e.toString(), context);
                     }
                   },
@@ -341,35 +345,35 @@ class _OtherSettings extends State<OtherSettings> {
               ],
             ),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('匿名登录'),
             onPressed: () async {
-              try{
+              try {
                 BaaS.CurrentUser currentUser = await BaaS.Auth.anonymousLogin();
                 showSnackBar(prettyJson(currentUser?.toJSON()), context);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('获取当前用户'),
             onPressed: () async {
               try {
                 BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
                 showSnackBar(prettyJson(currentUser?.toJSON()), context);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('登出'),
             onPressed: () async {
               try {
                 await BaaS.Auth.logout();
                 showSnackBar('已登出', context);
-              } on BaaS.HError catch(e) {
+              } on BaaS.HError catch (e) {
                 showSnackBar(e.toString(), context);
               }
             },
@@ -378,9 +382,7 @@ class _OtherSettings extends State<OtherSettings> {
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  decoration: InputDecoration(
-                      labelText: '邮箱'
-                  ),
+                  decoration: InputDecoration(labelText: '邮箱'),
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailForUpdate,
                 ),
@@ -397,7 +399,7 @@ class _OtherSettings extends State<OtherSettings> {
                   obscureText: true,
                   controller: _passwordForUpdate,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text('设置用户名/邮箱/密码'),
                   onPressed: () async {
                     Map<String, dynamic> data = {
@@ -406,10 +408,11 @@ class _OtherSettings extends State<OtherSettings> {
                       'password': _passwordForUpdate.text,
                     };
                     try {
-                      BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
+                      BaaS.CurrentUser currentUser =
+                          await BaaS.Auth.getCurrentUser();
                       await currentUser.setAccount(data);
                       showSnackBar(prettyJson(currentUser?.toJSON()), context);
-                    } on BaaS.HError catch(e) {
+                    } on BaaS.HError catch (e) {
                       showSnackBar(e.toString(), context);
                     }
                   },
@@ -426,14 +429,15 @@ class _OtherSettings extends State<OtherSettings> {
                   ),
                   controller: _emailSetting,
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text('设置邮箱'),
                   onPressed: () async {
-                    try{
-                      BaaS.CurrentUser currentUser = await BaaS.Auth.getCurrentUser();
+                    try {
+                      BaaS.CurrentUser currentUser =
+                          await BaaS.Auth.getCurrentUser();
                       await currentUser.setEmail(_emailSetting.text);
                       showSnackBar(currentUser.email, context);
-                    } on BaaS.HError catch(e) {
+                    } on BaaS.HError catch (e) {
                       showSnackBar(e.toString(), context);
                     }
                   },

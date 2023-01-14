@@ -26,13 +26,15 @@ class _CustomButtonState extends State<CustomButton> {
         SizedBox(height: 10),
         ButtonTheme(
           height: 50.0,
-          child: RaisedButton(
+          child: ElevatedButton(
             onPressed: widget.fn,
             child: Text(
               widget.title,
               style: TextStyle(color: widget.titleColor, fontSize: 18.0),
             ),
-            color: widget.bgColor,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(widget.bgColor),
+            ),
           ),
         ),
       ],

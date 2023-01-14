@@ -8,9 +8,7 @@ class CloudFunctionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('调用云函数')),
-      body: Center(
-        child: InvokeButtons()
-      ),
+      body: Center(child: InvokeButtons()),
     );
   }
 }
@@ -20,29 +18,27 @@ class InvokeButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        RaisedButton(
+        ElevatedButton(
           child: Text('helloWorld'),
           onPressed: () async {
             try {
-              var res = await invokeCloudFunction(name: 'helloWorld', data: {'name': 'helloWorld'}, sync: true);
+              var res = await invokeCloudFunction(
+                  name: 'helloWorld', data: {'name': 'helloWorld'}, sync: true);
               showSimpleDialog(context, res['data'] ?? 'null');
-            } on HError catch(e) {
+            } on HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('testRequest'),
           onPressed: () async {
             try {
-              var res = await invokeCloudFunction(
-                  name: 'testRequest',
-                  data: {
-                    'url': 'https://www.ifanr.com',
-                  }
-              );
+              var res = await invokeCloudFunction(name: 'testRequest', data: {
+                'url': 'https://www.ifanr.com',
+              });
               showSimpleDialog(context, res['data'].toString());
-            } on HError catch(e) {
+            } on HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },

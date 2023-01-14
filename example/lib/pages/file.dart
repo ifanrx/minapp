@@ -82,14 +82,20 @@ class _FileListView extends State<FileListView> {
       showSnackBar(e.toString(), context);
     }
   }
+
   void uploadFileWithName() async {
     try {
       Map<String, dynamic> metaData = {
         'categoryName': currentCateName,
       };
-      File file = await FilePicker.getFile();
-      await FileManager.upload(file, metaData);
-      showSnackBar('文件上传成功', context);
+
+      FilePickerResult result = await FilePicker.platform.pickFiles();
+      if (result != null) {
+        File file = File(result.files.single.path);
+
+        await FileManager.upload(file, metaData);
+        showSnackBar('文件上传成功', context);
+      }
     } catch (e) {
       showSnackBar('获取文件失败', context);
     }
@@ -100,9 +106,14 @@ class _FileListView extends State<FileListView> {
       Map<String, dynamic> metaData = {
         'categoryID': currentCate,
       };
-      File file = await FilePicker.getFile();
-      await FileManager.upload(file, metaData);
-      showSnackBar('文件上传成功', context);
+      FilePickerResult result = await FilePicker.platform.pickFiles();
+
+      if (result != null) {
+        File file = File(result.files.single.path);
+
+        await FileManager.upload(file, metaData);
+        showSnackBar('文件上传成功', context);
+      }
     } catch (e) {
       showSnackBar('获取文件失败', context);
     }
@@ -165,7 +176,6 @@ class _FileListView extends State<FileListView> {
     fetchFileList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -221,26 +231,30 @@ class _FileListView extends State<FileListView> {
                 margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: categoryList != null ? categoryList.fileCategories.length : 0,
+                  itemCount: categoryList != null
+                      ? categoryList.fileCategories.length
+                      : 0,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       child: GestureDetector(
                         child: Container(
                           child: Text(
                             categoryList.fileCategories[index].name,
-                            style: TextStyle(color: categoryList.fileCategories[index].id == currentCate ? Colors.red : Colors.black),
+                            style: TextStyle(
+                                color: categoryList.fileCategories[index].id ==
+                                        currentCate
+                                    ? Colors.red
+                                    : Colors.black),
                           ),
                           padding: EdgeInsets.only(right: 5.0, left: 5.0),
                           alignment: Alignment.topLeft,
                           decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(
-                                  color: Colors.grey,
-                                  width: 1,
-                                  style: BorderStyle.solid,
-                                )
-                              )
-                          ),
+                              border: Border(
+                                  right: BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                            style: BorderStyle.solid,
+                          ))),
                         ),
                         onTap: () {
                           setState(() {
@@ -255,7 +269,7 @@ class _FileListView extends State<FileListView> {
                   },
                 ),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('全部'),
                 onPressed: () {
                   setState(() {
@@ -271,7 +285,7 @@ class _FileListView extends State<FileListView> {
         Wrap(
           spacing: 10.0,
           children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
               child: Text('删除'),
               onPressed: selectedFile.length <= 0
                   ? null
@@ -304,16 +318,18 @@ class _FileListView extends State<FileListView> {
                 runSpacing: 10.0,
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.start,
-                children: orderByList.map((o) => Container(
-                  width: 150.0,
-                  height: 50.0,
-                  child: RadioListTile<String>(
-                    title: Text(o),
-                    value: o,
-                    groupValue: orderBy,
-                    onChanged: _handleOrderByChange,
-                  ),
-                )).toList(),
+                children: orderByList
+                    .map((o) => Container(
+                          width: 150.0,
+                          height: 50.0,
+                          child: RadioListTile<String>(
+                            title: Text(o),
+                            value: o,
+                            groupValue: orderBy,
+                            onChanged: _handleOrderByChange,
+                          ),
+                        ))
+                    .toList(),
               ),
             ],
           ),
@@ -379,64 +395,72 @@ class _FileListView extends State<FileListView> {
         ),
         Container(
           child: Column(
-            children: currentFileID == null ? [] : <Widget>[
-              SectionTitle('获取文件详情'),
-              SectionTitle('record id = $currentFileID'),
-              RaisedButton(
-                child: Text('获取文件详情'),
-                onPressed: () async {
-                  try {
-                    CloudFile file = await FileManager.get(currentFileID);
-                    alert(context, 'name: ${file.name}, category: ${file.category}, mime_type: ${file.mime_type}');
-                  } on HError catch(e) {
-                    showSnackBar(e.toString(), context);
-                  }
-                },
-              )
-            ],
+            children: currentFileID == null
+                ? []
+                : <Widget>[
+                    SectionTitle('获取文件详情'),
+                    SectionTitle('record id = $currentFileID'),
+                    ElevatedButton(
+                      child: Text('获取文件详情'),
+                      onPressed: () async {
+                        try {
+                          CloudFile file = await FileManager.get(currentFileID);
+                          alert(context,
+                              'name: ${file.name}, category: ${file.category}, mime_type: ${file.mime_type}');
+                        } on HError catch (e) {
+                          showSnackBar(e.toString(), context);
+                        }
+                      },
+                    )
+                  ],
           ),
         ),
         Container(
           child: Column(
-            children: defaultCateID == null ? [] : <Widget>[
-              SectionTitle('文件分类'),
-              SectionTitle('cate id = $defaultCateID'),
-              RaisedButton(
-                child: Text('获取分类详情'),
-                onPressed: () async {
-                  try {
-                    FileCategory cate = await FileManager.getCategory(defaultCateID);
-                    alert(context, 'id: ${cate.id}, name: ${cate.name}, files: ${cate.files}');
-                  } on HError catch(e) {
-                    showSnackBar(e.toString(), context);
-                  }
-                },
-              ),
-              RaisedButton(
-                child: Text('获取分类下所有文件'),
-                onPressed: () async {
-                  try {
-                    Where where = Where.compare('category_id', '=', defaultCateID);
-                    Query query = Query()..where(where);
-                    CloudFileList files = await FileManager.find(query);
-                    alert(context, files.files.length.toString());
-                  } on HError catch(e) {
-                    showSnackBar(e.toString(), context);
-                  }
-                },
-              ),
-              RaisedButton(
-                child: Text('获取所有文件'),
-                onPressed: () async {
-                  try {
-                    CloudFileList files = await FileManager.find();
-                    alert(context, files.files.length.toString());
-                  } on HError catch(e) {
-                    showSnackBar(e.toString(), context);
-                  }
-                },
-              ),
-            ],
+            children: defaultCateID == null
+                ? []
+                : <Widget>[
+                    SectionTitle('文件分类'),
+                    SectionTitle('cate id = $defaultCateID'),
+                    ElevatedButton(
+                      child: Text('获取分类详情'),
+                      onPressed: () async {
+                        try {
+                          FileCategory cate =
+                              await FileManager.getCategory(defaultCateID);
+                          alert(context,
+                              'id: ${cate.id}, name: ${cate.name}, files: ${cate.files}');
+                        } on HError catch (e) {
+                          showSnackBar(e.toString(), context);
+                        }
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text('获取分类下所有文件'),
+                      onPressed: () async {
+                        try {
+                          Where where =
+                              Where.compare('category_id', '=', defaultCateID);
+                          Query query = Query()..where(where);
+                          CloudFileList files = await FileManager.find(query);
+                          alert(context, files.files.length.toString());
+                        } on HError catch (e) {
+                          showSnackBar(e.toString(), context);
+                        }
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text('获取所有文件'),
+                      onPressed: () async {
+                        try {
+                          CloudFileList files = await FileManager.find();
+                          alert(context, files.files.length.toString());
+                        } on HError catch (e) {
+                          showSnackBar(e.toString(), context);
+                        }
+                      },
+                    ),
+                  ],
           ),
         ),
       ],

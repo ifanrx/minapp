@@ -43,7 +43,7 @@ class _SmsState extends State<SmsForm> {
             labelText: '签名 ID',
           ),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('发送短信验证码'),
           onPressed: () async {
             try {
@@ -52,7 +52,7 @@ class _SmsState extends State<SmsForm> {
                 signatureID: _signController.text,
               );
               showSnackBar('验证码已发送', context);
-            } on HError catch(e) {
+            } on HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
@@ -64,7 +64,7 @@ class _SmsState extends State<SmsForm> {
           ),
           keyboardType: TextInputType.number,
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('验证短信验证码'),
           onPressed: () async {
             try {
@@ -73,7 +73,7 @@ class _SmsState extends State<SmsForm> {
                 code: _codeController.text,
               );
               showSnackBar('验证成功', context);
-            } on HError catch(e) {
+            } on HError catch (e) {
               showSnackBar(e.toString(), context);
             }
           },
