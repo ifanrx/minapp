@@ -402,11 +402,20 @@ class _OtherSettings extends State<OtherSettings> {
                 ElevatedButton(
                   child: Text('设置用户名/邮箱/密码'),
                   onPressed: () async {
-                    Map<String, dynamic> data = {
-                      'email': _emailForUpdate.text,
-                      'username': _usernameForUpdate.text,
-                      'password': _passwordForUpdate.text,
-                    };
+                    Map<String, dynamic> data = {};
+
+                    if (_emailForUpdate.text != '') {
+                      data['email'] = _emailForUpdate.text;
+                    }
+
+                    if (_usernameForUpdate.text != '') {
+                      data['username'] = _usernameForUpdate.text;
+                    }
+
+                    if (_passwordForUpdate.text != '') {
+                      data['password'] = _passwordForUpdate.text;
+                    }
+
                     try {
                       BaaS.CurrentUser currentUser =
                           await BaaS.Auth.getCurrentUser();

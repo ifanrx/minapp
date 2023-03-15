@@ -85,7 +85,8 @@ class _SchemaBatchState extends State<SchemaBatch> {
         {"rum": 203, "str": '5a33406909a805412e3169c3'},
       ];
 
-      TableRecordOperationList records = await order.createMany(data);
+      TableRecordOperationList records =
+          await order.createMany(data, enableTrigger: false);
       Map result = getResult(records);
       alert(context, '$result');
     } catch (e) {
