@@ -13,9 +13,9 @@ class _StoragePageState extends State<StoragePage> {
   final _formKey = GlobalKey<FormState>();
 
   void _showSnackBar(String message) {
-    _scaffoldKey.currentState.removeCurrentSnackBar();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).removeCurrentSnackBar();
     var snackBar = SnackBar(content: Text(message));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(snackBar);
   }
 
   @override
@@ -27,47 +27,47 @@ class _StoragePageState extends State<StoragePage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child:  Column(
-          children: <Widget>[
-            TextFormField(
-              controller: _keyController,
-              decoration: InputDecoration(
-                labelText: 'key',
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: _keyController,
+                decoration: InputDecoration(
+                  labelText: 'key',
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return '请填写 key 值';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return '请填写 key 值';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _valueController,
-              decoration: InputDecoration(
-                labelText: 'value',
+              TextFormField(
+                controller: _valueController,
+                decoration: InputDecoration(
+                  labelText: 'value',
+                ),
               ),
-            ),
-            RaisedButton(
-              child: Text('set'),
-              onPressed: () async {
-                if (!_formKey.currentState.validate()) return;
-                var key = _keyController.text;
-                var value = _valueController.text;
-                var ok = await BaaS.storageAsync.set(key, value);
-                _showSnackBar('设置${ok ? '成功': '失败'}');
-              },
-            ),
-            RaisedButton(
-              child: Text('get'),
-              onPressed: () async {
-                if (!_formKey.currentState.validate()) return;
-                var key = _keyController.text;
-                var value = await BaaS.storageAsync.get(key);
-                _showSnackBar('$key=$value');
-              },
-            ),
-          ],
-        ),
+              ElevatedButton(
+                child: Text('set'),
+                onPressed: () async {
+                  if (!_formKey.currentState.validate()) return;
+                  var key = _keyController.text;
+                  var value = _valueController.text;
+                  var ok = await BaaS.storageAsync.set(key, value);
+                  _showSnackBar('设置${ok ? '成功' : '失败'}');
+                },
+              ),
+              ElevatedButton(
+                child: Text('get'),
+                onPressed: () async {
+                  if (!_formKey.currentState.validate()) return;
+                  var key = _keyController.text;
+                  var value = await BaaS.storageAsync.get(key);
+                  _showSnackBar('$key=$value');
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

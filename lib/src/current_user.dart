@@ -36,7 +36,7 @@ class CurrentUser extends User {
       'email': email,
     });
 
-    this._attribute = res.data;
+    this._attribute['_email'] = email;
 
     if (sendVerificationEmail) {
       this.requestEmailVerification();
@@ -54,7 +54,7 @@ class CurrentUser extends User {
         'username': username,
       });
 
-      this._attribute = res.data;
+      this._attribute['_username'] = username;
     }
   }
 
@@ -114,7 +114,7 @@ class CurrentUser extends User {
       'phone': phone,
     });
 
-    this._attribute = res.data;
+    this._attribute['_phone'] = phone;
   }
 
   /// 验证手机号

@@ -27,9 +27,9 @@ class SectionTitle extends StatelessWidget {
 }
 
 void showSnackBar(String message, BuildContext context) {
-  Scaffold.of(context).removeCurrentSnackBar();
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
   var snackBar = SnackBar(content: Text(message));
-  Scaffold.of(context).showSnackBar(snackBar);
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
@@ -83,7 +83,7 @@ class _NumberInputWithIncrementDecrementState
                 signed: true,
               ),
               inputFormatters: <TextInputFormatter>[
-                WhitelistingTextInputFormatter.digitsOnly
+                FilteringTextInputFormatter.digitsOnly
               ],
               onChanged: (v) {
                 handleChange(int.parse(v));
@@ -156,7 +156,7 @@ void showSimpleDialog(BuildContext context, String content) {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text('关闭'),
                   )
@@ -180,7 +180,7 @@ void alert(
       title: new Text(title),
       content: new Text(content),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text(confirmText),
           onPressed: () {
             Navigator.of(context).pop();

@@ -34,15 +34,15 @@ class IndexPage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _showSnackBar(String message) {
-    _scaffoldKey.currentState.removeCurrentSnackBar();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).removeCurrentSnackBar();
     var snackBar = SnackBar(content: Text(message));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
     var list = _features
-        .map<Widget>((item) => RaisedButton(
+        .map<Widget>((item) => ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => item.page));
@@ -51,7 +51,7 @@ class IndexPage extends StatelessWidget {
             ))
         .toList();
 
-    list.add(RaisedButton(
+    list.add(ElevatedButton(
       onPressed: () async {
         var data = await BaaS.getServerDate();
         _showSnackBar(data.time);

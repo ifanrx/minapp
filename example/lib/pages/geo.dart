@@ -16,9 +16,9 @@ class _GeoState extends State<Geo> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _showSnackBar(String message) {
-    _scaffoldKey.currentState.removeCurrentSnackBar();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).removeCurrentSnackBar();
     var snackBar = SnackBar(content: Text(message));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(snackBar);
   }
 
   void showLoading(bool isLoading) {

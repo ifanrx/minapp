@@ -93,7 +93,7 @@ class CryptosignAuthentication extends AbstractAuthentication {
     authenticate.extra['channel_binding'] = channelBinding;
     var binaryChallenge = hexToBin(extra.challenge);
     authenticate.signature =
-        privateKey.sign(binaryChallenge).encode(HexCoder.instance);
+        privateKey.sign(binaryChallenge).encode(Base16Encoder.instance);
     return Future.value(authenticate);
   }
 
@@ -116,7 +116,7 @@ class CryptosignAuthentication extends AbstractAuthentication {
   Future<void> hello(String realm, Details details) {
     details.authextra ??= <String, String>{};
     details.authextra['pubkey'] =
-        privateKey.publicKey.encode(HexCoder.instance);
+        privateKey.publicKey.encode(Base16Encoder.instance);
     details.authextra['channel_binding'] = channelBinding;
     return Future.value();
   }
@@ -279,7 +279,7 @@ class CryptosignAuthentication extends AbstractAuthentication {
     mac.update(Uint8List.fromList([0, 0, 0, macData.privateKey.length]), 0, 4);
     mac.update(macData.privateKey, 0, macData.privateKey.length);
     mac.doFinal(macResult, 0);
-    if (HexCoder.instance.encode(ByteList.fromList(macResult)) != privateMac) {
+    if (Base16Encoder.instance.encode(ByteList(macResult)) != privateMac) {
       if (password == null) {
         throw Exception('Mac check failed, file is corrupt!');
       } else {
